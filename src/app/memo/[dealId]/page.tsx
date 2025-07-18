@@ -4,10 +4,11 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { ArrowLeft, Download, FileText } from "lucide-react"
 import { useRouter, useParams } from "next/navigation"
+import Image from "next/image"
 
 const memoData: Record<string, any> = {
   curenta: {
-    title: "InVitro Curenta SPV Investment Memorandum",
+    title: "Curenta Investment Memorandum",
     category: "Investment Memorandum",
     publishDate: "2025-08-07",
     readTime: "8 min read",
@@ -20,7 +21,7 @@ const memoData: Record<string, any> = {
           transaction: "Investment in Curenta",
           spvName: "InVitro Curenta SPV",
           targetRaise: "$2,000,000",
-          targetCloseDate: "August 7th 2025",
+          targetCloseDate: "September 15th 2025",
           preMoneyValuation: "$6,000,000",
           postMoneyValuation: "$8,000,000",
           targetOwnership: "25%",
@@ -114,7 +115,7 @@ const memoData: Record<string, any> = {
           { item: "GP Carry", terms: "20% (on profits above return of capital)" },
           { item: "Preferred Return (if any)", terms: "8%" },
           { item: "Minimum Commitment", terms: "$50,000" },
-          { item: "Close Date", terms: "August 7th 2025" },
+          { item: "Close Date", terms: "September 15th 2025" },
           { item: "Distributions", terms: "As liquidity events occur; subject to waterfall" },
         ],
         returnScenarios: [
@@ -182,7 +183,7 @@ const memoData: Record<string, any> = {
       ],
       nextSteps: [
         "Subscription documents available upon request.",
-        "Target close by August 7th 2025",
+        "Target close by September 15th 2025",
         "Minimum commitment: $50,000",
         "Please contact Jonathan Schroeder at jonathan.schroeder@invitrocapital.com to discuss allocation.",
       ],
@@ -191,7 +192,7 @@ const memoData: Record<string, any> = {
   // Keep existing allrx data as fallback
   allrx: {
     title: "AllRx Investment Memo",
-    industry: "Digital Health",
+    industry: "Pharmacy Operations",
     summary: "AllRx is revolutionizing prescription management through AI-powered medication adherence solutions.",
     keyPoints: [
       "Market size: $50B+ prescription management market",
@@ -209,40 +210,45 @@ export default function InvestmentMemo() {
   const memo = memoData[dealId] || memoData.allrx
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background text-foreground">
       <div className="max-w-5xl mx-auto px-8 py-12">
-        <Button variant="ghost" onClick={() => router.back()} className="mb-8">
-          <ArrowLeft className="w-4 h-4 mr-2" />
-          Back to Deals
-        </Button>
+        <div className="flex items-center justify-between mb-8">
+          <Button
+            variant="outline"
+            onClick={() => router.back()}
+            className="border-[hsl(212,74%,15%)] text-[hsl(212,74%,15%)] rounded-full px-5 py-2 text-sm font-medium hover:bg-[hsl(212,74%,97%)] hover:text-[hsl(212,74%,20%)] transition"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back to Deals
+          </Button>
+          <div className="flex-1 flex justify-center">
+            <Image src="/logo.png" alt="InVitro Capital Logo" width={180} height={48} priority />
+          </div>
+          <Button className="bg-white text-[hsl(212,74%,15%)] border border-[hsl(212,74%,15%)] hover:bg-[hsl(212,74%,97%)] hover:text-[hsl(212,74%,20%)] ml-4">
+            <Download className="w-4 h-4 mr-2" />
+            Download PDF
+          </Button>
+        </div>
+        <div className="text-center mb-16">
+          <h1 className="text-3xl font-bold text-foreground mb-2">{memo.title}</h1>
+        </div>
 
         {memo.content ? (
           <div className="space-y-12">
-            {/* Header */}
-            <div className="text-center border-b pb-8">
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">{memo.title}</h1>
-              <div className="flex justify-center">
-                <Button className="bg-blue-600 hover:bg-blue-700">
-                  <Download className="w-4 h-4 mr-2" />
-                  Download PDF
-                </Button>
-              </div>
-            </div>
-
             {/* Executive Summary */}
             <section>
-              <h2 className="text-2xl font-bold text-gray-900 mb-6 border-b-2 border-blue-600 pb-2">
-                {memo.content.executiveSummary.title}
+              <h2 className="text-2xl font-semibold text-muted-foreground mb-6 border-b-2 border-accent pb-2">
+                {`I. Executive Summary`}
               </h2>
 
               <div className="mb-8">
-                <h3 className="text-lg font-semibold text-gray-800 mb-4">Term Details</h3>
-                <div className="bg-gray-50 p-6 rounded-lg">
+                <h3 className="text-lg font-semibold text-foreground mb-4">Term Details</h3>
+                <div className="bg-gray-50 border border-gray-200 p-6 rounded-lg">
                   <div className="grid grid-cols-2 gap-4">
                     {Object.entries(memo.content.executiveSummary.termDetails).map(([key, value]) => (
                       <div key={key} className="flex justify-between">
-                        <span className="font-medium text-gray-600 capitalize">{key.replace(/([A-Z])/g, " $1")}:</span>
-                        <span className="font-semibold text-gray-900">{String(value)}</span>
+                        <span className="font-medium text-muted-foreground capitalize">{key.replace(/([A-Z])/g, " $1")}:</span>
+                        <span className="font-semibold text-foreground">{String(value)}</span>
                       </div>
                     ))}
                   </div>
@@ -250,29 +256,29 @@ export default function InvestmentMemo() {
               </div>
 
               <div className="mb-8">
-                <h3 className="text-lg font-semibold text-gray-800 mb-4">Company Overview</h3>
-                <p className="text-gray-700 leading-relaxed">{memo.content.executiveSummary.companyOverview}</p>
+                <h3 className="text-lg font-semibold text-foreground mb-4">Company Overview</h3>
+                <p className="text-muted-foreground leading-relaxed">{memo.content.executiveSummary.companyOverview}</p>
               </div>
 
               <div className="mb-8">
-                <h3 className="text-lg font-semibold text-gray-800 mb-4">Key Investment Highlights</h3>
-                <ul className="space-y-3">
+                <h3 className="text-lg font-semibold text-foreground mb-4">Key Investment Highlights</h3>
+                <ul className="space-y-2">
                   {memo.content.executiveSummary.keyHighlights.map((highlight: string, index: number) => (
                     <li key={index} className="flex items-start">
                       <div className="w-2 h-2 bg-blue-600 rounded-full mt-2 mr-4 flex-shrink-0"></div>
-                      <span className="text-gray-700">{highlight}</span>
+                      <span className="text-muted-foreground">{highlight}</span>
                     </li>
                   ))}
                 </ul>
               </div>
 
               <div>
-                <h3 className="text-lg font-semibold text-gray-800 mb-4">Why Now</h3>
+                <h3 className="text-lg font-semibold text-foreground mb-4">Why Now</h3>
                 <ul className="space-y-3">
                   {memo.content.executiveSummary.whyNow.map((point: string, index: number) => (
                     <li key={index} className="flex items-start">
                       <div className="w-2 h-2 bg-green-600 rounded-full mt-2 mr-4 flex-shrink-0"></div>
-                      <span className="text-gray-700">{point}</span>
+                      <span className="text-muted-foreground">{point}</span>
                     </li>
                   ))}
                 </ul>
@@ -281,17 +287,17 @@ export default function InvestmentMemo() {
 
             {/* Company Snapshot */}
             <section>
-              <h2 className="text-2xl font-bold text-gray-900 mb-6 border-b-2 border-blue-600 pb-2">
-                {memo.content.companySnapshot.title}
+              <h2 className="text-2xl font-bold text-muted-foreground mb-10 border-b-2 border-accent pb-2">
+                {`II. Company Snapshot`}
               </h2>
               <div className="overflow-x-auto">
-                <table className="w-full border-collapse border border-gray-300">
+                <table className="w-full border-collapse border border-border">
                   <thead>
-                    <tr className="bg-gray-100">
-                      <th className="border border-gray-300 px-4 py-3 text-left font-semibold text-gray-900">
+                    <tr className="bg-muted">
+                      <th className="border border-border px-4 py-3 text-left font-semibold text-foreground">
                         Category
                       </th>
-                      <th className="border border-gray-300 px-4 py-3 text-left font-semibold text-gray-900">
+                      <th className="border border-border px-4 py-3 text-left font-semibold text-foreground">
                         Details
                       </th>
                     </tr>
@@ -299,8 +305,8 @@ export default function InvestmentMemo() {
                   <tbody>
                     {memo.content.companySnapshot.data.map((row: any, index: number) => (
                       <tr key={index} className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}>
-                        <td className="border border-gray-300 px-4 py-3 font-medium text-gray-800">{row.category}</td>
-                        <td className="border border-gray-300 px-4 py-3 text-gray-700">{row.details}</td>
+                        <td className="border border-border px-4 py-3 font-medium text-foreground">{row.category}</td>
+                        <td className="border border-border px-4 py-3 text-muted-foreground">{row.details}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -310,22 +316,22 @@ export default function InvestmentMemo() {
 
             {/* Deal Snapshot */}
             <section>
-              <h2 className="text-2xl font-bold text-gray-900 mb-6 border-b-2 border-blue-600 pb-2">
-                {memo.content.dealSnapshot.title}
+              <h2 className="text-2xl font-bold text-muted-foreground mb-6 border-b-2 border-accent pb-2">
+                {`III. Deal Snapshot`}
               </h2>
               <div className="overflow-x-auto mb-8">
-                <table className="w-full border-collapse border border-gray-300">
+                <table className="w-full border-collapse border border-border">
                   <thead>
-                    <tr className="bg-gray-100">
-                      <th className="border border-gray-300 px-4 py-3 text-left font-semibold text-gray-900">Item</th>
-                      <th className="border border-gray-300 px-4 py-3 text-left font-semibold text-gray-900">Terms</th>
+                    <tr className="bg-muted">
+                      <th className="border border-border px-4 py-3 text-left font-semibold text-foreground">Item</th>
+                      <th className="border border-border px-4 py-3 text-left font-semibold text-foreground">Terms</th>
                     </tr>
                   </thead>
                   <tbody>
                     {memo.content.dealSnapshot.terms.map((row: any, index: number) => (
                       <tr key={index} className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}>
-                        <td className="border border-gray-300 px-4 py-3 font-medium text-gray-800">{row.item}</td>
-                        <td className="border border-gray-300 px-4 py-3 text-gray-700">{row.terms}</td>
+                        <td className="border border-border px-4 py-3 font-medium text-foreground">{row.item}</td>
+                        <td className="border border-border px-4 py-3 text-muted-foreground">{row.terms}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -333,20 +339,20 @@ export default function InvestmentMemo() {
               </div>
 
               <div>
-                <h3 className="text-lg font-semibold text-gray-800 mb-4">
+                <h3 className="text-lg font-semibold text-foreground mb-4">
                   Illustrative Return Scenarios (Example $100K Investment)
                 </h3>
                 <div className="overflow-x-auto">
-                  <table className="w-full border-collapse border border-gray-300">
+                  <table className="w-full border-collapse border border-border">
                     <thead>
-                      <tr className="bg-blue-50">
-                        <th className="border border-gray-300 px-4 py-3 text-left font-semibold text-gray-900">
+                      <tr className="bg-muted">
+                        <th className="border border-border px-4 py-3 text-left font-semibold text-foreground">
                           Exit Value
                         </th>
-                        <th className="border border-gray-300 px-4 py-3 text-left font-semibold text-gray-900">
+                        <th className="border border-border px-4 py-3 text-left font-semibold text-foreground">
                           Gross Investor Return
                         </th>
-                        <th className="border border-gray-300 px-4 py-3 text-left font-semibold text-gray-900">
+                        <th className="border border-border px-4 py-3 text-left font-semibold text-foreground">
                           Facilities Live
                         </th>
                       </tr>
@@ -354,19 +360,19 @@ export default function InvestmentMemo() {
                     <tbody>
                       {memo.content.dealSnapshot.returnScenarios.map((scenario: any, index: number) => (
                         <tr key={index} className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}>
-                          <td className="border border-gray-300 px-4 py-3 font-medium text-gray-800">
+                          <td className="border border-border px-4 py-3 font-medium text-foreground">
                             {scenario.exitValue}
                           </td>
-                          <td className="border border-gray-300 px-4 py-3 text-green-600 font-semibold">
+                          <td className="border border-border px-4 py-3 text-green-700 font-semibold">
                             {scenario.grossReturn}
                           </td>
-                          <td className="border border-gray-300 px-4 py-3 text-gray-700">{scenario.facilitiesLive}</td>
+                          <td className="border border-border px-4 py-3 text-muted-foreground">{scenario.facilitiesLive}</td>
                         </tr>
                       ))}
                     </tbody>
                   </table>
                 </div>
-                <p className="text-sm text-gray-600 mt-2 italic">
+                <p className="text-sm text-muted-foreground mt-2 italic">
                   Returns shown before fund fees and carry. Illustrative, assumes $5K ARR per facility and ~10x revenue
                   multiple. Note: There are ~30,000 Assisted Living Facilities in the U.S.
                 </p>
@@ -375,31 +381,31 @@ export default function InvestmentMemo() {
 
             {/* Industry Framing */}
             <section>
-              <h2 className="text-2xl font-bold text-gray-900 mb-6 border-b-2 border-blue-600 pb-2">
-                {memo.content.industryFraming.title}
+              <h2 className="text-2xl font-bold text-muted-foreground mb-6 border-b-2 border-accent pb-2">
+                {`IV. Industry Framing`}
               </h2>
 
               <div className="mb-8">
-                <h3 className="text-lg font-semibold text-gray-800 mb-4">Market Size</h3>
+                <h3 className="text-lg font-semibold text-foreground mb-4">Market Size</h3>
                 <div className="overflow-x-auto">
-                  <table className="w-full border-collapse border border-gray-300">
+                  <table className="w-full border-collapse border border-border">
                     <thead>
-                      <tr className="bg-gray-100">
-                        <th className="border border-gray-300 px-4 py-3 text-left font-semibold text-gray-900">
+                      <tr className="bg-muted">
+                        <th className="border border-border px-4 py-3 text-left font-semibold text-foreground">
                           Segment
                         </th>
-                        <th className="border border-gray-300 px-4 py-3 text-left font-semibold text-gray-900">TAM</th>
-                        <th className="border border-gray-300 px-4 py-3 text-left font-semibold text-gray-900">SAM</th>
-                        <th className="border border-gray-300 px-4 py-3 text-left font-semibold text-gray-900">SOM</th>
+                        <th className="border border-border px-4 py-3 text-left font-semibold text-foreground">TAM</th>
+                        <th className="border border-border px-4 py-3 text-left font-semibold text-foreground">SAM</th>
+                        <th className="border border-border px-4 py-3 text-left font-semibold text-foreground">SOM</th>
                       </tr>
                     </thead>
                     <tbody>
                       {memo.content.industryFraming.marketSize.map((row: any, index: number) => (
-                        <tr key={index} className="bg-white">
-                          <td className="border border-gray-300 px-4 py-3 font-medium text-gray-800">{row.segment}</td>
-                          <td className="border border-gray-300 px-4 py-3 text-gray-700">{row.tam}</td>
-                          <td className="border border-gray-300 px-4 py-3 text-gray-700">{row.sam}</td>
-                          <td className="border border-gray-300 px-4 py-3 text-gray-700">{row.som}</td>
+                        <tr key={index} className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}>
+                          <td className="border border-border px-4 py-3 font-medium text-foreground">{row.segment}</td>
+                          <td className="border border-border px-4 py-3 text-muted-foreground">{row.tam}</td>
+                          <td className="border border-border px-4 py-3 text-muted-foreground">{row.sam}</td>
+                          <td className="border border-border px-4 py-3 text-muted-foreground">{row.som}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -408,18 +414,18 @@ export default function InvestmentMemo() {
               </div>
 
               <div className="mb-8">
-                <h3 className="text-lg font-semibold text-gray-800 mb-4">Competitive Landscape Summary</h3>
+                <h3 className="text-lg font-semibold text-foreground mb-4">Competitive Landscape Summary</h3>
                 <div className="overflow-x-auto">
-                  <table className="w-full border-collapse border border-gray-300">
+                  <table className="w-full border-collapse border border-border">
                     <thead>
-                      <tr className="bg-gray-100">
-                        <th className="border border-gray-300 px-4 py-3 text-left font-semibold text-gray-900">
+                      <tr className="bg-muted">
+                        <th className="border border-border px-4 py-3 text-left font-semibold text-foreground">
                           Competitor
                         </th>
-                        <th className="border border-gray-300 px-4 py-3 text-left font-semibold text-gray-900">
+                        <th className="border border-border px-4 py-3 text-left font-semibold text-foreground">
                           Status
                         </th>
-                        <th className="border border-gray-300 px-4 py-3 text-left font-semibold text-gray-900">
+                        <th className="border border-border px-4 py-3 text-left font-semibold text-foreground">
                           Positioning
                         </th>
                       </tr>
@@ -427,11 +433,11 @@ export default function InvestmentMemo() {
                     <tbody>
                       {memo.content.industryFraming.competitive.map((row: any, index: number) => (
                         <tr key={index} className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}>
-                          <td className="border border-gray-300 px-4 py-3 font-medium text-gray-800">
+                          <td className="border border-border px-4 py-3 font-medium text-foreground">
                             {row.competitor}
                           </td>
-                          <td className="border border-gray-300 px-4 py-3 text-gray-700">{row.status}</td>
-                          <td className="border border-gray-300 px-4 py-3 text-gray-700">{row.positioning}</td>
+                          <td className="border border-border px-4 py-3 text-muted-foreground">{row.status}</td>
+                          <td className="border border-border px-4 py-3 text-muted-foreground">{row.positioning}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -440,18 +446,18 @@ export default function InvestmentMemo() {
               </div>
 
               <div className="mb-8">
-                <h3 className="text-lg font-semibold text-gray-800 mb-4">Workflow Gaps Addressed</h3>
+                <h3 className="text-lg font-semibold text-foreground mb-4">Workflow Gaps Addressed</h3>
                 <div className="overflow-x-auto">
-                  <table className="w-full border-collapse border border-gray-300">
+                  <table className="w-full border-collapse border border-border">
                     <thead>
-                      <tr className="bg-gray-100">
-                        <th className="border border-gray-300 px-4 py-3 text-left font-semibold text-gray-900">
+                      <tr className="bg-muted">
+                        <th className="border border-border px-4 py-3 text-left font-semibold text-foreground">
                           Workflow Category
                         </th>
-                        <th className="border border-gray-300 px-4 py-3 text-left font-semibold text-gray-900">
+                        <th className="border border-border px-4 py-3 text-left font-semibold text-foreground">
                           Current Pain Point
                         </th>
-                        <th className="border border-gray-300 px-4 py-3 text-left font-semibold text-gray-900">
+                        <th className="border border-border px-4 py-3 text-left font-semibold text-foreground">
                           Company Solution
                         </th>
                       </tr>
@@ -459,9 +465,9 @@ export default function InvestmentMemo() {
                     <tbody>
                       {memo.content.industryFraming.workflowGaps.map((row: any, index: number) => (
                         <tr key={index} className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}>
-                          <td className="border border-gray-300 px-4 py-3 font-medium text-gray-800">{row.workflow}</td>
-                          <td className="border border-gray-300 px-4 py-3 text-gray-700">{row.pain}</td>
-                          <td className="border border-gray-300 px-4 py-3 text-gray-700">{row.solution}</td>
+                          <td className="border border-border px-4 py-3 font-medium text-foreground">{row.workflow}</td>
+                          <td className="border border-border px-4 py-3 text-muted-foreground">{row.pain}</td>
+                          <td className="border border-border px-4 py-3 text-muted-foreground">{row.solution}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -470,32 +476,40 @@ export default function InvestmentMemo() {
               </div>
 
               <div>
-                <h3 className="text-lg font-semibold text-gray-800 mb-4">Why Curenta Is Uniquely Positioned</h3>
-                <p className="text-gray-700 leading-relaxed">{memo.content.industryFraming.positioning}</p>
+                <h3 className="text-lg font-semibold text-foreground mb-4">Why Curenta Is Uniquely Positioned</h3>
+                <p className="text-muted-foreground leading-relaxed">{memo.content.industryFraming.positioning}</p>
               </div>
             </section>
 
             {/* Key Risks */}
             <section>
-              <h2 className="text-2xl font-bold text-gray-900 mb-6 border-b-2 border-red-600 pb-2">KEY RISKS</h2>
+              <h2 className="text-2xl font-bold text-red-600 mb-6 border-b-2 border-red-600 pb-2">V. Key Risks</h2>
               <ul className="space-y-4">
                 {memo.content.keyRisks.map((risk: string, index: number) => (
                   <li key={index} className="flex items-start">
                     <div className="w-2 h-2 bg-red-600 rounded-full mt-2 mr-4 flex-shrink-0"></div>
-                    <span className="text-gray-700">{risk}</span>
+                    <span className="text-muted-foreground">{risk}</span>
                   </li>
                 ))}
               </ul>
             </section>
 
             {/* Next Steps */}
-            <section className="bg-blue-50 p-8 rounded-lg">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">NEXT STEPS</h2>
-              <ul className="space-y-3">
-                {memo.content.nextSteps.map((step: string, index: number) => (
-                  <li key={index} className="flex items-start">
+            <section>
+              <h2 className="text-2xl font-bold text-muted-foreground mb-6 border-b-2 border-accent pb-2">VI. Next Steps</h2>
+              <ul className="space-y-2">
+                {memo.content.nextSteps.map((step: string, idx: number) => (
+                  <li key={idx} className="flex items-start">
                     <div className="w-2 h-2 bg-blue-600 rounded-full mt-2 mr-4 flex-shrink-0"></div>
-                    <span className="text-gray-700">{step}</span>
+                    <span className="text-muted-foreground text-base">
+                      {step.includes("contact") && step.includes("@") ? (
+                        <span>
+                          Please contact <span className="font-medium">Jonathan Schroeder</span> at <span className="text-blue-600">jonathan.schroeder@invitrocapital.com</span> to discuss allocation.
+                        </span>
+                      ) : (
+                        step
+                      )}
+                    </span>
                   </li>
                 ))}
               </ul>
@@ -510,7 +524,7 @@ export default function InvestmentMemo() {
                   <CardTitle className="text-3xl mb-2">{memo.title}</CardTitle>
                   <CardDescription className="text-lg">{memo.industry}</CardDescription>
                 </div>
-                <Button>
+                <Button className="bg-[hsl(212,74%,15%)] text-white hover:bg-[hsl(212,74%,20%)]">
                   <Download className="w-4 h-4 mr-2" />
                   Download PDF
                 </Button>
@@ -522,7 +536,7 @@ export default function InvestmentMemo() {
                   <FileText className="w-5 h-5 mr-2" />
                   Executive Summary
                 </h3>
-                <p className="text-gray-700 leading-relaxed">{memo.summary}</p>
+                <p className="text-muted-foreground leading-relaxed">{memo.summary}</p>
               </div>
 
               <div>
@@ -530,16 +544,16 @@ export default function InvestmentMemo() {
                 <ul className="space-y-2">
                   {memo.keyPoints.map((point: string, index: number) => (
                     <li key={index} className="flex items-start">
-                      <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
-                      <span className="text-gray-700">{point}</span>
+                      <div className="w-2 h-2 bg-accent rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                      <span className="text-muted-foreground">{point}</span>
                     </li>
                   ))}
                 </ul>
               </div>
 
-              <div className="bg-blue-50 p-6 rounded-lg">
+              <div className="bg-accent/10 dark:bg-accent/30 p-6 rounded-lg">
                 <h3 className="text-xl font-semibold mb-3">Investment Recommendation</h3>
-                <p className="text-gray-700">
+                <p className="text-muted-foreground">
                   Based on our comprehensive analysis, we recommend proceeding with this investment opportunity. The
                   company demonstrates strong market positioning, proven traction, and significant growth potential
                   within the target market segment.

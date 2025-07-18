@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button"
 import { ArrowLeft, Download } from "lucide-react"
 import { useRouter, useParams } from "next/navigation"
+import Image from "next/image"
 
 const thesisData: Record<string, any> = {
   curenta: {
@@ -263,7 +264,7 @@ We aren't betting on digitizing LTC. We're betting on operators who desperately 
   // Keep existing allrx data as fallback
   allrx: {
     title: "Digital Health Industry Thesis",
-    industry: "Digital Health",
+    industry: "Pharmacy Operations",
     marketSize: "$659B",
     growthRate: "15.1% CAGR",
     keyTrends: [
@@ -282,54 +283,66 @@ export default function IndustryThesis() {
   const thesis = thesisData[dealId] || thesisData.allrx
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background text-foreground">
       <div className="max-w-5xl mx-auto px-8 py-12">
-        <Button variant="ghost" onClick={() => router.back()} className="mb-8">
-          <ArrowLeft className="w-4 h-4 mr-2" />
-          Back to Deals
-        </Button>
+        <div className="flex items-center justify-between mb-8">
+          <Button
+            variant="outline"
+            onClick={() => router.back()}
+            className="border-[hsl(212,74%,15%)] text-[hsl(212,74%,15%)] rounded-full px-5 py-2 text-sm font-medium hover:bg-[hsl(212,74%,97%)] hover:text-[hsl(212,74%,20%)] transition"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back to Deals
+          </Button>
+          <div className="flex-1 flex justify-center">
+            <Image src="/logo.png" alt="InVitro Capital Logo" width={180} height={48} priority />
+          </div>
+          <Button className="bg-white text-[hsl(212,74%,15%)] border border-[hsl(212,74%,15%)] hover:bg-[hsl(212,74%,97%)] hover:text-[hsl(212,74%,20%)] ml-4">
+            <Download className="w-4 h-4 mr-2" />
+            Download PDF
+          </Button>
+        </div>
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold text-foreground mb-2">{thesis.title}</h1>
+        </div>
 
         {thesis.content ? (
           <div className="space-y-12">
-            {/* Header */}
-            <div className="text-center border-b pb-8">
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">{thesis.title}</h1>
-              <div className="flex justify-center">
-                <Button className="bg-blue-600 hover:bg-blue-700">
-                  <Download className="w-4 h-4 mr-2" />
-                  Download PDF
-                </Button>
-              </div>
-            </div>
-
             {/* Executive Summary */}
             <section>
-              <h2 className="text-2xl font-bold text-gray-900 mb-6 border-b-2 border-blue-600 pb-2">
+              <h2 className="text-2xl font-bold text-muted-foreground mb-6 border-b-2 border-accent pb-2">
                 {thesis.content.executiveSummary.title}
               </h2>
-              <p className="text-gray-700 leading-relaxed text-lg">{thesis.content.executiveSummary.content}</p>
+              <p className="text-muted-foreground leading-relaxed text-base">{thesis.content.executiveSummary.content}</p>
             </section>
 
             {/* Narrative */}
             <section>
-              <h2 className="text-2xl font-bold text-gray-900 mb-6 border-b-2 border-blue-600 pb-2">
+              <h2 className="text-2xl font-bold text-muted-foreground mb-6 border-b-2 border-accent pb-2">
                 {thesis.content.narrative.title}
               </h2>
-              <div className="text-gray-700 leading-relaxed text-lg whitespace-pre-line">
+              <div className="text-muted-foreground leading-relaxed text-base whitespace-pre-line">
                 {thesis.content.narrative.content}
               </div>
             </section>
 
             {/* Structural Observations */}
             <section>
-              <h2 className="text-2xl font-bold text-gray-900 mb-6 border-b-2 border-blue-600 pb-2">
+              <h2 className="text-2xl font-bold text-muted-foreground mb-6 border-b-2 border-accent pb-2">
                 {thesis.content.structuralObservations.title}
               </h2>
-              <div className="space-y-6">
+              <div className="space-y-4">
                 {thesis.content.structuralObservations.observations.map((obs: any, index: number) => (
-                  <div key={index} className="bg-gray-50 p-6 rounded-lg">
-                    <h3 className="text-lg font-semibold text-gray-800 mb-3">{obs.title}</h3>
-                    <p className="text-gray-700 leading-relaxed">{obs.content}</p>
+                  <div
+                    key={index}
+                    className={`p-6 rounded-lg border-l-4 ${
+                      index % 2 === 0
+                        ? 'bg-gray-50 border-accent/80'
+                        : 'bg-gray-100 border-accent'
+                    }`}
+                  >
+                    <h3 className="text-lg font-semibold text-foreground mb-3">{obs.title}</h3>
+                    <p className="text-muted-foreground leading-relaxed text-base">{obs.content}</p>
                   </div>
                 ))}
               </div>
@@ -337,61 +350,61 @@ export default function IndustryThesis() {
 
             {/* Funding Signals */}
             <section>
-              <h2 className="text-2xl font-bold text-gray-900 mb-6 border-b-2 border-blue-600 pb-2">
+              <h2 className="text-2xl font-bold text-muted-foreground mb-6 border-b-2 border-accent pb-2">
                 {thesis.content.fundingSignals.title}
               </h2>
-              <p className="text-gray-700 leading-relaxed text-lg mb-8">{thesis.content.fundingSignals.intro}</p>
+              <p className="text-muted-foreground leading-relaxed text-base mb-8">{thesis.content.fundingSignals.intro}</p>
 
               <div className="mb-8">
-                <h3 className="text-xl font-semibold text-green-700 mb-4">The wins are clear:</h3>
+                <h3 className="text-lg font-semibold text-green-700 mb-4">The wins are clear:</h3>
                 <ul className="space-y-3">
                   {thesis.content.fundingSignals.wins.map((win: string, index: number) => (
                     <li key={index} className="flex items-start">
                       <div className="w-2 h-2 bg-green-600 rounded-full mt-2 mr-4 flex-shrink-0"></div>
-                      <span className="text-gray-700">{win}</span>
+                      <span className="text-muted-foreground text-base">{win}</span>
                     </li>
                   ))}
                 </ul>
               </div>
 
               <div className="mb-8">
-                <h3 className="text-xl font-semibold text-red-700 mb-4">Others didn't convert:</h3>
+                <h3 className="text-lg font-semibold text-red-700 mb-4">Others didn't convert:</h3>
                 <ul className="space-y-3">
                   {thesis.content.fundingSignals.failures.map((failure: string, index: number) => (
                     <li key={index} className="flex items-start">
                       <div className="w-2 h-2 bg-red-600 rounded-full mt-2 mr-4 flex-shrink-0"></div>
-                      <span className="text-gray-700">{failure}</span>
+                      <span className="text-muted-foreground text-base">{failure}</span>
                     </li>
                   ))}
                 </ul>
               </div>
 
-              <div className="bg-blue-50 p-6 rounded-lg">
-                <p className="text-gray-700 leading-relaxed text-lg">{thesis.content.fundingSignals.conclusion}</p>
+              <div className="bg-gray-100 p-6 rounded-lg">
+                <p className="text-accent-foreground leading-relaxed text-base">{thesis.content.fundingSignals.conclusion}</p>
               </div>
             </section>
 
             {/* Workflow-Segment Fit */}
             <section>
-              <h2 className="text-2xl font-bold text-gray-900 mb-6 border-b-2 border-blue-600 pb-2">
+              <h2 className="text-2xl font-bold text-muted-foreground mb-6 border-b-2 border-accent pb-2">
                 {thesis.content.workflowFit.title}
               </h2>
-              <p className="text-gray-700 leading-relaxed text-lg mb-8">{thesis.content.workflowFit.intro}</p>
+              <p className="text-muted-foreground leading-relaxed text-base mb-8">{thesis.content.workflowFit.intro}</p>
 
               <div className="overflow-x-auto mb-8">
-                <table className="w-full border-collapse border border-gray-300">
+                <table className="w-full border-collapse border border-border">
                   <thead>
-                    <tr className="bg-gray-100">
-                      <th className="border border-gray-300 px-4 py-3 text-left font-semibold text-gray-900">
+                    <tr className="bg-muted">
+                      <th className="border border-border px-4 py-3 text-left font-semibold text-foreground text-base">
                         Workflow
                       </th>
-                      <th className="border border-gray-300 px-4 py-3 text-left font-semibold text-gray-900">
+                      <th className="border border-border px-4 py-3 text-left font-semibold text-foreground text-base">
                         Segment Fit
                       </th>
-                      <th className="border border-gray-300 px-4 py-3 text-left font-semibold text-gray-900">
+                      <th className="border border-border px-4 py-3 text-left font-semibold text-foreground text-base">
                         Product Fit
                       </th>
-                      <th className="border border-gray-300 px-4 py-3 text-left font-semibold text-gray-900">
+                      <th className="border border-border px-4 py-3 text-left font-semibold text-foreground text-base">
                         Why It Works / Doesn't
                       </th>
                     </tr>
@@ -399,9 +412,9 @@ export default function IndustryThesis() {
                   <tbody>
                     {thesis.content.workflowFit.table.map((row: any, index: number) => (
                       <tr key={index} className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}>
-                        <td className="border border-gray-300 px-4 py-3 font-medium text-gray-800">{row.workflow}</td>
-                        <td className="border border-gray-300 px-4 py-3 text-gray-700">{row.segmentFit}</td>
-                        <td className="border border-gray-300 px-4 py-3">
+                        <td className="border border-border px-4 py-3 font-medium text-foreground text-base">{row.workflow}</td>
+                        <td className="border border-border px-4 py-3 text-muted-foreground text-base">{row.segmentFit}</td>
+                        <td className="border border-border px-4 py-3">
                           <span
                             className={`px-2 py-1 rounded text-sm font-medium ${
                               row.productFit === "High"
@@ -416,36 +429,36 @@ export default function IndustryThesis() {
                             {row.productFit}
                           </span>
                         </td>
-                        <td className="border border-gray-300 px-4 py-3 text-gray-700">{row.reason}</td>
+                        <td className="border border-border px-4 py-3 text-muted-foreground text-base">{row.reason}</td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
               </div>
 
-              <div className="bg-gray-50 p-6 rounded-lg">
-                <p className="text-gray-700 leading-relaxed">{thesis.content.workflowFit.conclusion}</p>
+              <div className="bg-gray-100 p-6 rounded-lg">
+                <p className="text-accent-foreground leading-relaxed text-base">{thesis.content.workflowFit.conclusion}</p>
               </div>
             </section>
 
             {/* Product Strategy */}
             <section>
-              <h2 className="text-2xl font-bold text-gray-900 mb-6 border-b-2 border-blue-600 pb-2">
+              <h2 className="text-2xl font-bold text-muted-foreground mb-6 border-b-2 border-accent pb-2">
                 {thesis.content.productStrategy.title}
               </h2>
-              <p className="text-gray-700 leading-relaxed text-lg mb-8">{thesis.content.productStrategy.intro}</p>
+              <p className="text-muted-foreground leading-relaxed text-base mb-8">{thesis.content.productStrategy.intro}</p>
 
               <div className="overflow-x-auto mb-8">
-                <table className="w-full border-collapse border border-gray-300">
+                <table className="w-full border-collapse border border-border">
                   <thead>
-                    <tr className="bg-gray-100">
-                      <th className="border border-gray-300 px-4 py-3 text-left font-semibold text-gray-900">
+                    <tr className="bg-muted">
+                      <th className="border border-border px-4 py-3 text-left font-semibold text-foreground text-base">
                         Starting Point
                       </th>
-                      <th className="border border-gray-300 px-4 py-3 text-left font-semibold text-gray-900">
+                      <th className="border border-border px-4 py-3 text-left font-semibold text-foreground text-base">
                         Expansion Path
                       </th>
-                      <th className="border border-gray-300 px-4 py-3 text-left font-semibold text-gray-900">
+                      <th className="border border-border px-4 py-3 text-left font-semibold text-foreground text-base">
                         Conditions for Success
                       </th>
                     </tr>
@@ -453,11 +466,11 @@ export default function IndustryThesis() {
                   <tbody>
                     {thesis.content.productStrategy.table.map((row: any, index: number) => (
                       <tr key={index} className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}>
-                        <td className="border border-gray-300 px-4 py-3 font-medium text-gray-800">
+                        <td className="border border-border px-4 py-3 font-medium text-foreground text-base">
                           {row.startingPoint}
                         </td>
-                        <td className="border border-gray-300 px-4 py-3 text-gray-700">{row.expansionPath}</td>
-                        <td className="border border-gray-300 px-4 py-3 text-gray-700">{row.conditions}</td>
+                        <td className="border border-border px-4 py-3 text-muted-foreground text-base">{row.expansionPath}</td>
+                        <td className="border border-border px-4 py-3 text-muted-foreground text-base">{row.conditions}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -465,12 +478,12 @@ export default function IndustryThesis() {
               </div>
 
               <div>
-                <h3 className="text-xl font-semibold text-red-700 mb-4">What Not to Do:</h3>
+                <h3 className="text-lg font-semibold text-red-700 mb-4">What Not to Do:</h3>
                 <ul className="space-y-3">
                   {thesis.content.productStrategy.whatNotToDo.map((item: string, index: number) => (
                     <li key={index} className="flex items-start">
                       <div className="w-2 h-2 bg-red-600 rounded-full mt-2 mr-4 flex-shrink-0"></div>
-                      <span className="text-gray-700">{item}</span>
+                      <span className="text-muted-foreground text-base">{item}</span>
                     </li>
                   ))}
                 </ul>
@@ -479,16 +492,16 @@ export default function IndustryThesis() {
 
             {/* Segment Strategy */}
             <section>
-              <h2 className="text-2xl font-bold text-gray-900 mb-6 border-b-2 border-blue-600 pb-2">
+              <h2 className="text-2xl font-bold text-muted-foreground mb-6 border-b-2 border-accent pb-2">
                 {thesis.content.segmentStrategy.title}
               </h2>
-              <p className="text-gray-700 leading-relaxed text-lg mb-8">{thesis.content.segmentStrategy.intro}</p>
+              <p className="text-muted-foreground leading-relaxed text-base mb-6">{thesis.content.segmentStrategy.intro}</p>
 
-              <div className="space-y-6">
+              <div className="space-y-2">
                 {thesis.content.segmentStrategy.segments.map((segment: any, index: number) => (
-                  <div key={index} className="bg-gray-50 p-6 rounded-lg">
-                    <h3 className="text-lg font-semibold text-gray-800 mb-3">{segment.name}</h3>
-                    <p className="text-gray-700 leading-relaxed">{segment.description}</p>
+                  <div key={index} className="bg-gray-50 border border-accent/20 rounded-lg px-4 py-2">
+                    <h3 className="text-base font-semibold text-foreground mb-1">{segment.name}</h3>
+                    <p className="text-muted-foreground text-base leading-relaxed mb-0">{segment.description}</p>
                   </div>
                 ))}
               </div>
@@ -496,59 +509,58 @@ export default function IndustryThesis() {
 
             {/* Sales Realities */}
             <section>
-              <h2 className="text-2xl font-bold text-gray-900 mb-6 border-b-2 border-blue-600 pb-2">
+              <h2 className="text-2xl font-bold text-muted-foreground mb-6 border-b-2 border-accent pb-2">
                 {thesis.content.salesRealities.title}
               </h2>
-              <p className="text-gray-700 leading-relaxed text-lg mb-6">{thesis.content.salesRealities.intro}</p>
+              <p className="text-muted-foreground leading-relaxed text-base mb-6">{thesis.content.salesRealities.intro}</p>
 
-              <ul className="space-y-3 mb-8">
+              <ul className="list-disc pl-6 space-y-2 mb-8">
                 {thesis.content.salesRealities.keyPoints.map((point: string, index: number) => (
-                  <li key={index} className="flex items-start">
-                    <div className="w-2 h-2 bg-blue-600 rounded-full mt-2 mr-4 flex-shrink-0"></div>
-                    <span className="text-gray-700">{point}</span>
+                  <li key={index} className="text-muted-foreground text-base leading-relaxed">
+                    {point}
                   </li>
                 ))}
               </ul>
 
               <div className="mb-8">
-                <h3 className="text-xl font-semibold text-gray-800 mb-4">Sales timelines vary by segment:</h3>
-                <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-foreground mb-4">Sales timelines vary by segment:</h3>
+                <div className="space-y-2">
                   {thesis.content.salesRealities.timelines.map((timeline: any, index: number) => (
-                    <div key={index} className="bg-gray-50 p-4 rounded-lg">
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="font-medium text-gray-800">{timeline.segment}</span>
-                        <span className="font-semibold text-blue-600">{timeline.timeline}</span>
+                    <div key={index} className="flex items-start bg-gray-50 border border-accent/20 rounded-lg px-4 py-2">
+                      <div className="flex-1 font-medium text-foreground text-base">
+                        {timeline.segment}
+                        <div className="text-sm text-muted-foreground mt-1">{timeline.note}</div>
                       </div>
-                      <p className="text-gray-600 text-sm">{timeline.note}</p>
+                      <div className="ml-4 font-bold text-accent text-base whitespace-nowrap flex items-center">{timeline.timeline}</div>
                     </div>
                   ))}
                 </div>
               </div>
 
               <div className="mb-8">
-                <h3 className="text-xl font-semibold text-gray-800 mb-4">Key buyer personas across segments:</h3>
-                <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-foreground mb-4">Key buyer personas across segments:</h3>
+                <div className="space-y-2">
                   {thesis.content.salesRealities.buyerPersonas.map((persona: any, index: number) => (
-                    <div key={index} className="bg-gray-50 p-4 rounded-lg">
-                      <h4 className="font-semibold text-gray-800 mb-2">{persona.title}</h4>
-                      <p className="text-gray-700">{persona.description}</p>
+                    <div key={index} className="bg-gray-50 border border-accent/20 rounded-lg px-4 py-2">
+                      <div className="font-semibold text-foreground text-base">{persona.title}</div>
+                      <div className="text-sm text-muted-foreground mb-1">{persona.description}</div>
                     </div>
                   ))}
                 </div>
               </div>
 
-              <div className="bg-blue-50 p-6 rounded-lg">
-                <p className="text-gray-700 leading-relaxed">{thesis.content.salesRealities.conclusion}</p>
+              <div className="bg-gray-100 p-6 rounded-lg">
+                <p className="text-accent-foreground leading-relaxed text-base">{thesis.content.salesRealities.conclusion}</p>
               </div>
             </section>
 
             {/* Conclusion */}
             <section>
-              <h2 className="text-2xl font-bold text-gray-900 mb-6 border-b-2 border-blue-600 pb-2">
+              <h2 className="text-2xl font-bold text-muted-foreground mb-6 border-b-2 border-accent pb-2">
                 {thesis.content.conclusion.title}
               </h2>
               <div className="bg-yellow-50 p-8 rounded-lg">
-                <div className="text-gray-700 leading-relaxed text-lg whitespace-pre-line">
+                <div className="text-muted-foreground leading-relaxed text-base whitespace-pre-line">
                   {thesis.content.conclusion.content}
                 </div>
               </div>
@@ -569,19 +581,21 @@ export default function IndustryThesis() {
 
             {/* Sources */}
             <section>
-              <h3 className="text-xl font-semibold text-gray-800 mb-4">Sources</h3>
-              <ol className="space-y-2">
+              <h2 className="text-2xl font-bold text-muted-foreground mb-6 border-b-2 border-accent pb-2">Sources</h2>
+              <div className="space-y-2">
                 {thesis.content.sources.map((source: string, index: number) => (
-                  <li key={index} className="text-gray-700">
-                    {index + 1}. {source}
-                  </li>
+                  <p key={index} className="text-sm text-muted-foreground">
+                    [{index + 1}] {source}
+                  </p>
                 ))}
-              </ol>
+              </div>
             </section>
           </div>
         ) : (
-          // Fallback for other deals - keep existing layout
-          <div>Fallback content for other deals...</div>
+          <div className="text-center">
+            <h1 className="text-2xl font-bold text-foreground mb-4">Thesis Not Found</h1>
+            <p className="text-muted-foreground">The requested thesis could not be found.</p>
+          </div>
         )}
       </div>
     </div>

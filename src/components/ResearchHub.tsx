@@ -4,12 +4,11 @@ import type React from "react"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
-import { FileText, Calendar, ExternalLink, Building2, BookOpen, Lightbulb } from "lucide-react"
+import { FileText, Calendar, ExternalLink, Building2, BookOpen, Lightbulb, Folder, FolderOpen, ChevronRight, ChevronDown } from "lucide-react"
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 
@@ -17,7 +16,7 @@ interface ResearchPaper {
   id: string
   title: string
   description: string
-  category: "build-process" | "whitepapers" | "industry-theses"
+  category: "build-process" | "whitepapers" | "industry-theses" | "industry-decompositions"
   publishDate: string
   readTime: string
   tags: string[]
@@ -92,32 +91,55 @@ const researchPapers: ResearchPaper[] = [
   },
 ]
 
-const categoryConfig = {
+const categoryConfig: Record<string, {
+  title: string
+  icon: React.FC<any>
+  color: string
+  iconColor: string
+}> = {
   "build-process": {
-    title: "InVitro Build Process",
-    description: "Methodologies and frameworks for building successful ventures",
+    title: "InVitro Builder",
     icon: Building2,
-    color: "bg-blue-100 text-blue-800 border-blue-200",
+    color: "bg-blue-50 border-blue-200",
+    iconColor: "text-blue-600",
   },
   whitepapers: {
     title: "WhitePapers",
-    description: "In-depth research and analysis on market trends and opportunities",
     icon: FileText,
-    color: "bg-green-100 text-green-800 border-green-200",
+    color: "bg-green-50 border-green-200",
+    iconColor: "text-green-600",
   },
   "industry-theses": {
     title: "Industry Theses",
-    description: "Strategic investment perspectives across key sectors",
     icon: Lightbulb,
-    color: "bg-purple-100 text-purple-800 border-purple-200",
+    color: "bg-purple-50 border-purple-200",
+    iconColor: "text-purple-600",
   },
 }
+
+// Accredited investor options
+const ACCREDITED_OPTIONS = [
+  "I earned over $200,000 individually (or $300,000 with my spouse) in each of the last two years and expect the same this year",
+  "I have a net worth over $1 million, excluding my primary residence",
+  "I hold a qualifying financial license (Series 7, 65, or 82)",
+  "I am a knowledgeable employee of a private investment fund",
+  "I represent an entity with over $5 million in assets, or where all equity owners are accredited investors",
+  "I am not an accredited investor",
+]
 
 export default function ResearchHub() {
   const [showForm, setShowForm] = useState(false)
   const [pendingNavigation, setPendingNavigation] = useState<string | null>(null)
   const [userInfo, setUserInfo] = useState({ firstName: "", lastName: "", email: "" })
   const [hasSubmittedInfo, setHasSubmittedInfo] = useState(false)
+  const [expandedFolders, setExpandedFolders] = useState<Record<string, boolean>>({
+    "build-process": true,
+    whitepapers: true,
+    "industry-theses": true,
+  })
+  const [showAccreditedModal, setShowAccreditedModal] = useState(false)
+  const [accreditedSelections, setAccreditedSelections] = useState<string[]>([])
+  const [isAccredited, setIsAccredited] = useState(false)
   const router = useRouter()
 
   useEffect(() => {
@@ -126,14 +148,23 @@ export default function ResearchHub() {
       setHasSubmittedInfo(true)
       setUserInfo(JSON.parse(savedInfo))
     }
+    const accredited = localStorage.getItem("invitro-accredited")
+    if (accredited === "true") {
+      setIsAccredited(true)
+    }
   }, [])
 
   const handlePaperClick = (paperId: string) => {
-    if (hasSubmittedInfo) {
-      router.push(`/research/${paperId}`)
-    } else {
-      setPendingNavigation(paperId)
+    setPendingNavigation(paperId)
+    setAccreditedSelections([])
+    if (!hasSubmittedInfo) {
       setShowForm(true)
+    } else if (!isAccredited) {
+      setShowAccreditedModal(true)
+    } else {
+      // Already accredited, go straight to research
+      router.push(`/research/${paperId}`)
+      setPendingNavigation(null)
     }
   }
 
@@ -149,38 +180,110 @@ export default function ResearchHub() {
     }
   }
 
+  const handleAccreditedSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (anyAboveSelected && !lastSelected) {
+      localStorage.setItem("invitro-accredited", "true")
+      setIsAccredited(true)
+      setShowAccreditedModal(false)
+      setAccreditedSelections([])
+      router.push(`/research/${pendingNavigation}`)
+      setPendingNavigation(null)
+    }
+  }
+
+  // For use in render
+  const lastSelected = accreditedSelections.includes(ACCREDITED_OPTIONS[ACCREDITED_OPTIONS.length - 1])
+  const anyAboveSelected = accreditedSelections.some((s) => ACCREDITED_OPTIONS.indexOf(s) < ACCREDITED_OPTIONS.length - 1)
+  const visibleOptions = lastSelected
+    ? [ACCREDITED_OPTIONS[ACCREDITED_OPTIONS.length - 1]]
+    : ACCREDITED_OPTIONS;
+
+  const toggleFolder = (category: string) => {
+    setExpandedFolders((prev) => ({
+      ...prev,
+      [category]: !prev[category],
+    }))
+  }
+
   const buildProcessPapers = researchPapers.filter((paper) => paper.category === "build-process")
   const whitepapers = researchPapers.filter((paper) => paper.category === "whitepapers")
   const industryTheses = researchPapers.filter((paper) => paper.category === "industry-theses")
 
+  // Add Curenta industry decomposition as a research paper
+  const industryDecompositions: ResearchPaper[] = [
+    {
+      id: "curenta-industry-decomposition",
+      title: "Industry Decomposition: Long Term Care",
+      description: "Comprehensive workflow and market decomposition for Long Term Care.",
+      category: "industry-decompositions",
+      publishDate: "2025-01-01",
+      readTime: "30 min read",
+      tags: ["Long Term Care", "Curenta", "Industry Analysis", "Decomposition"],
+      featured: true,
+    },
+  ]
+
   return (
-    <div className="space-y-16">
-      {/* InVitro Build Process */}
-      <ResearchSection
-        title="InVitro Build Process"
-        description="Methodologies and frameworks for building successful ventures"
-        icon={Building2}
-        papers={buildProcessPapers}
-        onPaperClick={handlePaperClick}
-      />
+    <div className="space-y-6">
+      {/* InVitro's Research Philosophy Box */}
+      <div className="bg-white border border-gray-200 rounded-lg px-0 md:px-10 py-8 md:py-12 shadow-lg w-full text-left mt-1 -ml-6 mb-8">
+        <div className="flex items-center gap-2 mb-4">
+          <Lightbulb className="w-6 h-6 text-yellow-400 flex-shrink-0" />
+          <h3 className="font-bold text-2xl text-[#0a2e4e]">InVitro’s Research Philosophy</h3>
+        </div>
+        <div className="text-base font-semibold mb-6 text-left" style={{color: '#0a2e4e'}}>
+          Demand-First • Workflow-Deep • Segment-Precise • Capital-Efficient
+        </div>
+        <p className="text-base text-gray-800 leading-relaxed text-left mb-1" style={{wordBreak: 'break-word'}}>
+          InVitro doesn't start with ideas—we start with pain. Our research maps labor-intensive, fragmented, and tech-starved industries from first principles, deconstructs workflows, and tests for urgency before anything gets built. We prioritize segments where software is absent, human effort is high, and willingness to pay is measurable. Every thesis begins with real buyer signal—not speculation. This is where disciplined demand generation meets structural insight.
+        </p>
+      </div>
+      {/* Research Folders */}
+      <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
+        {/* InVitro Builder Folder */}
+        <FolderSection
+          category="build-process"
+          papers={buildProcessPapers}
+          isExpanded={expandedFolders["build-process"]}
+          onToggle={() => toggleFolder("build-process")}
+          onPaperClick={handlePaperClick}
+        />
 
-      {/* WhitePapers */}
-      <ResearchSection
-        title="WhitePapers"
-        description="In-depth research and analysis on market trends and opportunities"
-        icon={FileText}
-        papers={whitepapers}
-        onPaperClick={handlePaperClick}
-      />
+        <Separator />
 
-      {/* Industry Theses */}
-      <ResearchSection
-        title="Industry Theses"
-        description="Strategic investment perspectives across key sectors"
-        icon={Lightbulb}
-        papers={industryTheses}
-        onPaperClick={handlePaperClick}
-      />
+        {/* WhitePapers Folder */}
+        <FolderSection
+          category="whitepapers"
+          papers={whitepapers}
+          isExpanded={expandedFolders["whitepapers"]}
+          onToggle={() => toggleFolder("whitepapers")}
+          onPaperClick={handlePaperClick}
+        />
+
+        <Separator />
+
+        {/* Industry Theses Folder */}
+        <FolderSection
+          category="industry-theses"
+          papers={industryTheses}
+          isExpanded={expandedFolders["industry-theses"]}
+          onToggle={() => toggleFolder("industry-theses")}
+          onPaperClick={handlePaperClick}
+        />
+
+        <Separator />
+
+        {/* Industry Decompositions Folder */}
+        <FolderSection
+          category="industry-decompositions"
+          papers={industryDecompositions}
+          isExpanded={expandedFolders["industry-decompositions"] ?? true}
+          onToggle={() => toggleFolder("industry-decompositions")}
+          onPaperClick={() => router.push("/decomposition/curenta")}
+          placeholderText="Industry Decomposition research coming soon."
+        />
+      </div>
 
       {/* User Info Form Dialog */}
       <Dialog open={showForm} onOpenChange={setShowForm}>
@@ -218,8 +321,50 @@ export default function ResearchHub() {
                 required
               />
             </div>
-            <Button type="submit" className="w-full cursor-pointer">
-              Continue to Research
+            <Button type="submit" className="w-full">
+              Continue
+            </Button>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Accredited Investor Modal */}
+      <Dialog open={showAccreditedModal} onOpenChange={setShowAccreditedModal}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Access Restricted to Accredited Investors</DialogTitle>
+            <DialogDescription>
+              We only grant access to our research to accredited investors under U.S. securities law. Please select the option that best describes how you qualify:
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleAccreditedSubmit} className="space-y-6 mt-4">
+            <div className="space-y-3">
+              {visibleOptions.map((option, idx) => (
+                <label key={option} className={`flex items-start gap-3 cursor-pointer p-2 rounded-lg transition ${accreditedSelections.includes(option) ? 'bg-blue-50 border border-blue-200' : ''}`}>
+                  <input
+                    type="checkbox"
+                    name="accredited"
+                    value={option}
+                    checked={accreditedSelections.includes(option)}
+                    onChange={() => {
+                      if (accreditedSelections.includes(option)) {
+                        setAccreditedSelections(accreditedSelections.filter((s) => s !== option))
+                      } else {
+                        setAccreditedSelections([...accreditedSelections, option])
+                      }
+                    }}
+                    className="mt-1 accent-blue-600"
+                  />
+                  <span className="text-sm text-gray-800 leading-snug">{option}</span>
+                </label>
+              ))}
+            </div>
+            <Button
+              type="submit"
+              className="w-full"
+              disabled={!anyAboveSelected || lastSelected}
+            >
+              Continue
             </Button>
           </form>
         </DialogContent>
@@ -228,77 +373,79 @@ export default function ResearchHub() {
   )
 }
 
-function ResearchSection({
-  title,
-  description,
-  icon: Icon,
+function FolderSection({
+  category,
   papers,
+  isExpanded,
+  onToggle,
   onPaperClick,
+  placeholderText,
 }: {
-  title: string
-  description: string
-  icon: any
+  category: string
   papers: ResearchPaper[]
+  isExpanded: boolean
+  onToggle: () => void
   onPaperClick: (paperId: string) => void
+  placeholderText?: string
 }) {
+  const config = categoryConfig[category] || {
+    title: category.replace(/-/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase()),
+    icon: Folder,
+    color: "bg-gray-50 border-gray-200",
+    iconColor: "text-gray-400",
+  }
+
   return (
-    <section>
-      <div className="flex items-center gap-4 mb-8">
-        <Icon className="w-8 h-8 text-gray-700" />
-        <div>
-          <h2 className="text-3xl font-bold text-gray-900">{title}</h2>
-          <p className="text-gray-600 text-lg">{description}</p>
+    <div>
+      <button
+        className="w-full flex items-center px-6 py-4 text-left hover:bg-gray-50 focus:outline-none"
+        onClick={onToggle}
+        aria-expanded={isExpanded}
+      >
+        <span className={`mr-4 ${config.iconColor}`}>
+          {isExpanded ? <FolderOpen className="w-6 h-6" /> : <Folder className="w-6 h-6" />}
+        </span>
+        <span className="text-lg font-semibold flex-1 flex items-center gap-2">
+          {config.title}
+          <span className="inline-flex items-center justify-center rounded-full bg-gray-200 text-gray-700 text-xs font-semibold w-6 h-6">
+            {papers.length}
+          </span>
+        </span>
+        <span className="ml-2 text-gray-400">
+          {isExpanded ? <ChevronDown className="w-5 h-5" /> : <ChevronRight className="w-5 h-5" />}
+        </span>
+      </button>
+      {isExpanded && (
+        <div className={`ml-6 px-8 pb-6 border-l-4 ${config.color.split(' ')[1]}`}> 
+          {papers.length === 0 ? (
+            <div className="text-gray-500 italic py-4">{placeholderText || "No documents available."}</div>
+          ) : (
+            <ul className="space-y-2">
+              {papers.map((paper) => (
+                <FileItem key={paper.id} paper={paper} onPaperClick={onPaperClick} />
+              ))}
+            </ul>
+          )}
         </div>
-      </div>
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {papers.map((paper) => (
-          <PaperCard key={paper.id} paper={paper} onPaperClick={onPaperClick} />
-        ))}
-      </div>
-    </section>
+      )}
+    </div>
   )
 }
 
-function PaperCard({ paper, onPaperClick }: { paper: ResearchPaper; onPaperClick: (paperId: string) => void }) {
-  const categoryInfo = categoryConfig[paper.category]
-
+function FileItem({ paper, onPaperClick }: { paper: ResearchPaper; onPaperClick: (paperId: string) => void }) {
   return (
-    <Card className="hover:shadow-xl transition-all duration-300 border-gray-200 bg-white">
-      <CardHeader className="pb-4">
-        <div className="flex items-start justify-between mb-2">
-          <Badge className={`${categoryInfo.color} font-semibold`}>{categoryInfo.title}</Badge>
-          <categoryInfo.icon className="w-5 h-5 text-gray-500" />
+    <li
+      className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 cursor-pointer transition"
+      onClick={() => onPaperClick(paper.id)}
+    >
+      <FileText className="w-5 h-5 text-gray-400 flex-shrink-0" />
+      <div className="flex-1 min-w-0">
+        <div className="truncate text-base font-semibold">
+          {paper.title}
         </div>
-        <CardTitle className="text-lg leading-tight font-bold text-gray-900">{paper.title}</CardTitle>
-        <CardDescription className="text-sm text-gray-600">{paper.description}</CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="flex items-center gap-4 text-sm text-gray-500">
-          <div className="flex items-center gap-1">
-            <Calendar className="w-4 h-4" />
-            {new Date(paper.publishDate).toLocaleDateString()}
-          </div>
-          <div className="flex items-center gap-1">
-            <BookOpen className="w-4 h-4" />
-            {paper.readTime}
-          </div>
-        </div>
-
-        <div className="flex flex-wrap gap-1">
-          {paper.tags.map((tag) => (
-            <Badge key={tag} variant="secondary" className="text-xs">
-              {tag}
-            </Badge>
-          ))}
-        </div>
-
-        <Separator />
-
-        <Button onClick={() => onPaperClick(paper.id)} variant="outline" className="w-full justify-between cursor-pointer">
-          Read Paper
-          <ExternalLink className="w-4 h-4" />
-        </Button>
-      </CardContent>
-    </Card>
+        <div className="text-xs text-gray-500 truncate">{paper.description}</div>
+      </div>
+      <span className="text-xs text-gray-400 whitespace-nowrap ml-2">{paper.readTime}</span>
+    </li>
   )
 } 

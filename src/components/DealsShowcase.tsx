@@ -9,7 +9,7 @@ import { Separator } from "@/components/ui/separator"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { ExternalLink, FileText, TrendingUp, Users } from "lucide-react"
+import { ExternalLink, FileText, TrendingUp, Users, Lightbulb } from "lucide-react"
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 
@@ -30,14 +30,14 @@ const deals: Deal[] = [
   {
     id: "allrx",
     transactionName: "AllRx",
-    targetRaise: "$15M",
-    preMoneyValuation: "$35M",
-    postMoneyValuation: "$50M",
-    targetOwnership: "30%",
-    targetCloseDate: "Q2 2023",
+    targetRaise: "$2.1M",
+    preMoneyValuation: "$10M",
+    postMoneyValuation: "$12M",
+    targetOwnership: "14%",
+    targetCloseDate: "Q3 2021",
     leadInvestor: "InVitro Capital",
     status: "closed",
-    industry: "Digital Health",
+    industry: "Pharmacy Operations",
   },
   {
     id: "curenta",
@@ -46,7 +46,7 @@ const deals: Deal[] = [
     preMoneyValuation: "$6M",
     postMoneyValuation: "$8M",
     targetOwnership: "25%",
-    targetCloseDate: "August 7th 2025",
+    targetCloseDate: "September 15th 2025",
     leadInvestor: "InVitro Capital",
     status: "open",
     industry: "Long-Term Care",
@@ -54,38 +54,38 @@ const deals: Deal[] = [
   {
     id: "osta",
     transactionName: "Osta",
-    targetRaise: "$12M",
-    preMoneyValuation: "$28M",
-    postMoneyValuation: "$40M",
-    targetOwnership: "30%",
-    targetCloseDate: "Q2 2025",
-    leadInvestor: "Sequoia Capital",
-    status: "open",
-    industry: "PropTech",
+    targetRaise: "$1M",
+    preMoneyValuation: "$4M",
+    postMoneyValuation: "$5M",
+    targetOwnership: "25%",
+    targetCloseDate: "Q4 2025",
+    leadInvestor: "InVitro Capital",
+    status: "upcoming",
+    industry: "ConstructionTech",
   },
   {
     id: "allcare",
     transactionName: "AllCare",
-    targetRaise: "$18M",
-    preMoneyValuation: "$42M",
-    postMoneyValuation: "$60M",
-    targetOwnership: "30%",
-    targetCloseDate: "Q1 2025",
+    targetRaise: "$2M",
+    preMoneyValuation: "$4M",
+    postMoneyValuation: "$5M",
+    targetOwnership: "25%",
+    targetCloseDate: "Q4 2025",
     leadInvestor: "InVitro Capital",
-    status: "open",
-    industry: "Healthcare",
+    status: "upcoming",
+    industry: "In-Home Care",
   },
   {
     id: "needles",
     transactionName: "Needles",
-    targetRaise: "$20M",
-    preMoneyValuation: "$55M",
-    postMoneyValuation: "$75M",
-    targetOwnership: "27%",
-    targetCloseDate: "Q3 2025",
-    leadInvestor: "Andreessen Horowitz",
+    targetRaise: "$500k",
+    preMoneyValuation: "$1.5M",
+    postMoneyValuation: "$2M",
+    targetOwnership: "25%",
+    targetCloseDate: "Q1 2026",
+    leadInvestor: "InVitro Capital",
     status: "upcoming",
-    industry: "MedTech",
+    industry: "SalesTech",
   },
 ]
 
@@ -157,16 +157,6 @@ export default function DealsShowcase() {
 
     return (
     <div className="space-y-16">
-      {/* Investment Philosophy */}
-      <section className="mb-12">
-        <div className="max-w-4xl">
-          <h2 className="text-3xl font-bold text-gray-900 mb-6">Investment Philosophy</h2>
-          <p className="text-lg text-gray-700 leading-relaxed">
-            InVitro curates and creates high-conviction investment opportunities across both internally built ventures and select external startups. Every deal—whether homegrown or sourced—is vetted for capital efficiency, real traction, and clear paths to liquidity. We focus on sectors others overlook, prioritizing structural advantage and execution speed. This is where disciplined company building meets disciplined investing.
-          </p>
-        </div>
-      </section>
-
       {/* Open Deals */}
       <section>
         <div className="flex items-center gap-3 mb-8">
@@ -245,7 +235,7 @@ export default function DealsShowcase() {
               />
             </div>
             <Button type="submit" className="w-full cursor-pointer">
-              Continue to Documents
+              Continue
             </Button>
           </form>
         </DialogContent>
@@ -273,11 +263,11 @@ function DealCard({
       <CardContent className="space-y-4">
         <div className="grid grid-cols-2 gap-4 text-sm">
           <div>
-            <p className="text-gray-500 font-medium">Target Raise</p>
+            <p className="text-gray-500 font-medium">{deal.status === "closed" ? "Capital Raised" : "Target Raise"}</p>
             <p className="font-semibold text-lg">{deal.targetRaise}</p>
           </div>
           <div>
-            <p className="text-gray-500 font-medium">Target Ownership</p>
+            <p className="text-gray-500 font-medium">{deal.status === "closed" ? "Round Ownership" : "Target Ownership"}</p>
             <p className="font-semibold text-lg">{deal.targetOwnership}</p>
           </div>
         </div>
@@ -285,6 +275,10 @@ function DealCard({
         <Separator />
 
         <div className="space-y-2 text-sm">
+          <div className="flex justify-between">
+            <span className="text-gray-500">Traction:</span>
+            <span className="font-medium">{deal.id === "curenta" ? "180K ARR" : deal.id === "osta" ? "600K AR" : deal.id === "allcare" ? "480K ARR" : deal.id === "needles" ? "Build Stage" : deal.id === "allrx" ? "$12M AR" : "TBD"}</span>
+          </div>
           <div className="flex justify-between">
             <span className="text-gray-500">Pre-Money Valuation:</span>
             <span className="font-medium">{deal.preMoneyValuation}</span>
@@ -294,7 +288,7 @@ function DealCard({
             <span className="font-medium">{deal.postMoneyValuation}</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-gray-500">Target Close Date:</span>
+            <span className="text-gray-500">{deal.status === "closed" ? "Close Date:" : "Target Close Date:"}</span>
             <span className="font-medium">{deal.targetCloseDate}</span>
           </div>
           <div className="flex justify-between">
@@ -306,36 +300,40 @@ function DealCard({
         <Separator />
 
         <div className="flex flex-col gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            className="justify-start bg-transparent cursor-pointer"
-            onClick={() => onDocumentClick(deal.id, "memo")}
-          >
-            <FileText className="w-4 h-4 mr-2" />
-            Investment Memo
-            <ExternalLink className="w-3 h-3 ml-auto" />
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            className="justify-start bg-transparent cursor-pointer"
-            onClick={() => onDocumentClick(deal.id, "thesis")}
-          >
-            <Users className="w-4 h-4 mr-2" />
-            Industry Thesis
-            <ExternalLink className="w-3 h-3 ml-auto" />
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            className="justify-start bg-transparent cursor-pointer"
-            onClick={() => onDocumentClick(deal.id, "decomposition")}
-          >
-            <TrendingUp className="w-4 h-4 mr-2" />
-            Industry Decomposition
-            <ExternalLink className="w-3 h-3 ml-auto" />
-          </Button>
+          {deal.status === "open" ? (
+            <>
+              <Button
+                variant="outline"
+                size="sm"
+                className="justify-start bg-transparent cursor-pointer"
+                onClick={() => onDocumentClick(deal.id, "memo")}
+              >
+                <FileText className="w-4 h-4 mr-2" />
+                Investment Memo
+                <ExternalLink className="w-3 h-3 ml-auto" />
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                className="justify-start bg-transparent cursor-pointer"
+                onClick={() => onDocumentClick(deal.id, "thesis")}
+              >
+                <Users className="w-4 h-4 mr-2" />
+                Industry Thesis
+                <ExternalLink className="w-3 h-3 ml-auto" />
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                className="justify-start bg-transparent cursor-pointer"
+                onClick={() => onDocumentClick(deal.id, "decomposition")}
+              >
+                <TrendingUp className="w-4 h-4 mr-2" />
+                Industry Decomposition
+                <ExternalLink className="w-3 h-3 ml-auto" />
+              </Button>
+            </>
+          ) : null /* Document buttons hidden for closed and upcoming deals */}
         </div>
       </CardContent>
     </Card>

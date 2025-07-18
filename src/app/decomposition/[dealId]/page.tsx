@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button"
 import { ArrowLeft, Download } from "lucide-react"
 import { useRouter, useParams } from "next/navigation"
+import Image from "next/image"
 
 const decompositionData: Record<string, any> = {
   curenta: {
@@ -436,7 +437,7 @@ const decompositionData: Record<string, any> = {
   // Keep existing allrx data as fallback
   allrx: {
     title: "Digital Health Industry Decomposition",
-    industry: "Digital Health",
+    industry: "Pharmacy Operations",
     summary: "Comprehensive breakdown of the digital health market segments and opportunities.",
   },
 }
@@ -463,27 +464,31 @@ export default function IndustryDecomposition() {
   return (
     <div className="min-h-screen bg-white">
       <div className="max-w-6xl mx-auto px-8 py-12">
-        <Button variant="ghost" onClick={() => router.back()} className="mb-8">
-          <ArrowLeft className="w-4 h-4 mr-2" />
-          Back to Deals
-        </Button>
-
+        <div className="flex items-center justify-between mb-8">
+          <Button
+            variant="outline"
+            onClick={() => router.back()}
+            className="border-[hsl(212,74%,15%)] text-[hsl(212,74%,15%)] rounded-full px-5 py-2 text-sm font-medium hover:bg-[hsl(212,74%,97%)] hover:text-[hsl(212,74%,20%)] transition"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back to Deals
+          </Button>
+          <div className="flex-1 flex justify-center">
+            <Image src="/logo.png" alt="InVitro Capital Logo" width={180} height={48} priority />
+          </div>
+          <Button className="bg-white text-[hsl(212,74%,15%)] border border-[hsl(212,74%,15%)] hover:bg-[hsl(212,74%,97%)] hover:text-[hsl(212,74%,20%)] ml-4">
+            <Download className="w-4 h-4 mr-2" />
+            Download PDF
+          </Button>
+        </div>
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">{decomposition.title}</h1>
+        </div>
         {decomposition.content ? (
           <div className="space-y-12">
-            {/* Header */}
-            <div className="text-center border-b pb-8">
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">{decomposition.title}</h1>
-              <div className="flex justify-center">
-                <Button className="bg-blue-600 hover:bg-blue-700">
-                  <Download className="w-4 h-4 mr-2" />
-                  Download PDF
-                </Button>
-              </div>
-            </div>
-
             {/* InVitro Criteria Scoring */}
             <section>
-              <h2 className="text-2xl font-bold text-gray-900 mb-6 border-b-2 border-blue-600 pb-2">
+              <h2 className="text-2xl font-bold text-muted-foreground mb-6 border-b-2 border-accent pb-2">
                 {decomposition.content.criteriaScoring.title}
               </h2>
               <div className="overflow-x-auto">
@@ -491,7 +496,7 @@ export default function IndustryDecomposition() {
                   <thead>
                     <tr className="bg-gray-100">
                       <th className="border border-gray-300 px-4 py-3 text-left font-semibold text-gray-900">Filter</th>
-                      <th className="border border-gray-300 px-4 py-3 text-center font-semibold text-gray-900">
+                      <th className="border border-gray-300 px-4 py-3 text-center font-semibold text-gray-900 min-w-[120px]">
                         Score (1–3)
                       </th>
                       <th className="border border-gray-300 px-4 py-3 text-left font-semibold text-gray-900">
@@ -503,7 +508,7 @@ export default function IndustryDecomposition() {
                     {decomposition.content.criteriaScoring.data.map((row: any, index: number) => (
                       <tr key={index} className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}>
                         <td className="border border-gray-300 px-4 py-3 font-medium text-gray-800">{row.filter}</td>
-                        <td className="border border-gray-300 px-4 py-3 text-center">
+                        <td className="border border-gray-300 px-4 py-3 text-center min-w-[120px]">
                           <span
                             className={`inline-flex items-center justify-center w-8 h-8 rounded-full font-bold ${getScoreColor(row.score)}`}
                           >
@@ -520,7 +525,7 @@ export default function IndustryDecomposition() {
 
             {/* MECE Subsegmentation */}
             <section>
-              <h2 className="text-2xl font-bold text-gray-900 mb-6 border-b-2 border-blue-600 pb-2">
+              <h2 className="text-2xl font-bold text-muted-foreground mb-6 border-b-2 border-accent pb-2">
                 {decomposition.content.subsegmentation.title}
               </h2>
               <h3 className="text-xl font-semibold text-gray-800 mb-6">
@@ -554,7 +559,7 @@ export default function IndustryDecomposition() {
 
             {/* Workflow Decomposition */}
             <section>
-              <h2 className="text-2xl font-bold text-gray-900 mb-6 border-b-2 border-blue-600 pb-2">
+              <h2 className="text-2xl font-bold text-muted-foreground mb-6 border-b-2 border-accent pb-2">
                 {decomposition.content.workflowDecomposition.title}
               </h2>
 
@@ -608,7 +613,7 @@ export default function IndustryDecomposition() {
                 <h3 className="text-xl font-semibold text-gray-800 mb-6">
                   {decomposition.content.workflowDecomposition.functionalGroupings.title}
                 </h3>
-                <div className="bg-blue-50 p-6 rounded-lg">
+                <div className="bg-accent/10 p-6 rounded-lg">
                   <ul className="space-y-2">
                     {decomposition.content.workflowDecomposition.functionalGroupings.groups.map(
                       (group: string, index: number) => (
@@ -710,14 +715,14 @@ export default function IndustryDecomposition() {
 
             {/* Top Subsegment × Workflow Pairs */}
             <section>
-              <h2 className="text-2xl font-bold text-gray-900 mb-6 border-b-2 border-blue-600 pb-2">
+              <h2 className="text-2xl font-bold text-muted-foreground mb-6 border-b-2 border-accent pb-2">
                 {decomposition.content.topPairs.title}
               </h2>
               <div className="space-y-8">
                 {decomposition.content.topPairs.pairs.map((pair: any, index: number) => (
                   <div
                     key={index}
-                    className="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-lg border border-blue-200"
+                    className="bg-gradient-to-r from-accent/10 to-indigo-50 p-6 rounded-lg border border-accent/20"
                   >
                     <h3 className="text-xl font-semibold text-gray-800 mb-6">{pair.title}</h3>
                     <div className="overflow-x-auto">
@@ -751,7 +756,7 @@ export default function IndustryDecomposition() {
 
             {/* Buyer Personas */}
             <section>
-              <h2 className="text-2xl font-bold text-gray-900 mb-6 border-b-2 border-blue-600 pb-2">
+              <h2 className="text-2xl font-bold text-muted-foreground mb-6 border-b-2 border-accent pb-2">
                 {decomposition.content.buyerPersonas.title}
               </h2>
               <div className="overflow-x-auto">

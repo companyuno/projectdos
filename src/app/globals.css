@@ -2,7 +2,16 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #0A2342;
+  --card: #ffffff;
+  --card-foreground: #0A2342;
+  --border: #e5e5e5;
+  --muted-foreground: #737373;
+  --primary: 212 74% 15%;
+  --primary-foreground: 0 0% 100%;
+  --accent: 212 74% 15%;
+  --accent-foreground: 0 0% 100%;
+  --font-poppins: 'Poppins', sans-serif;
 }
 
 @theme inline {
@@ -14,8 +23,26 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #0A2342;
+    --foreground: #F5F6FA;
+    --card: #11294d;
+    --card-foreground: #F5F6FA;
+    --popover: #11294d;
+    --popover-foreground: #F5F6FA;
+    --primary: 212 74% 15%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: #22304A;
+    --secondary-foreground: #F5F6FA;
+    --muted: #22304A;
+    --muted-foreground: #B0B7C3;
+    --accent: 212 74% 15%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: #EF4444;
+    --destructive-foreground: #FFFFFF;
+    --border: #22304A;
+    --input: #22304A;
+    --ring: 221 83% 53%;
+    --radius: 0.5rem;
   }
 }
 
