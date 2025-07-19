@@ -215,7 +215,16 @@ export default function InvestmentMemo() {
         <div className="flex items-center justify-between mb-8">
           <Button
             variant="outline"
-            onClick={() => router.back()}
+            onClick={() => {
+              const source = typeof window !== 'undefined' ? localStorage.getItem('invitro-doc-source') : null;
+              if (source === 'deals') {
+                router.push('/?tab=deals');
+              } else if (source === 'research') {
+                router.push('/?tab=research');
+              } else {
+                router.back();
+              }
+            }}
             className="border-[hsl(212,74%,15%)] text-[hsl(212,74%,15%)] rounded-full px-5 py-2 text-sm font-medium hover:bg-[hsl(212,74%,97%)] hover:text-[hsl(212,74%,20%)] transition"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />

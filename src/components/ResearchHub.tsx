@@ -28,11 +28,11 @@ const researchPapers: ResearchPaper[] = [
   {
     id: "invitro-investment-build-process",
     title: "InVitro Capital Investment & Build Process",
-    description:
-      "Our comprehensive methodology for identifying, building, and scaling high-growth companies from ideation to exit.",
+          description:
+        "Our comprehensive methodology for identifying, building, and scaling high-growth companies from ideation to exit",
     category: "build-process",
     publishDate: "2024-01-15",
-    readTime: "12 min read",
+    readTime: "15 min read",
     tags: ["Investment Process", "Venture Studio", "Company Building"],
   },
 
@@ -41,7 +41,7 @@ const researchPapers: ResearchPaper[] = [
     id: "invitro-private-markets-whitepaper",
     title: "InVitro Capital Private Markets White Paper",
     description:
-      "In-depth analysis of private market opportunities, trends, and investment strategies across key sectors.",
+      "A comparative analysis of private company ownership models: private equity, venture capital & venture builders",
     category: "whitepapers",
     publishDate: "2024-02-01",
     readTime: "20 min read",
@@ -52,42 +52,29 @@ const researchPapers: ResearchPaper[] = [
   {
     id: "healthcare-elearning-thesis",
     title: "Healthcare E-Learning",
-    description:
-      "Investment thesis on digital education and training platforms transforming healthcare professional development.",
+    description: "",
     category: "industry-theses",
     publishDate: "2024-01-01",
-    readTime: "16 min read",
+    readTime: "10 min read",
     tags: ["Healthcare", "E-Learning", "Digital Education"],
   },
   {
     id: "healthcare-prescription-dtc-thesis",
     title: "Healthcare Prescription DTC",
-    description:
-      "Analysis of direct-to-consumer prescription and telehealth market opportunities and regulatory landscape.",
+    description: "",
     category: "industry-theses",
     publishDate: "2023-11-01",
-    readTime: "18 min read",
+    readTime: "12 min read",
     tags: ["Healthcare", "DTC", "Telehealth", "Prescription"],
   },
   {
-    id: "long-term-care-thesis",
+    id: "long-term-care",
     title: "Long Term Care",
-    description:
-      "Comprehensive investment thesis on long-term care facilities, technology adoption, and market dynamics.",
+    description: "",
     category: "industry-theses",
     publishDate: "2023-10-15",
-    readTime: "22 min read",
+    readTime: "16 min read",
     tags: ["Long Term Care", "Healthcare", "Assisted Living"],
-  },
-  {
-    id: "b2b-sales-marketing-software-thesis",
-    title: "B2B Sales & Marketing Software",
-    description:
-      "Investment perspective on B2B sales and marketing technology platforms, automation, and growth opportunities.",
-    category: "industry-theses",
-    publishDate: "2023-08-20",
-    readTime: "19 min read",
-    tags: ["B2B Software", "Sales", "Marketing", "SaaS"],
   },
 ]
 
@@ -151,10 +138,13 @@ export default function ResearchHub() {
     const accredited = localStorage.getItem("invitro-accredited")
     if (accredited === "true") {
       setIsAccredited(true)
+    } else {
+      setIsAccredited(false)
     }
   }, [])
 
   const handlePaperClick = (paperId: string) => {
+    localStorage.setItem("invitro-doc-source", "research");
     setPendingNavigation(paperId)
     setAccreditedSelections([])
     if (!hasSubmittedInfo) {
@@ -162,31 +152,68 @@ export default function ResearchHub() {
     } else if (!isAccredited) {
       setShowAccreditedModal(true)
     } else {
-      // Already accredited, go straight to research
-      router.push(`/research/${paperId}`)
+      // Already accredited, go straight to research or thesis
+      if (paperId === "long-term-care") {
+        router.push(`/thesis/long-term-care`)
+      } else {
+        router.push(`/research/${paperId}`)
+      }
       setPendingNavigation(null)
     }
   }
 
-  const handleFormSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    localStorage.setItem("invitro-user-info", JSON.stringify(userInfo))
-    setHasSubmittedInfo(true)
-    setShowForm(false)
-
+  const handleFormSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    localStorage.setItem("invitro-user-info", JSON.stringify(userInfo));
+    // Send to backend visitor log, including accredited info if available
+    let accredited = undefined;
+    let accreditedSelections = undefined;
+    try {
+      const stored = localStorage.getItem("invitro-accredited");
+      if (stored) accredited = stored;
+      const selections = localStorage.getItem("invitro-accredited-selections");
+      if (selections) accreditedSelections = JSON.parse(selections);
+    } catch {}
+    try {
+      await fetch("/api/visitors", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...userInfo, accredited, accreditedSelections }),
+      });
+    } catch (err) {
+      // Ignore error for now
+    }
+    setHasSubmittedInfo(true);
+    setShowForm(false);
+    // Check if accredited (localStorage value or state)
+    const isAccreditedNow = (typeof window !== 'undefined' && localStorage.getItem('invitro-accredited') === 'true') || isAccredited;
     if (pendingNavigation) {
-      router.push(`/research/${pendingNavigation}`)
-      setPendingNavigation(null)
+      if (isAccreditedNow) {
+        router.push(`/research/${pendingNavigation}`);
+        setPendingNavigation(null);
+      } else {
+        setShowAccreditedModal(true);
+      }
     }
   }
 
-  const handleAccreditedSubmit = (e: React.FormEvent) => {
+  const handleAccreditedSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (anyAboveSelected && !lastSelected) {
       localStorage.setItem("invitro-accredited", "true")
+      localStorage.setItem("invitro-accredited-selections", JSON.stringify(accreditedSelections))
       setIsAccredited(true)
       setShowAccreditedModal(false)
       setAccreditedSelections([])
+      // Send updated info to backend visitor log
+      try {
+        const userInfo = JSON.parse(localStorage.getItem("invitro-user-info") || '{}');
+        await fetch("/api/visitors", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ ...userInfo, accredited: "true", accreditedSelections }),
+        });
+      } catch {}
       router.push(`/research/${pendingNavigation}`)
       setPendingNavigation(null)
     }
@@ -206,34 +233,175 @@ export default function ResearchHub() {
     }))
   }
 
-  const buildProcessPapers = researchPapers.filter((paper) => paper.category === "build-process")
-  const whitepapers = researchPapers.filter((paper) => paper.category === "whitepapers")
-  const industryTheses = researchPapers.filter((paper) => paper.category === "industry-theses")
+  // Sort research papers within each category alphabetically by title
+  const sortedResearchPapers = researchPapers.reduce((acc, paper) => {
+    if (!acc[paper.category]) acc[paper.category] = [];
+    acc[paper.category].push(paper);
+    return acc;
+  }, {} as Record<string, ResearchPaper[]>);
+  Object.keys(sortedResearchPapers).forEach(cat => {
+    sortedResearchPapers[cat].sort((a, b) => a.title.localeCompare(b.title));
+  });
+
+  const buildProcessPapers = sortedResearchPapers["build-process"] || []
+  const whitepapers = sortedResearchPapers["whitepapers"] || []
+  const industryTheses = sortedResearchPapers["industry-theses"] || []
 
   // Add Curenta industry decomposition as a research paper
   const industryDecompositions: ResearchPaper[] = [
     {
       id: "curenta-industry-decomposition",
-      title: "Industry Decomposition: Long Term Care",
-      description: "Comprehensive workflow and market decomposition for Long Term Care.",
+      title: "Long Term Care",
+      description: "",
       category: "industry-decompositions",
       publishDate: "2025-01-01",
-      readTime: "30 min read",
+      readTime: "5 min read",
       tags: ["Long Term Care", "Curenta", "Industry Analysis", "Decomposition"],
       featured: true,
     },
+    {
+      id: "construction-tech-industry-decomposition",
+      title: "Construction Tech",
+      description: "",
+      category: "industry-decompositions",
+      publishDate: "2024-06-01",
+      readTime: "5 min read",
+      tags: ["Construction Tech", "Industry Analysis", "Decomposition"],
+      featured: false,
+    },
+    {
+      id: "dtc-healthcare-industry-decomposition",
+      title: "Healthcare Prescription DTC",
+      description: "",
+      category: "industry-decompositions",
+      publishDate: "2024-06-09",
+      readTime: "5 min read",
+      tags: ["DTC Healthcare", "Industry Analysis", "Decomposition"],
+      featured: false,
+    },
+    {
+      id: "accounting-services-industry-decomposition",
+      title: "Accounting Services",
+      description: "",
+      category: "industry-decompositions",
+      publishDate: "2024-12-01",
+      readTime: "5 min read",
+      tags: ["Accounting Services", "Industry Analysis", "Decomposition"],
+      featured: false,
+    },
+    {
+      id: "b2b-sales-marketing-software-industry-decomposition",
+      title: "B2B Sales & Marketing Software",
+      description: "",
+      category: "industry-decompositions",
+      publishDate: "2024-12-01",
+      readTime: "5 min read",
+      tags: ["B2B Sales", "Marketing Software", "Industry Analysis", "Decomposition"],
+      featured: false,
+    },
+    {
+      id: "healthcare-e-learning-industry-decomposition",
+      title: "Healthcare E-Learning",
+      description: "",
+      category: "industry-decompositions",
+      publishDate: "2024-12-01",
+      readTime: "5 min read",
+      tags: ["Healthcare", "E-Learning", "Industry Analysis", "Decomposition"],
+      featured: false,
+    },
   ]
+
+  // If there is an industryDecompositions array, sort it alphabetically by title before rendering
+  let industryDecompositionsSorted: ResearchPaper[] = [
+    {
+      id: "curenta-industry-decomposition",
+      title: "Long Term Care",
+      description: "",
+      category: "industry-decompositions",
+      publishDate: "2025-01-01",
+      readTime: "5 min read",
+      tags: ["Long Term Care", "Curenta", "Industry Analysis", "Decomposition"],
+      featured: true,
+    },
+    {
+      id: "construction-tech-industry-decomposition",
+      title: "Construction Tech",
+      description: "",
+      category: "industry-decompositions",
+      publishDate: "2024-06-01",
+      readTime: "5 min read",
+      tags: ["Construction Tech", "Industry Analysis", "Decomposition"],
+      featured: false,
+    },
+    {
+      id: "dtc-healthcare-industry-decomposition",
+      title: "Healthcare Prescription DTC",
+      description: "",
+      category: "industry-decompositions",
+      publishDate: "2024-06-09",
+      readTime: "5 min read",
+      tags: ["DTC Healthcare", "Industry Analysis", "Decomposition"],
+      featured: false,
+    },
+    {
+      id: "accounting-services-industry-decomposition",
+      title: "Accounting Services",
+      description: "",
+      category: "industry-decompositions",
+      publishDate: "2024-12-01",
+      readTime: "5 min read",
+      tags: ["Accounting Services", "Industry Analysis", "Decomposition"],
+      featured: false,
+    },
+    {
+      id: "b2b-sales-marketing-software-industry-decomposition",
+      title: "B2B Sales & Marketing Software",
+      description: "",
+      category: "industry-decompositions",
+      publishDate: "2024-12-01",
+      readTime: "5 min read",
+      tags: ["B2B Sales", "Marketing Software", "Industry Analysis", "Decomposition"],
+      featured: false,
+    },
+    {
+      id: "healthcare-e-learning-industry-decomposition",
+      title: "Healthcare E-Learning",
+      description: "",
+      category: "industry-decompositions",
+      publishDate: "2024-12-01",
+      readTime: "5 min read",
+      tags: ["Healthcare", "E-Learning", "Industry Analysis", "Decomposition"],
+      featured: false,
+    },
+  ];
+  industryDecompositionsSorted.sort((a, b) => a.title.localeCompare(b.title));
 
   return (
     <div className="space-y-6">
+      {/* Reset Demo Button */}
+      <div className="flex justify-end mb-2">
+        <Button
+          variant="outline"
+          className="text-xs px-3 py-1 border-red-400 text-red-700 hover:bg-red-50 hover:border-red-500"
+          onClick={() => {
+            localStorage.removeItem("invitro-accredited");
+            localStorage.removeItem("invitro-accredited-selections");
+            localStorage.removeItem("invitro-user-info");
+            // Remove any other relevant keys if needed
+            window.location.reload();
+          }}
+        >
+          Reset Demo
+        </Button>
+      </div>
       {/* InVitro's Research Philosophy Box */}
-      <div className="bg-white border border-gray-200 rounded-lg px-0 md:px-10 py-8 md:py-12 shadow-lg w-full text-left mt-1 -ml-6 mb-8">
+      <div className="bg-white border border-gray-200 rounded-lg px-6 py-8 md:py-12 shadow-lg w-full text-left mt-1 mb-8">
         <div className="flex items-center gap-2 mb-4">
           <Lightbulb className="w-6 h-6 text-yellow-400 flex-shrink-0" />
           <h3 className="font-bold text-2xl text-[#0a2e4e]">InVitro’s Research Philosophy</h3>
         </div>
         <div className="text-base font-semibold mb-6 text-left" style={{color: '#0a2e4e'}}>
-          Demand-First • Workflow-Deep • Segment-Precise • Capital-Efficient
+          Demand-First • Workflow-Deep • Segment-Precise
         </div>
         <p className="text-base text-gray-800 leading-relaxed text-left mb-1" style={{wordBreak: 'break-word'}}>
           InVitro doesn't start with ideas—we start with pain. Our research maps labor-intensive, fragmented, and tech-starved industries from first principles, deconstructs workflows, and tests for urgency before anything gets built. We prioritize segments where software is absent, human effort is high, and willingness to pay is measurable. Every thesis begins with real buyer signal—not speculation. This is where disciplined demand generation meets structural insight.
@@ -277,10 +445,24 @@ export default function ResearchHub() {
         {/* Industry Decompositions Folder */}
         <FolderSection
           category="industry-decompositions"
-          papers={industryDecompositions}
+          papers={industryDecompositionsSorted}
           isExpanded={expandedFolders["industry-decompositions"] ?? true}
           onToggle={() => toggleFolder("industry-decompositions")}
-          onPaperClick={() => router.push("/decomposition/curenta")}
+          onPaperClick={(paperId) => {
+            if (paperId === "curenta-industry-decomposition") {
+              router.push("/decomposition/curenta");
+            } else if (paperId === "construction-tech-industry-decomposition") {
+              router.push("/decomposition/construction-tech");
+            } else if (paperId === "dtc-healthcare-industry-decomposition") {
+              router.push("/decomposition/dtc-healthcare");
+            } else if (paperId === "accounting-services-industry-decomposition") {
+              router.push("/decomposition/accounting-services");
+            } else if (paperId === "b2b-sales-marketing-software-industry-decomposition") {
+              router.push("/decomposition/b2b-sales-marketing-software");
+            } else if (paperId === "healthcare-e-learning-industry-decomposition") {
+              router.push("/decomposition/healthcare-e-learning");
+            }
+          }}
           placeholderText="Industry Decomposition research coming soon."
         />
       </div>

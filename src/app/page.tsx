@@ -1,14 +1,44 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { useRouter, usePathname, useSearchParams } from "next/navigation"
 import DealsShowcase from "@/components/DealsShowcase"
 import ResearchHub from "@/components/ResearchHub"
+import PermissionGate from "@/components/PermissionGate"
 import { Button } from "@/components/ui/button"
 import { Building2, FileText, Lightbulb } from "lucide-react"
 import Image from "next/image"
 
 export default function Home() {
-  const [activeTab, setActiveTab] = useState<"deals" | "research">("research")
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const [activeTab, setActiveTab] = useState<"deals" | "research">(() => {
+    const tab = searchParams.get('tab');
+    return tab === 'deals' ? 'deals' : 'research';
+  });
+
+  // Sync activeTab with URL tab param
+  useEffect(() => {
+    const tab = searchParams.get('tab');
+    if (tab === 'deals' && activeTab !== 'deals') {
+      setActiveTab('deals');
+    } else if (tab === 'research' && activeTab !== 'research') {
+      setActiveTab('research');
+    }
+    // eslint-disable-next-line
+  }, [searchParams, pathname]);
+
+  // Update the URL when the tab changes
+  useEffect(() => {
+    const tab = searchParams.get('tab');
+    if (activeTab === 'deals' && tab !== 'deals') {
+      router.replace('/?tab=deals');
+    } else if (activeTab === 'research' && tab !== 'research') {
+      router.replace('/?tab=research');
+    }
+    // eslint-disable-next-line
+  }, [activeTab]);
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -50,22 +80,24 @@ export default function Home() {
       {/* Content */}
       <main className="max-w-7xl mx-auto px-6 py-12">
         {activeTab === "deals" ? (
-          <>
-            {/* InVitro's Investment Philosophy Box */}
-            <div className="bg-white border border-gray-200 rounded-lg px-0 md:px-10 py-8 md:py-12 shadow-lg w-full text-left mt-1 -ml-6 mb-8">
-              <div className="flex items-center gap-2 mb-4">
-                <Lightbulb className="w-6 h-6 text-yellow-400 flex-shrink-0" />
-                <h3 className="font-bold text-2xl text-[#0a2e4e]">InVitro's Investment Philosophy</h3>
+          <PermissionGate>
+            <>
+              {/* InVitro's Investment Philosophy Box */}
+              <div className="bg-white border border-gray-200 rounded-lg px-6 py-8 md:py-12 shadow-lg w-full text-left mt-1 mb-8">
+                <div className="flex items-center gap-2 mb-4">
+                  <Lightbulb className="w-6 h-6 text-yellow-400 flex-shrink-0" />
+                  <h3 className="font-bold text-2xl text-[#0a2e4e]">InVitro's Investment Philosophy</h3>
+                </div>
+                <div className="text-base font-semibold mb-6 text-left" style={{color: '#0a2e4e'}}>
+                  Labor Intensive • Fragmented • Tech-Starved
+                </div>
+                <p className="text-base text-gray-800 leading-relaxed text-left mb-1" style={{wordBreak: 'break-word'}}>
+                  InVitro curates and creates high-conviction investment opportunities across both internally built ventures and select external startups. Every deal—whether homegrown or sourced—is vetted for capital efficiency, real traction, and clear paths to liquidity. We focus on sectors others overlook, prioritizing structural advantage and execution speed. This is where disciplined company building meets disciplined investing.
+                </p>
               </div>
-              <div className="text-base font-semibold mb-6 text-left" style={{color: '#0a2e4e'}}>
-                Labor Intensive • Fragmented • Tech-Starved • Under Penetrated
-              </div>
-              <p className="text-base text-gray-800 leading-relaxed text-left mb-1" style={{wordBreak: 'break-word'}}>
-                InVitro curates and creates high-conviction investment opportunities across both internally built ventures and select external startups. Every deal—whether homegrown or sourced—is vetted for capital efficiency, real traction, and clear paths to liquidity. We focus on sectors others overlook, prioritizing structural advantage and execution speed. This is where disciplined company building meets disciplined investing.
-              </p>
-            </div>
-            <DealsShowcase />
-          </>
+              <DealsShowcase />
+            </>
+          </PermissionGate>
         ) : (
           <ResearchHub />
         )}

@@ -476,7 +476,14 @@ export default function IndustryDecomposition() {
           <div className="flex-1 flex justify-center">
             <Image src="/logo.png" alt="InVitro Capital Logo" width={180} height={48} priority />
           </div>
-          <Button className="bg-white text-[hsl(212,74%,15%)] border border-[hsl(212,74%,15%)] hover:bg-[hsl(212,74%,97%)] hover:text-[hsl(212,74%,20%)] ml-4">
+          <Button 
+            className="bg-white text-[hsl(212,74%,15%)] border border-[hsl(212,74%,15%)] hover:bg-[hsl(212,74%,97%)] hover:text-[hsl(212,74%,20%)] ml-4"
+            onClick={() => {
+              if (dealId === 'curenta') {
+                window.open('/Industry%20Decomposition%20-%20Long%20Term%20Care%20(LTC).pdf', '_blank');
+              }
+            }}
+          >
             <Download className="w-4 h-4 mr-2" />
             Download PDF
           </Button>

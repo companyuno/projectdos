@@ -135,6 +135,7 @@ export default function DealsShowcase() {
   const upcomingDeals = deals.filter((deal) => deal.status === "upcoming")
 
   const handleDocumentClick = (dealId: string, type: "memo" | "thesis" | "decomposition") => {
+    localStorage.setItem("invitro-doc-source", "deals");
     if (hasSubmittedInfo) {
       router.push(`/${type}/${dealId}`)
     } else {
@@ -143,15 +144,50 @@ export default function DealsShowcase() {
     }
   }
 
-  const handleFormSubmit = (e: React.FormEvent) => {
+  const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    localStorage.setItem("invitro-user-info", JSON.stringify(userInfo))
-    setHasSubmittedInfo(true)
-    setShowForm(false)
+    
+    try {
+      // First check if the email has permission
+      const permissionResponse = await fetch('/api/permissions/check', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email: userInfo.email }),
+      })
 
-    if (pendingNavigation) {
-      router.push(`/${pendingNavigation.type}/${pendingNavigation.dealId}`)
-      setPendingNavigation(null)
+      const permissionData = await permissionResponse.json()
+      
+      if (!permissionData.hasPermission) {
+        alert('Access denied. Your email is not authorized to view deal documents. Please contact the administrator.')
+        return
+      }
+
+      // If permission granted, track visitor and proceed
+      const response = await fetch('/api/visitors', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userInfo),
+      })
+      
+      if (response.ok) {
+        localStorage.setItem("invitro-user-info", JSON.stringify(userInfo))
+        setHasSubmittedInfo(true)
+        setShowForm(false)
+
+        if (pendingNavigation) {
+          router.push(`/${pendingNavigation.type}/${pendingNavigation.dealId}`)
+          setPendingNavigation(null)
+        }
+      } else {
+        console.error('Failed to track visitor')
+      }
+    } catch (error) {
+      console.error('Error checking permission or tracking visitor:', error)
+      alert('An error occurred. Please try again.')
     }
   }
 
@@ -316,7 +352,7 @@ function DealCard({
                 variant="outline"
                 size="sm"
                 className="justify-start bg-transparent cursor-pointer"
-                onClick={() => onDocumentClick(deal.id, "thesis")}
+                onClick={() => onDocumentClick(deal.id === "curenta" ? "long-term-care" : deal.id, "thesis")}
               >
                 <Users className="w-4 h-4 mr-2" />
                 Industry Thesis
