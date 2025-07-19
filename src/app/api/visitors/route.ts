@@ -42,4 +42,42 @@ export async function GET() {
   } catch (e) {
     return NextResponse.json([]);
   }
+}
+
+export async function DELETE(req: NextRequest) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const index = searchParams.get('index');
+    
+    if (!index) {
+      return NextResponse.json({ error: 'Index parameter required' }, { status: 400 });
+    }
+    
+    const indexNum = parseInt(index);
+    if (isNaN(indexNum) || indexNum < 0) {
+      return NextResponse.json({ error: 'Invalid index' }, { status: 400 });
+    }
+    
+    let visitors = [];
+    try {
+      const file = await fs.readFile(DATA_FILE, 'utf-8');
+      visitors = JSON.parse(file);
+    } catch (e) {
+      return NextResponse.json({ error: 'No visitors file found' }, { status: 404 });
+    }
+    
+    if (indexNum >= visitors.length) {
+      return NextResponse.json({ error: 'Index out of bounds' }, { status: 400 });
+    }
+    
+    // Remove the visitor at the specified index
+    visitors.splice(indexNum, 1);
+    
+    // Write back to file
+    await fs.writeFile(DATA_FILE, JSON.stringify(visitors, null, 2));
+    
+    return NextResponse.json({ success: true });
+  } catch (e) {
+    return NextResponse.json({ error: 'Server error' }, { status: 500 });
+  }
 } 

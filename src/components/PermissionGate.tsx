@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
-import { Lock, Mail } from "lucide-react"
+import { Lock, Mail, CheckCircle } from "lucide-react"
 
 interface PermissionGateProps {
   children: React.ReactNode
@@ -13,7 +13,16 @@ interface PermissionGateProps {
 }
 
 export default function PermissionGate({ children, fallback }: PermissionGateProps) {
-  const [hasPermission, setHasPermission] = useState<boolean | null>(null)
+  const [hasPermission, setHasPermission] = useState<boolean | null>(() => {
+    // Initialize with cached permission state if available
+    if (typeof window !== 'undefined') {
+      const savedEmail = localStorage.getItem("invitro-user-email")
+      if (savedEmail) {
+        return null // Will be set after permission check
+      }
+    }
+    return false
+  })
   const [email, setEmail] = useState("")
   const [isChecking, setIsChecking] = useState(false)
   const [error, setError] = useState("")
@@ -22,26 +31,29 @@ export default function PermissionGate({ children, fallback }: PermissionGatePro
 
   useEffect(() => {
     // Check if user already has permission from localStorage
-    const savedInfo = localStorage.getItem("invitro-user-info")
-    if (savedInfo) {
-      try {
-        const userInfo = JSON.parse(savedInfo)
-        if (userInfo.email) {
-          checkPermission(userInfo.email)
-        } else {
-          setHasPermission(false)
-        }
-      } catch (error) {
-        console.error('Error parsing saved user info:', error)
-        localStorage.removeItem("invitro-user-info")
-        setHasPermission(false)
+    const savedEmail = localStorage.getItem("invitro-user-email")
+    if (savedEmail) {
+      setEmail(savedEmail)
+      // Only check permission if we haven't already determined it
+      if (hasPermission === null) {
+        checkPermission(savedEmail)
       }
     } else {
       setHasPermission(false)
+      setRequestSubmitted(false)
     }
-  }, [])
+  }, []) // Remove hasPermission dependency to prevent re-runs
 
   const checkPermission = async (emailToCheck: string) => {
+    // Check if we already have a cached result for this email
+    const cachedPermission = localStorage.getItem(`invitro-permission-${emailToCheck}`)
+    if (cachedPermission) {
+      const hasPermission = cachedPermission === 'true'
+      setHasPermission(hasPermission)
+      setEmail(emailToCheck)
+      return
+    }
+
     setIsChecking(true)
     try {
       const response = await fetch('/api/permissions/check', {
@@ -56,22 +68,23 @@ export default function PermissionGate({ children, fallback }: PermissionGatePro
       setHasPermission(data.hasPermission)
       setError("")
       
-      // If access granted, save to localStorage
+      // Cache the permission result
+      localStorage.setItem(`invitro-permission-${emailToCheck}`, String(data.hasPermission))
+      
       if (data.hasPermission) {
-        const wasAlreadyLoggedIn = localStorage.getItem("invitro-user-info") !== null
-        localStorage.setItem("invitro-user-info", JSON.stringify({
-          email: emailToCheck,
-          timestamp: new Date().toISOString()
-        }))
+        const wasAlreadyLoggedIn = localStorage.getItem("invitro-user-email") !== null
+        localStorage.setItem("invitro-user-email", emailToCheck)
         
         // Only show banner if this is a new login (not a refresh)
         if (!wasAlreadyLoggedIn) {
           setShowAccessBanner(true)
-          setTimeout(() => setShowAccessBanner(false), 3000) // Hide after 3 seconds
+          setTimeout(() => setShowAccessBanner(false), 3000)
         }
       } else {
-        // If access denied, show request submitted message
-        setRequestSubmitted(true)
+        // If access denied, show request submitted message only if this was a form submission
+        if (emailToCheck !== "") {
+          setRequestSubmitted(true)
+        }
       }
       
       // Log the access attempt
@@ -118,14 +131,18 @@ export default function PermissionGate({ children, fallback }: PermissionGatePro
   }
 
   const handleLogout = () => {
-    localStorage.removeItem("invitro-user-info")
+    const savedEmail = localStorage.getItem("invitro-user-email")
+    if (savedEmail) {
+      localStorage.removeItem(`invitro-permission-${savedEmail}`)
+    }
+    localStorage.removeItem("invitro-user-email")
     setHasPermission(false)
     setEmail("")
     setRequestSubmitted(false)
     setShowAccessBanner(false)
   }
 
-  // Show loading state
+  // Show loading state while checking permission
   if (hasPermission === null) {
     return (
       <div className="flex items-center justify-center py-12">
@@ -134,29 +151,35 @@ export default function PermissionGate({ children, fallback }: PermissionGatePro
     )
   }
 
+  // Show access granted banner
+  if (showAccessBanner) {
+    return (
+      <div className="fixed top-4 right-4 z-50">
+        <div className="bg-green-50 border border-green-200 rounded-lg p-4 shadow-lg">
+          <div className="flex items-center gap-2">
+            <CheckCircle className="w-5 h-5 text-green-600" />
+            <span className="text-green-800 font-medium">Access Granted</span>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   // Show content if user has permission
-  if (hasPermission) {
+  if (hasPermission === true) {
     return (
       <div>
-        {showAccessBanner && (
-          <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6 animate-in fade-in duration-300">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Mail className="w-4 h-4 text-green-600" />
-                <span className="text-green-800 font-medium">Access Granted</span>
-              </div>
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={handleLogout}
-                className="text-green-700 border-green-300 hover:bg-green-100"
-              >
-                Logout
-              </Button>
-            </div>
-          </div>
-        )}
         {children}
+        <div className="fixed top-4 right-4 z-50">
+          <Button
+            onClick={handleLogout}
+            variant="outline"
+            size="sm"
+            className="bg-white shadow-lg"
+          >
+            Logout
+          </Button>
+        </div>
       </div>
     )
   }

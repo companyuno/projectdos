@@ -2,199 +2,508 @@
   {
     "firstName": "Access",
     "lastName": "Request",
+    "email": "jas2278@cornell.edu",
+    "timestamp": "2025-07-19T00:34:08.885Z"
+  },
+  {
+    "firstName": "Investment",
+    "lastName": "Access",
     "email": "jonathan.schroeder@invitrocapital.com",
-    "timestamp": "2025-07-19T00:22:54.742Z"
+    "timestamp": "2025-07-19T00:34:13.244Z"
+  },
+  {
+    "firstName": "Investment",
+    "lastName": "Access",
+    "email": "jonathan.schroeder@invitrocapital.com",
+    "timestamp": "2025-07-19T00:34:15.468Z"
+  },
+  {
+    "firstName": "Investment",
+    "lastName": "Access",
+    "email": "jonathan.schroeder@invitrocapital.com",
+    "timestamp": "2025-07-19T00:34:15.485Z"
+  },
+  {
+    "firstName": "Investment",
+    "lastName": "Access",
+    "email": "jonathan.schroeder@invitrocapital.com",
+    "timestamp": "2025-07-19T00:34:16.861Z"
+  },
+  {
+    "firstName": "Investment",
+    "lastName": "Access",
+    "email": "jonathan.schroeder@invitrocapital.com",
+    "timestamp": "2025-07-19T00:34:21.919Z"
+  },
+  {
+    "firstName": "Investment",
+    "lastName": "Access",
+    "email": "jonathan.schroeder@invitrocapital.com",
+    "timestamp": "2025-07-19T00:34:21.939Z"
+  },
+  {
+    "firstName": "Jonathan",
+    "lastName": "Schroeder",
+    "email": "jas2278@cornell.edu",
+    "timestamp": "2025-07-19T00:34:32.156Z"
+  },
+  {
+    "firstName": "Jonathan",
+    "lastName": "Schroeder",
+    "email": "jas2278@cornell.edu",
+    "timestamp": "2025-07-19T00:34:34.953Z",
+    "accredited": "true",
+    "accreditedSelections": [
+      "I earned over $200,000 individually (or $300,000 with my spouse) in each of the last two years and expect the same this year",
+      "I have a net worth over $1 million, excluding my primary residence"
+    ]
   },
   {
     "firstName": "Access",
     "lastName": "Request",
-    "email": "jonathan.schroeder@invitrocapital.com",
-    "timestamp": "2025-07-19T00:24:34.776Z"
+    "email": "jas2278@cornell.edu",
+    "timestamp": "2025-07-19T00:34:37.394Z"
   },
   {
     "firstName": "Access",
     "lastName": "Request",
+    "email": "jas2278@cornell.edu",
+    "timestamp": "2025-07-19T00:34:37.401Z"
+  },
+  {
+    "firstName": "Jonathan",
+    "lastName": "Schroeder",
+    "email": "jas2278@cornell.edu",
+    "timestamp": "2025-07-19T00:36:03.096Z"
+  },
+  {
+    "firstName": "Jonathan",
+    "lastName": "Schroeder",
+    "email": "jas2278@cornell.edu",
+    "timestamp": "2025-07-19T00:36:05.408Z",
+    "accredited": "true",
+    "accreditedSelections": [
+      "I have a net worth over $1 million, excluding my primary residence",
+      "I earned over $200,000 individually (or $300,000 with my spouse) in each of the last two years and expect the same this year"
+    ]
+  },
+  {
+    "firstName": "Access",
+    "lastName": "Request",
+    "email": "jas2278@cornell.edu",
+    "timestamp": "2025-07-19T00:36:09.988Z"
+  },
+  {
+    "firstName": "Jonathan",
+    "lastName": "Schroeder",
     "email": "jonathan.schroeder@invitrocapital.com",
-    "timestamp": "2025-07-19T00:26:04.775Z"
+    "timestamp": "2025-07-19T00:36:29.911Z"
+  },
+  {
+    "firstName": "Jonathan",
+    "lastName": "Schroeder",
+    "email": "jonathan.schroeder@invitrocapital.com",
+    "timestamp": "2025-07-19T00:36:31.890Z",
+    "accredited": "true",
+    "accreditedSelections": [
+      "I earned over $200,000 individually (or $300,000 with my spouse) in each of the last two years and expect the same this year",
+      "I have a net worth over $1 million, excluding my primary residence"
+    ]
   },
   {
     "firstName": "Investment",
     "lastName": "Access",
     "email": "jonathan.schroeder@invitrocapital.com",
-    "timestamp": "2025-07-19T00:26:53.672Z"
+    "timestamp": "2025-07-19T00:36:35.416Z"
   },
   {
     "firstName": "Investment",
     "lastName": "Access",
     "email": "jonathan.schroeder@invitrocapital.com",
-    "timestamp": "2025-07-19T00:27:05.296Z"
+    "timestamp": "2025-07-19T00:36:35.427Z"
   },
   {
     "firstName": "Investment",
     "lastName": "Access",
     "email": "jonathan.schroeder@invitrocapital.com",
-    "timestamp": "2025-07-19T00:27:45.767Z"
+    "timestamp": "2025-07-19T00:36:57.168Z"
   },
   {
     "firstName": "Investment",
     "lastName": "Access",
     "email": "jonathan.schroeder@invitrocapital.com",
-    "timestamp": "2025-07-19T00:28:13.652Z"
+    "timestamp": "2025-07-19T00:36:57.181Z"
   },
   {
     "firstName": "Investment",
     "lastName": "Access",
     "email": "jonathan.schroeder@invitrocapital.com",
-    "timestamp": "2025-07-19T00:28:33.346Z"
+    "timestamp": "2025-07-19T00:38:10.285Z"
+  },
+  {
+    "firstName": "Jonathan",
+    "lastName": "Schroeder",
+    "email": "jonathan.schroeder@invitrocapital.com",
+    "timestamp": "2025-07-19T00:39:52.615Z"
+  },
+  {
+    "firstName": "Jonathan",
+    "lastName": "Schroeder",
+    "email": "jonathan.schroeder@invitrocapital.com",
+    "timestamp": "2025-07-19T00:43:47.272Z",
+    "accredited": "yes",
+    "accreditedSelections": []
+  },
+  {
+    "firstName": "Jonathan",
+    "lastName": "Schroeder",
+    "email": "jas2278@cornell.edu",
+    "timestamp": "2025-07-19T00:45:07.037Z"
+  },
+  {
+    "firstName": "Jonathan",
+    "lastName": "Schroeder",
+    "email": "jas2278@cornell.edu",
+    "timestamp": "2025-07-19T00:45:09.578Z",
+    "accredited": "true",
+    "accreditedSelections": [
+      "I hold a qualifying financial license (Series 7, 65, or 82)",
+      "I earned over $200,000 individually (or $300,000 with my spouse) in each of the last two years and expect the same this year"
+    ]
+  },
+  {
+    "firstName": "Access",
+    "lastName": "Request",
+    "email": "jas2278@cornell.edu",
+    "timestamp": "2025-07-19T00:45:22.734Z",
+    "accredited": "",
+    "accreditedSelections": []
+  },
+  {
+    "firstName": "Jonathan",
+    "lastName": "Schroeder",
+    "email": "jas2278@cornell.edu",
+    "timestamp": "2025-07-19T00:46:09.529Z"
+  },
+  {
+    "firstName": "Jonathan",
+    "lastName": "Schroeder",
+    "email": "jas2278@cornell.edu",
+    "timestamp": "2025-07-19T00:46:11.783Z",
+    "accredited": "true",
+    "accreditedSelections": [
+      "I earned over $200,000 individually (or $300,000 with my spouse) in each of the last two years and expect the same this year",
+      "I have a net worth over $1 million, excluding my primary residence"
+    ]
+  },
+  {
+    "firstName": "Access",
+    "lastName": "Request",
+    "email": "jas2278@cornell.edu",
+    "timestamp": "2025-07-19T00:46:14.425Z",
+    "accredited": "",
+    "accreditedSelections": []
+  },
+  {
+    "firstName": "Jonathan",
+    "lastName": "Schroeder",
+    "email": "jonathan.schroeder@invitrocapital.com",
+    "timestamp": "2025-07-19T00:47:18.474Z",
+    "accredited": "yes",
+    "accreditedSelections": [
+      "I earned over $200,000 individually (or $300,000 with my spouse) in each of the last two years and expect the same this year",
+      "I have a net worth over $1 million, excluding my primary residence"
+    ]
+  },
+  {
+    "firstName": "Jonathan",
+    "lastName": "Schroeder",
+    "email": "jonathan.schroeder@invitrocapital.com",
+    "timestamp": "2025-07-19T00:47:40.943Z"
+  },
+  {
+    "firstName": "Jonathan",
+    "lastName": "Schroeder",
+    "email": "jonathan.schroeder@invitrocapital.com",
+    "timestamp": "2025-07-19T00:47:43.603Z",
+    "accredited": "true",
+    "accreditedSelections": [
+      "I earned over $200,000 individually (or $300,000 with my spouse) in each of the last two years and expect the same this year",
+      "I have a net worth over $1 million, excluding my primary residence"
+    ]
+  },
+  {
+    "firstName": "Jonathan",
+    "lastName": "Schroeder",
+    "email": "jas2278@cornell.edu",
+    "timestamp": "2025-07-19T00:48:01.831Z"
+  },
+  {
+    "firstName": "Jonathan",
+    "lastName": "Schroeder",
+    "email": "jas2278@cornell.edu",
+    "timestamp": "2025-07-19T00:48:04.551Z",
+    "accredited": "true",
+    "accreditedSelections": [
+      "I earned over $200,000 individually (or $300,000 with my spouse) in each of the last two years and expect the same this year",
+      "I have a net worth over $1 million, excluding my primary residence"
+    ]
+  },
+  {
+    "firstName": "Access",
+    "lastName": "Request",
+    "email": "jas2278@cornell.edu",
+    "timestamp": "2025-07-19T00:48:07.947Z",
+    "accredited": "",
+    "accreditedSelections": []
+  },
+  {
+    "firstName": "Access",
+    "lastName": "Request",
+    "email": "jas2278@cornell.edu",
+    "timestamp": "2025-07-19T00:48:07.953Z",
+    "accredited": "",
+    "accreditedSelections": []
+  },
+  {
+    "firstName": "Jonathan",
+    "lastName": "Schroeder",
+    "email": "jonathan.schroeder@invitrocapital.com",
+    "timestamp": "2025-07-19T00:48:42.806Z",
+    "accredited": "yes",
+    "accreditedSelections": [
+      "I have a net worth over $1 million, excluding my primary residence",
+      "I earned over $200,000 individually (or $300,000 with my spouse) in each of the last two years and expect the same this year"
+    ]
+  },
+  {
+    "firstName": "Jonathan",
+    "lastName": "Schroeder",
+    "email": "jonathan.schroeder@invitrocapital.com",
+    "timestamp": "2025-07-19T00:53:49.510Z"
+  },
+  {
+    "firstName": "Jonathan",
+    "lastName": "Schroeder",
+    "email": "jonathan.schroeder@invitrocapital.com",
+    "timestamp": "2025-07-19T00:53:51.452Z",
+    "accredited": "true",
+    "accreditedSelections": [
+      "I earned over $200,000 individually (or $300,000 with my spouse) in each of the last two years and expect the same this year",
+      "I have a net worth over $1 million, excluding my primary residence"
+    ]
   },
   {
     "firstName": "Investment",
     "lastName": "Access",
     "email": "jonathan.schroeder@invitrocapital.com",
-    "timestamp": "2025-07-19T00:28:33.354Z"
+    "timestamp": "2025-07-19T00:53:56.722Z"
   },
   {
     "firstName": "Investment",
     "lastName": "Access",
     "email": "jonathan.schroeder@invitrocapital.com",
-    "timestamp": "2025-07-19T00:28:36.647Z"
+    "timestamp": "2025-07-19T00:54:10.921Z"
   },
   {
     "firstName": "Investment",
     "lastName": "Access",
     "email": "jonathan.schroeder@invitrocapital.com",
-    "timestamp": "2025-07-19T00:28:36.668Z"
+    "timestamp": "2025-07-19T00:54:10.952Z"
   },
   {
     "firstName": "Investment",
     "lastName": "Access",
     "email": "jonathan.schroeder@invitrocapital.com",
-    "timestamp": "2025-07-19T00:28:43.625Z"
+    "timestamp": "2025-07-19T00:54:12.569Z"
   },
   {
     "firstName": "Investment",
     "lastName": "Access",
     "email": "jonathan.schroeder@invitrocapital.com",
-    "timestamp": "2025-07-19T00:28:43.643Z"
+    "timestamp": "2025-07-19T00:54:12.579Z"
   },
   {
     "firstName": "Investment",
     "lastName": "Access",
     "email": "jonathan.schroeder@invitrocapital.com",
-    "timestamp": "2025-07-19T00:28:55.916Z"
+    "timestamp": "2025-07-19T00:54:15.105Z"
   },
   {
     "firstName": "Investment",
     "lastName": "Access",
     "email": "jonathan.schroeder@invitrocapital.com",
-    "timestamp": "2025-07-19T00:29:25.955Z"
+    "timestamp": "2025-07-19T00:54:15.122Z"
   },
   {
     "firstName": "Investment",
     "lastName": "Access",
     "email": "jonathan.schroeder@invitrocapital.com",
-    "timestamp": "2025-07-19T00:29:25.966Z"
+    "timestamp": "2025-07-19T00:54:19.185Z"
+  },
+  {
+    "firstName": "Access",
+    "lastName": "Request",
+    "email": "jas2278@cornell.edu",
+    "timestamp": "2025-07-19T00:54:25.777Z"
   },
   {
     "firstName": "Investment",
     "lastName": "Access",
     "email": "jonathan.schroeder@invitrocapital.com",
-    "timestamp": "2025-07-19T00:29:36.303Z"
+    "timestamp": "2025-07-19T00:54:29.580Z"
   },
   {
     "firstName": "Investment",
     "lastName": "Access",
     "email": "jonathan.schroeder@invitrocapital.com",
-    "timestamp": "2025-07-19T00:29:36.330Z"
+    "timestamp": "2025-07-19T00:54:44.845Z"
   },
   {
     "firstName": "Investment",
     "lastName": "Access",
     "email": "jonathan.schroeder@invitrocapital.com",
-    "timestamp": "2025-07-19T00:29:44.472Z"
+    "timestamp": "2025-07-19T00:54:44.853Z"
   },
   {
     "firstName": "Investment",
     "lastName": "Access",
     "email": "jonathan.schroeder@invitrocapital.com",
-    "timestamp": "2025-07-19T00:29:49.199Z"
+    "timestamp": "2025-07-19T00:54:56.254Z"
   },
   {
     "firstName": "Investment",
     "lastName": "Access",
     "email": "jonathan.schroeder@invitrocapital.com",
-    "timestamp": "2025-07-19T00:29:49.214Z"
+    "timestamp": "2025-07-19T01:14:09.788Z"
   },
   {
     "firstName": "Investment",
     "lastName": "Access",
     "email": "jonathan.schroeder@invitrocapital.com",
-    "timestamp": "2025-07-19T00:29:54.548Z"
+    "timestamp": "2025-07-19T01:14:11.618Z"
   },
   {
     "firstName": "Investment",
     "lastName": "Access",
     "email": "jonathan.schroeder@invitrocapital.com",
-    "timestamp": "2025-07-19T00:29:54.581Z"
+    "timestamp": "2025-07-19T01:14:11.622Z"
   },
   {
     "firstName": "Investment",
     "lastName": "Access",
     "email": "jonathan.schroeder@invitrocapital.com",
-    "timestamp": "2025-07-19T00:31:09.583Z"
+    "timestamp": "2025-07-19T01:14:13.474Z"
   },
   {
     "firstName": "Investment",
     "lastName": "Access",
     "email": "jonathan.schroeder@invitrocapital.com",
-    "timestamp": "2025-07-19T00:31:16.485Z"
+    "timestamp": "2025-07-19T01:14:13.487Z"
   },
   {
     "firstName": "Investment",
     "lastName": "Access",
     "email": "jonathan.schroeder@invitrocapital.com",
-    "timestamp": "2025-07-19T00:31:20.298Z"
+    "timestamp": "2025-07-19T01:14:15.578Z"
   },
   {
     "firstName": "Investment",
     "lastName": "Access",
     "email": "jonathan.schroeder@invitrocapital.com",
-    "timestamp": "2025-07-19T00:31:20.327Z"
+    "timestamp": "2025-07-19T01:14:15.582Z"
+  },
+  {
+    "firstName": "Jonathan",
+    "lastName": "Schroeder",
+    "email": "jon.schroeder13@gmail.om",
+    "timestamp": "2025-07-19T01:23:05.509Z"
+  },
+  {
+    "firstName": "Jonathan",
+    "lastName": "Schroeder",
+    "email": "jon.schroeder13@gmail.om",
+    "timestamp": "2025-07-19T01:23:14.548Z",
+    "accredited": "true",
+    "accreditedSelections": [
+      "I earned over $200,000 individually (or $300,000 with my spouse) in each of the last two years and expect the same this year"
+    ]
+  },
+  {
+    "firstName": "Access",
+    "lastName": "Request",
+    "email": "jas2278@cornell.edu",
+    "timestamp": "2025-07-19T01:23:25.878Z"
   },
   {
     "firstName": "Investment",
     "lastName": "Access",
     "email": "jonathan.schroeder@invitrocapital.com",
-    "timestamp": "2025-07-19T00:31:23.536Z"
+    "timestamp": "2025-07-19T01:23:35.671Z"
   },
   {
     "firstName": "Investment",
     "lastName": "Access",
     "email": "jonathan.schroeder@invitrocapital.com",
-    "timestamp": "2025-07-19T00:31:23.551Z"
+    "timestamp": "2025-07-19T01:23:44.611Z"
   },
   {
     "firstName": "Investment",
     "lastName": "Access",
     "email": "jonathan.schroeder@invitrocapital.com",
-    "timestamp": "2025-07-19T00:31:28.138Z"
+    "timestamp": "2025-07-19T01:23:45.936Z"
   },
   {
     "firstName": "Investment",
     "lastName": "Access",
     "email": "jonathan.schroeder@invitrocapital.com",
-    "timestamp": "2025-07-19T00:31:28.160Z"
+    "timestamp": "2025-07-19T01:23:45.966Z"
   },
   {
     "firstName": "Investment",
     "lastName": "Access",
     "email": "jonathan.schroeder@invitrocapital.com",
-    "timestamp": "2025-07-19T00:31:34.981Z"
+    "timestamp": "2025-07-19T01:23:47.396Z"
   },
   {
     "firstName": "Investment",
     "lastName": "Access",
     "email": "jonathan.schroeder@invitrocapital.com",
-    "timestamp": "2025-07-19T00:31:35.002Z"
+    "timestamp": "2025-07-19T01:23:47.401Z"
+  },
+  {
+    "firstName": "Investment",
+    "lastName": "Access",
+    "email": "jonathan.schroeder@invitrocapital.com",
+    "timestamp": "2025-07-19T01:24:30.454Z"
+  },
+  {
+    "firstName": "Investment",
+    "lastName": "Access",
+    "email": "jonathan.schroeder@invitrocapital.com",
+    "timestamp": "2025-07-19T01:28:27.775Z"
+  },
+  {
+    "firstName": "Investment",
+    "lastName": "Access",
+    "email": "jonathan.schroeder@invitrocapital.com",
+    "timestamp": "2025-07-19T01:28:27.788Z"
+  },
+  {
+    "firstName": "Jon",
+    "lastName": "Schro",
+    "email": "jonathan.schroeder@invitrocapital.com",
+    "timestamp": "2025-07-19T01:28:39.817Z"
+  },
+  {
+    "firstName": "Jon",
+    "lastName": "Schro",
+    "email": "jonathan.schroeder@invitrocapital.com",
+    "timestamp": "2025-07-19T01:28:42.108Z",
+    "accredited": "true",
+    "accreditedSelections": [
+      "I earned over $200,000 individually (or $300,000 with my spouse) in each of the last two years and expect the same this year",
+      "I have a net worth over $1 million, excluding my primary residence"
+    ]
   }
 ]
