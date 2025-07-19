@@ -192,14 +192,14 @@ export default function DealsShowcase() {
   }
 
     return (
-    <div className="space-y-16">
+    <div className="space-y-12 sm:space-y-16">
       {/* Open Deals */}
       <section>
-        <div className="flex items-center gap-3 mb-8">
-          <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
-          <h2 className="text-3xl font-bold text-gray-900">Open Deals ({openDeals.length})</h2>
+        <div className="flex items-center gap-2 sm:gap-3 mb-6 sm:mb-8">
+          <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 bg-blue-500 rounded-full"></div>
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">Open Deals ({openDeals.length})</h2>
         </div>
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-4 sm:gap-6 md:grid-cols-2 lg:grid-cols-3">
             {openDeals.map((deal) => (
               <DealCard key={deal.id} deal={deal} onDocumentClick={handleDocumentClick} />
             ))}
@@ -208,11 +208,11 @@ export default function DealsShowcase() {
 
               {/* Upcoming Deals */}
       <section>
-        <div className="flex items-center gap-3 mb-8">
-          <div className="w-3 h-3 bg-orange-500 rounded-full"></div>
-          <h2 className="text-3xl font-bold text-gray-900">Upcoming Deals ({upcomingDeals.length})</h2>
+        <div className="flex items-center gap-2 sm:gap-3 mb-6 sm:mb-8">
+          <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 bg-orange-500 rounded-full"></div>
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">Upcoming Deals ({upcomingDeals.length})</h2>
         </div>
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-4 sm:gap-6 md:grid-cols-2 lg:grid-cols-3">
             {upcomingDeals.map((deal) => (
               <DealCard key={deal.id} deal={deal} onDocumentClick={handleDocumentClick} />
             ))}
@@ -221,11 +221,11 @@ export default function DealsShowcase() {
 
               {/* Closed Deals */}
       <section>
-        <div className="flex items-center gap-3 mb-8">
-          <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-          <h2 className="text-3xl font-bold text-gray-900">Closed Deals ({closedDeals.length})</h2>
+        <div className="flex items-center gap-2 sm:gap-3 mb-6 sm:mb-8">
+          <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 bg-green-500 rounded-full"></div>
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">Closed Deals ({closedDeals.length})</h2>
         </div>
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-4 sm:gap-6 md:grid-cols-2 lg:grid-cols-3">
             {closedDeals.map((deal) => (
               <DealCard key={deal.id} deal={deal} onDocumentClick={handleDocumentClick} />
             ))}
@@ -289,28 +289,28 @@ function DealCard({
 }) {
   return (
     <Card className="hover:shadow-xl transition-all duration-300 border-gray-200 bg-white">
-      <CardHeader className="pb-4">
+      <CardHeader className="pb-3 sm:pb-4">
         <div className="flex items-center justify-between mb-2">
-          <CardTitle className="text-xl font-bold text-gray-900">{deal.transactionName}</CardTitle>
-          <Badge className={`${getStatusColor(deal.status)} font-semibold`}>{getStatusText(deal.status)}</Badge>
+          <CardTitle className="text-lg sm:text-xl font-bold text-gray-900">{deal.transactionName}</CardTitle>
+          <Badge className={`${getStatusColor(deal.status)} font-semibold text-xs sm:text-sm`}>{getStatusText(deal.status)}</Badge>
         </div>
-        <CardDescription className="text-sm font-medium text-blue-600">{deal.industry}</CardDescription>
+        <CardDescription className="text-xs sm:text-sm font-medium text-blue-600">{deal.industry}</CardDescription>
       </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="grid grid-cols-2 gap-4 text-sm">
+      <CardContent className="space-y-3 sm:space-y-4">
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 text-xs sm:text-sm">
           <div>
             <p className="text-gray-500 font-medium">{deal.status === "closed" ? "Capital Raised" : "Target Raise"}</p>
-            <p className="font-semibold text-lg">{deal.targetRaise}</p>
+            <p className="font-semibold text-base sm:text-lg">{deal.targetRaise}</p>
           </div>
           <div>
             <p className="text-gray-500 font-medium">{deal.status === "closed" ? "Round Ownership" : "Target Ownership"}</p>
-            <p className="font-semibold text-lg">{deal.targetOwnership}</p>
+            <p className="font-semibold text-base sm:text-lg">{deal.targetOwnership}</p>
           </div>
         </div>
 
         <Separator />
 
-        <div className="space-y-2 text-sm">
+        <div className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm">
           <div className="flex justify-between">
             <span className="text-gray-500">Traction:</span>
             <span className="font-medium">{deal.id === "curenta" ? "180K ARR" : deal.id === "osta" ? "600K AR" : deal.id === "allcare" ? "480K ARR" : deal.id === "needles" ? "Build Stage" : deal.id === "allrx" ? "$12M AR" : "TBD"}</span>
@@ -335,38 +335,38 @@ function DealCard({
 
         <Separator />
 
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-1.5 sm:gap-2">
           {deal.status === "open" ? (
             <>
               <Button
                 variant="outline"
                 size="sm"
-                className="justify-start bg-transparent cursor-pointer"
+                className="justify-start bg-transparent cursor-pointer text-xs sm:text-sm h-8 sm:h-9"
                 onClick={() => onDocumentClick(deal.id, "memo")}
               >
-                <FileText className="w-4 h-4 mr-2" />
+                <FileText className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1.5 sm:mr-2" />
                 Investment Memo
-                <ExternalLink className="w-3 h-3 ml-auto" />
+                <ExternalLink className="w-2.5 h-2.5 sm:w-3 sm:h-3 ml-auto" />
               </Button>
               <Button
                 variant="outline"
                 size="sm"
-                className="justify-start bg-transparent cursor-pointer"
+                className="justify-start bg-transparent cursor-pointer text-xs sm:text-sm h-8 sm:h-9"
                 onClick={() => onDocumentClick(deal.id === "curenta" ? "long-term-care" : deal.id, "thesis")}
               >
-                <Users className="w-4 h-4 mr-2" />
+                <Users className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1.5 sm:mr-2" />
                 Industry Thesis
-                <ExternalLink className="w-3 h-3 ml-auto" />
+                <ExternalLink className="w-2.5 h-2.5 sm:w-3 sm:h-3 ml-auto" />
               </Button>
               <Button
                 variant="outline"
                 size="sm"
-                className="justify-start bg-transparent cursor-pointer"
+                className="justify-start bg-transparent cursor-pointer text-xs sm:text-sm h-8 sm:h-9"
                 onClick={() => onDocumentClick(deal.id, "decomposition")}
               >
-                <TrendingUp className="w-4 h-4 mr-2" />
+                <TrendingUp className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1.5 sm:mr-2" />
                 Industry Decomposition
-                <ExternalLink className="w-3 h-3 ml-auto" />
+                <ExternalLink className="w-2.5 h-2.5 sm:w-3 sm:h-3 ml-auto" />
               </Button>
             </>
           ) : null /* Document buttons hidden for closed and upcoming deals */}

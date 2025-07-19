@@ -86,12 +86,12 @@ export default function AdminVisitorsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground px-8 py-12 max-w-7xl mx-auto">
-      <div className="flex items-center justify-between mb-8">
-        <h1 className="text-3xl font-bold">Visitor Log</h1>
+    <div className="min-h-screen bg-background text-foreground px-4 sm:px-8 py-8 sm:py-12 max-w-7xl mx-auto">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 sm:gap-0 mb-6 sm:mb-8">
+        <h1 className="text-2xl sm:text-3xl font-bold">Visitor Log</h1>
         <Link href="/admin/permissions">
-          <Button className="bg-blue-600 hover:bg-blue-700 text-white">
-            <Shield className="w-4 h-4 mr-2" />
+          <Button className="bg-blue-600 hover:bg-blue-700 text-white text-sm sm:text-base">
+            <Shield className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1.5 sm:mr-2" />
             Manage Permissions
           </Button>
         </Link>
@@ -99,18 +99,18 @@ export default function AdminVisitorsPage() {
 
       {/* Search and Filter Controls */}
       <div className="mb-6">
-        <div className="text-sm text-gray-600 mb-4">
+        <div className="text-xs sm:text-sm text-gray-600 mb-3 sm:mb-4">
           Showing {filteredVisitors.length} of {visitors.length} records
         </div>
-        <div className="flex flex-col sm:flex-row gap-4">
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
           <div className="flex-1">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-3.5 h-3.5 sm:w-4 sm:h-4" />
               <Input
                 placeholder="Search by email, first name, or last name..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
+                className="pl-9 sm:pl-10 text-sm sm:text-base"
               />
             </div>
           </div>
@@ -118,7 +118,7 @@ export default function AdminVisitorsPage() {
             <select
               value={filterType}
               onChange={(e) => setFilterType(e.target.value)}
-              className="px-3 py-2 border border-gray-300 rounded-md bg-white"
+              className="px-2 sm:px-3 py-2 border border-gray-300 rounded-md bg-white text-xs sm:text-sm"
             >
               <option value="all">All Records</option>
               <option value="access_attempts">Access Attempts</option>
@@ -133,6 +133,7 @@ export default function AdminVisitorsPage() {
               }}
               variant="outline"
               size="sm"
+              className="text-xs sm:text-sm"
             >
               Clear
             </Button>
@@ -140,26 +141,26 @@ export default function AdminVisitorsPage() {
         </div>
       </div>
       {loading ? (
-        <div>Loading...</div>
+        <div className="text-center py-8">Loading...</div>
       ) : filteredVisitors.length === 0 ? (
-        <div className="text-center py-8 text-gray-500">
+        <div className="text-center py-8 text-gray-500 text-sm sm:text-base">
           {visitors.length === 0 ? "No visitors yet." : "No records match your search/filter criteria."}
         </div>
       ) : (
         <div className="overflow-x-auto w-full">
-          <table className="min-w-[1200px] border border-gray-200 rounded-lg">
+          <table className="min-w-[1000px] sm:min-w-[1200px] border border-gray-200 rounded-lg">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-4 py-2 border-b text-left">First Name</th>
-                <th className="px-4 py-2 border-b text-left">Last Name</th>
-                <th className="px-4 py-2 border-b text-left">Email</th>
-                <th className="px-4 py-2 border-b text-left">Timestamp</th>
-                <th className="px-4 py-2 border-b text-left">Access Type</th>
-                <th className="px-4 py-2 border-b text-left">Request Type</th>
-                <th className="px-4 py-2 border-b text-left">Access Granted</th>
-                <th className="px-4 py-2 border-b text-left">Accredited</th>
-                <th className="px-4 py-2 border-b text-left">Accredited Selections</th>
-                <th className="px-4 py-2 border-b text-left">Actions</th>
+                <th className="px-2 sm:px-4 py-2 border-b text-left text-xs sm:text-sm">First Name</th>
+                <th className="px-2 sm:px-4 py-2 border-b text-left text-xs sm:text-sm">Last Name</th>
+                <th className="px-2 sm:px-4 py-2 border-b text-left text-xs sm:text-sm">Email</th>
+                <th className="px-2 sm:px-4 py-2 border-b text-left text-xs sm:text-sm">Timestamp</th>
+                <th className="px-2 sm:px-4 py-2 border-b text-left text-xs sm:text-sm">Access Type</th>
+                <th className="px-2 sm:px-4 py-2 border-b text-left text-xs sm:text-sm">Request Type</th>
+                <th className="px-2 sm:px-4 py-2 border-b text-left text-xs sm:text-sm">Access Granted</th>
+                <th className="px-2 sm:px-4 py-2 border-b text-left text-xs sm:text-sm">Accredited</th>
+                <th className="px-2 sm:px-4 py-2 border-b text-left text-xs sm:text-sm">Accredited Selections</th>
+                <th className="px-2 sm:px-4 py-2 border-b text-left text-xs sm:text-sm">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -167,24 +168,24 @@ export default function AdminVisitorsPage() {
                 const originalIndex = visitors.findIndex(visitor => visitor === v);
                 return (
                 <tr key={i} className={i % 2 === 0 ? "bg-white" : "bg-gray-50"}>
-                  <td className="px-4 py-2 border-b">{v.firstName}</td>
-                  <td className="px-4 py-2 border-b">{v.lastName}</td>
-                  <td className="px-4 py-2 border-b">{v.email}</td>
-                  <td className="px-4 py-2 border-b font-mono text-xs">{new Date(v.timestamp).toLocaleString()}</td>
-                  <td className="px-4 py-2 border-b">
+                  <td className="px-2 sm:px-4 py-2 border-b text-xs sm:text-sm">{v.firstName}</td>
+                  <td className="px-2 sm:px-4 py-2 border-b text-xs sm:text-sm">{v.lastName}</td>
+                  <td className="px-2 sm:px-4 py-2 border-b text-xs sm:text-sm">{v.email}</td>
+                  <td className="px-2 sm:px-4 py-2 border-b font-mono text-xs">{new Date(v.timestamp).toLocaleString()}</td>
+                  <td className="px-2 sm:px-4 py-2 border-b">
                     {v.accessAttempt ? (
-                      <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs">
+                      <span className="px-1.5 sm:px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs">
                         {v.accessType === 'access_request' ? 'Access Request' : 'Investment Access'}
                       </span>
                     ) : (
-                      <span className="px-2 py-1 bg-gray-100 text-gray-800 rounded text-xs">
+                      <span className="px-1.5 sm:px-2 py-1 bg-gray-100 text-gray-800 rounded text-xs">
                         Deal Document
                       </span>
                     )}
                   </td>
-                  <td className="px-4 py-2 border-b">
+                  <td className="px-2 sm:px-4 py-2 border-b">
                     {v.accessAttempt ? (
-                      <span className={`px-2 py-1 rounded text-xs ${
+                      <span className={`px-1.5 sm:px-2 py-1 rounded text-xs ${
                         v.requestType === 'unauthorized_request' 
                           ? 'bg-orange-100 text-orange-800' 
                           : 'bg-green-100 text-green-800'
@@ -192,14 +193,14 @@ export default function AdminVisitorsPage() {
                         {v.requestType === 'unauthorized_request' ? '🔒 Unauthorized Request' : '✅ Authorized Access'}
                       </span>
                     ) : (
-                      <span className="px-2 py-1 bg-gray-100 text-gray-800 rounded text-xs">
+                      <span className="px-1.5 sm:px-2 py-1 bg-gray-100 text-gray-800 rounded text-xs">
                         N/A
                       </span>
                     )}
                   </td>
-                  <td className="px-4 py-2 border-b">
+                  <td className="px-2 sm:px-4 py-2 border-b">
                     {v.accessAttempt ? (
-                      <span className={`px-2 py-1 rounded text-xs ${
+                      <span className={`px-1.5 sm:px-2 py-1 rounded text-xs ${
                         v.hasAccess 
                           ? 'bg-green-100 text-green-800' 
                           : 'bg-red-100 text-red-800'
@@ -207,25 +208,25 @@ export default function AdminVisitorsPage() {
                         {v.hasAccess ? '✅ Granted' : '❌ Denied'}
                       </span>
                     ) : (
-                      <span className="px-2 py-1 bg-gray-100 text-gray-800 rounded text-xs">
+                      <span className="px-1.5 sm:px-2 py-1 bg-gray-100 text-gray-800 rounded text-xs">
                         N/A
                       </span>
                     )}
                   </td>
-                  <td className="px-4 py-2 border-b">{v.accredited !== undefined ? String(v.accredited) : ""}</td>
-                  <td className="px-4 py-2 border-b">
+                  <td className="px-2 sm:px-4 py-2 border-b text-xs sm:text-sm">{v.accredited !== undefined ? String(v.accredited) : ""}</td>
+                  <td className="px-2 sm:px-4 py-2 border-b text-xs sm:text-sm">
                     {Array.isArray(v.accreditedSelections)
                       ? v.accreditedSelections.join(", ")
                       : v.accreditedSelections || ""}
                   </td>
-                  <td className="px-4 py-2 border-b">
+                  <td className="px-2 sm:px-4 py-2 border-b">
                     <Button
                       onClick={() => handleDelete(originalIndex)}
                       variant="outline"
                       size="sm"
-                      className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                      className="text-red-600 hover:text-red-700 hover:bg-red-50 h-7 sm:h-8 w-7 sm:w-8 p-0"
                     >
-                      <Trash2 className="w-4 h-4" />
+                      <Trash2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                     </Button>
                   </td>
                 </tr>

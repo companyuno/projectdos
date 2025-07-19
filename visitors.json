@@ -505,5 +505,22 @@
       "I earned over $200,000 individually (or $300,000 with my spouse) in each of the last two years and expect the same this year",
       "I have a net worth over $1 million, excluding my primary residence"
     ]
+  },
+  {
+    "firstName": "Jonathan",
+    "lastName": "Schroeder",
+    "email": "jonathan.schroeder@invitrocapital.com",
+    "timestamp": "2025-07-19T02:26:14.151Z"
+  },
+  {
+    "firstName": "Jonathan",
+    "lastName": "Schroeder",
+    "email": "jonathan.schroeder@invitrocapital.com",
+    "timestamp": "2025-07-19T02:26:16.465Z",
+    "accredited": "true",
+    "accreditedSelections": [
+      "I earned over $200,000 individually (or $300,000 with my spouse) in each of the last two years and expect the same this year",
+      "I have a net worth over $1 million, excluding my primary residence"
+    ]
   }
 ]

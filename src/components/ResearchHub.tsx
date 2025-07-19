@@ -102,6 +102,12 @@ const categoryConfig: Record<string, {
     color: "bg-purple-50 border-purple-200",
     iconColor: "text-purple-600",
   },
+  "industry-decompositions": {
+    title: "Industry Decompositions",
+    icon: Folder,
+    color: "bg-orange-50 border-orange-200",
+    iconColor: "text-orange-600",
+  },
 }
 
 // Accredited investor options
@@ -580,25 +586,25 @@ function FolderSection({
   return (
     <div>
       <button
-        className="w-full flex items-center px-6 py-4 text-left hover:bg-gray-50 focus:outline-none"
+        className="w-full flex items-center px-4 sm:px-6 py-3 sm:py-4 text-left hover:bg-gray-50 focus:outline-none"
         onClick={onToggle}
         aria-expanded={isExpanded}
       >
-        <span className={`mr-4 ${config.iconColor}`}>
-          {isExpanded ? <FolderOpen className="w-6 h-6" /> : <Folder className="w-6 h-6" />}
+        <span className={`mr-3 sm:mr-4 ${config.iconColor} flex-shrink-0`}>
+          {isExpanded ? <FolderOpen className="w-5 h-5 sm:w-6 sm:h-6" /> : <Folder className="w-5 h-5 sm:w-6 sm:h-6" />}
         </span>
-        <span className="text-lg font-semibold flex-1 flex items-center gap-2">
-          {config.title}
-          <span className="inline-flex items-center justify-center rounded-full bg-gray-200 text-gray-700 text-xs font-semibold w-6 h-6">
+        <span className="text-base sm:text-lg font-semibold flex-1 flex items-center gap-2 min-w-0">
+          <span className="truncate">{config.title}</span>
+          <span className="inline-flex items-center justify-center rounded-full bg-gray-200 text-gray-700 text-xs font-semibold w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0">
             {papers.length}
           </span>
         </span>
-        <span className="ml-2 text-gray-400">
-          {isExpanded ? <ChevronDown className="w-5 h-5" /> : <ChevronRight className="w-5 h-5" />}
+        <span className="ml-2 text-gray-400 flex-shrink-0">
+          {isExpanded ? <ChevronDown className="w-4 h-4 sm:w-5 sm:h-5" /> : <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />}
         </span>
       </button>
       {isExpanded && (
-        <div className={`ml-6 px-8 pb-6 border-l-4 ${config.color.split(' ')[1]}`}> 
+        <div className={`ml-4 sm:ml-6 px-4 sm:px-8 pb-4 sm:pb-6 border-l-4 ${config.color.split(' ')[1]}`}> 
           {papers.length === 0 ? (
             <div className="text-gray-500 italic py-4">{placeholderText || "No documents available."}</div>
           ) : (
@@ -617,17 +623,17 @@ function FolderSection({
 function FileItem({ paper, onPaperClick }: { paper: ResearchPaper; onPaperClick: (paperId: string) => void }) {
   return (
     <li
-      className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-100 cursor-pointer transition"
+      className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg hover:bg-gray-100 cursor-pointer transition"
       onClick={() => onPaperClick(paper.id)}
     >
-      <FileText className="w-5 h-5 text-gray-400 flex-shrink-0" />
+      <FileText className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400 flex-shrink-0" />
       <div className="flex-1 min-w-0">
-        <div className="truncate text-base font-semibold">
+        <div className="truncate text-sm sm:text-base font-semibold">
           {paper.title}
         </div>
         <div className="text-xs text-gray-500 truncate">{paper.description}</div>
       </div>
-      <span className="text-xs text-gray-400 whitespace-nowrap ml-2">{paper.readTime}</span>
+      <span className="text-xs text-gray-400 whitespace-nowrap ml-1 sm:ml-2 flex-shrink-0">{paper.readTime}</span>
     </li>
   )
 } 
