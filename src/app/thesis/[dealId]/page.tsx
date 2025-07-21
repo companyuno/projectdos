@@ -695,7 +695,7 @@ export default function IndustryThesis() {
                 {thesis.content.structuralObservations?.title}
               </h2>
               <div className="space-y-4">
-                {thesis.content.structuralObservations?.observations?.map((obs: any, index: number) => (
+                {thesis.content.structuralObservations?.observations?.map((obs: { title: string; content: string }, index: number) => (
                   <div
                     key={index}
                     className={`p-6 rounded-lg border-l-4 ${
@@ -773,7 +773,7 @@ export default function IndustryThesis() {
                     </tr>
                   </thead>
                   <tbody>
-                    {thesis.content.workflowFit?.table?.map((row: any, index: number) => (
+                    {thesis.content.workflowFit?.table?.map((row: { workflow: string; segmentFit: string; productFit: string; reason: string }, index: number) => (
                       <tr key={index} className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}>
                         <td className="border border-border px-4 py-3 font-medium text-foreground text-base">{row.workflow}</td>
                         <td className="border border-border px-4 py-3 text-muted-foreground text-base">{row.segmentFit}</td>
@@ -827,7 +827,7 @@ export default function IndustryThesis() {
                     </tr>
                   </thead>
                   <tbody>
-                    {thesis.content.productStrategy?.table?.map((row: any, index: number) => (
+                    {thesis.content.productStrategy?.table?.map((row: { startingPoint: string; expansionPath: string; conditions: string }, index: number) => (
                       <tr key={index} className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}>
                         <td className="border border-border px-4 py-3 font-medium text-foreground text-base">
                           {row.startingPoint}
@@ -861,7 +861,7 @@ export default function IndustryThesis() {
               <p className="text-muted-foreground leading-relaxed text-base mb-6">{thesis.content.segmentStrategy?.intro}</p>
 
               <div className="space-y-2">
-                {thesis.content.segmentStrategy?.segments?.map((segment: any, index: number) => (
+                {thesis.content.segmentStrategy?.segments?.map((segment: { name: string; description: string }, index: number) => (
                   <div key={index} className="bg-gray-50 border border-accent/20 rounded-lg px-4 py-2">
                     <h3 className="text-base font-semibold text-foreground mb-1">{segment.name}</h3>
                     <p className="text-muted-foreground text-base leading-relaxed mb-0">{segment.description}</p>
@@ -888,7 +888,7 @@ export default function IndustryThesis() {
               <div className="mb-8">
                 <h3 className="text-lg font-semibold text-foreground mb-4">Sales timelines vary by segment:</h3>
                 <div className="space-y-2">
-                  {thesis.content.salesRealities?.timelines?.map((timeline: any, index: number) => (
+                  {thesis.content.salesRealities?.timelines?.map((timeline: { segment: string; timeline: string; note: string }, index: number) => (
                     <div key={index} className="flex items-start bg-gray-50 border border-accent/20 rounded-lg px-4 py-2">
                       <div className="flex-1 font-medium text-foreground text-base">
                         {timeline.segment}
@@ -903,7 +903,7 @@ export default function IndustryThesis() {
               <div className="mb-8">
                 <h3 className="text-lg font-semibold text-foreground mb-4">Key buyer personas across segments:</h3>
                 <div className="space-y-2">
-                  {thesis.content.salesRealities?.buyerPersonas?.map((persona: any, index: number) => (
+                  {thesis.content.salesRealities?.buyerPersonas?.map((persona: { title: string; description: string }, index: number) => (
                     <div key={index} className="bg-gray-50 border border-accent/20 rounded-lg px-4 py-2">
                       <div className="font-semibold text-foreground text-base">{persona.title}</div>
                       <div className="text-sm text-muted-foreground mb-1">{persona.description}</div>

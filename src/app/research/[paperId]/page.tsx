@@ -517,7 +517,7 @@ export default function ResearchPaper() {
                       </tr>
                     </thead>
                     <tbody>
-                      {paper.content.industryStructure.map((row: any, index: number) => (
+                      {paper.content.industryStructure.map((row: { subsegment: string; description: string; examples: string }, index: number) => (
                         <tr key={index} className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}>
                           <td className="border border-gray-300 px-4 py-3 font-medium text-gray-800">
                             {row.subsegment}
@@ -560,7 +560,7 @@ export default function ResearchPaper() {
                       </tr>
                     </thead>
                     <tbody>
-                      {paper.content.studioFilter.map((row: any, index: number) => (
+                      {paper.content.studioFilter.map((row: { filter: string; assessment: string; comment: string }, index: number) => (
                         <tr key={index} className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}>
                           <td className="border border-gray-300 px-4 py-3 font-medium text-gray-800">{row.filter}</td>
                           <td className="border border-gray-300 px-4 py-3 text-center">
@@ -606,7 +606,7 @@ export default function ResearchPaper() {
                       </tr>
                     </thead>
                     <tbody>
-                      {paper.content.workflowDecomposition.map((row: any, index: number) => (
+                      {paper.content.workflowDecomposition.map((row: { stage: string; description: string; keyRisk: string; invitroControl: string }, index: number) => (
                         <tr key={index} className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}>
                           <td className="border border-gray-300 px-4 py-3 font-medium text-gray-800">{row.stage}</td>
                           <td className="border border-gray-300 px-4 py-3 text-gray-700">{row.description}</td>
@@ -625,7 +625,7 @@ export default function ResearchPaper() {
               <div>
                 <h3 className="text-xl font-semibold mb-4">IV. Studio Wedges Anchored to Drug Delivery Workflow</h3>
                 <div className="space-y-6">
-                  {paper.content.studioWedges.map((wedge: any, index: number) => (
+                  {paper.content.studioWedges.map((wedge: { title: string; thesis: string; fulfillmentRole?: string; studioAdvantage?: string; pharmacyAdvantage?: string; pharmacyRole?: string; applicableConditions?: string; studioFit?: string; competitors?: string }, index: number) => (
                     <div
                       key={index}
                       className="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-lg border border-blue-200"
@@ -705,7 +705,7 @@ export default function ResearchPaper() {
                       </tr>
                     </thead>
                     <tbody>
-                      {paper.content.summary.map((row: any, index: number) => (
+                      {paper.content.summary.map((row: { wedge: string; currentPractice: string; studioAdvantage: string }, index: number) => (
                         <tr key={index} className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}>
                           <td className="border border-gray-300 px-4 py-3 font-medium text-gray-800">{row.wedge}</td>
                           <td className="border border-gray-300 px-4 py-3 text-gray-700">{row.currentPractice}</td>
@@ -736,7 +736,7 @@ export default function ResearchPaper() {
                       </tr>
                     </thead>
                     <tbody>
-                      {paper.content.marketSubsegmentation.map((row: any, index: number) => (
+                      {paper.content.marketSubsegmentation.map((row: { subsegment: string; description: string; targetUser: string; primaryBuyer: string; examples: string }, index: number) => (
                         <tr key={index} className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}>
                           <td className="border border-gray-300 px-4 py-3 font-medium text-gray-800">{row.subsegment}</td>
                           <td className="border border-gray-300 px-4 py-3 text-gray-700">{row.description}</td>
@@ -795,7 +795,7 @@ export default function ResearchPaper() {
               <div>
                 <h3 className="text-xl font-semibold mb-4">III. Defensible Product Wedges in Healthcare E-Learning</h3>
                 <div className="space-y-8">
-                  {paper.content.productWedges.map((wedge: any, index: number) => (
+                  {paper.content.productWedges.map((wedge: { name: string; description: string; buyer: string; market: string; pricing: string; acv: string; competitiveWhitespace: string; verdict: string }, index: number) => (
                     <div
                       key={index}
                       className={`p-6 rounded-lg border-2 ${
@@ -850,7 +850,7 @@ export default function ResearchPaper() {
                       </tr>
                     </thead>
                     <tbody>
-                      {paper.content.summaryTable.map((row: any, index: number) => (
+                      {paper.content.summaryTable.map((row: { wedge: string; marketSize: string; buyerStrength: string; competitiveWhiteSpace: string; studioFit: string }, index: number) => (
                         <tr key={index} className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}>
                           <td className="border border-gray-300 px-4 py-3 font-medium text-gray-800">{row.wedge}</td>
                           <td className="border border-gray-300 px-4 py-3 text-center"><span className={`px-2 py-1 rounded text-sm font-medium ${

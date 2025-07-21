@@ -4,6 +4,12 @@ import path from 'path';
 
 const PERMISSIONS_FILE = path.resolve(process.cwd(), 'permissions.json');
 
+// Define a type for permission objects
+interface Permission {
+  email: string;
+  [key: string]: unknown;
+}
+
 export async function GET() {
   try {
     const file = await fs.readFile(PERMISSIONS_FILE, 'utf-8');
@@ -37,7 +43,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Check if email already exists
-    const emailExists = permissions.some((p: any) => p.email === newPermission.email);
+    const emailExists = permissions.some((p: Permission) => p.email === newPermission.email);
     if (emailExists) {
       return NextResponse.json({ error: 'Email already has permission' }, { status: 400 });
     }
@@ -65,7 +71,7 @@ export async function DELETE(req: NextRequest) {
       return NextResponse.json({ error: 'No permissions found' }, { status: 404 });
     }
 
-    const filteredPermissions = permissions.filter((p: any) => p.email !== body.email);
+    const filteredPermissions = permissions.filter((p: Permission) => p.email !== body.email);
     
     if (filteredPermissions.length === permissions.length) {
       return NextResponse.json({ error: 'Permission not found' }, { status: 404 });
