@@ -6,7 +6,7 @@ import { Separator } from "@/components/ui/separator"
 import { ArrowLeft, Download } from "lucide-react"
 import { useRouter, useParams } from "next/navigation"
 
-const researchContent: Record<string, any> = {
+const researchContent: Record<string, unknown> = {
   "venture-studio-methodology": {
     title: "The InVitro Venture Studio Methodology",
     category: "InVitro Build Process",

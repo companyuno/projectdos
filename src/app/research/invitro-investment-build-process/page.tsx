@@ -121,7 +121,7 @@ export default function InVitroInvestmentBuildProcess() {
                   <h4 className="font-semibold text-yellow-800 mb-3">Extended Timelines</h4>
                   <ul className="space-y-2 text-sm text-yellow-700">
                     <li>• VC companies: 10-12 years to liquidity</li>
-                    <li>• Growing "zombie" startup population</li>
+                    <li>• Growing &quot;zombie&quot; startup population</li>
                     <li>• Capital-draining, unexitable assets</li>
                   </ul>
                 </div>
@@ -165,7 +165,7 @@ export default function InVitroInvestmentBuildProcess() {
                     <div>
                       <h4 className="text-lg font-semibold text-blue-900 mb-2">Create</h4>
                       <p className="text-blue-800">
-                        The fund doesn't chase deals, it builds them. By identifying overlooked sectors with high labor
+                        The fund doesn&apos;t chase deals, it builds them. By identifying overlooked sectors with high labor
                         intensity, low tech penetration, and fragmentation, InVitro launches companies with embedded
                         operational leverage and consolidation potential.
                       </p>
@@ -198,7 +198,7 @@ export default function InVitroInvestmentBuildProcess() {
                       <p className="text-purple-800">
                         Centralized tech and talent infrastructure reduce marginal build cost and increase execution
                         speed. Investments are staged across 3–4 tranches based on live commercial traction, ensuring
-                        capital only scales what's working.
+                        capital only scales what&apos;s working.
                       </p>
                     </div>
                   </div>
@@ -346,7 +346,7 @@ export default function InVitroInvestmentBuildProcess() {
             <div>
               <h3 className="text-xl font-semibold text-gray-800 mb-6">Liquidity Outlook</h3>
               <p className="text-gray-700 leading-relaxed mb-6">
-                In contrast to traditional VC's 10+ year cycles, InVitro targets exit readiness within 3–5 year windows.
+                In contrast to traditional VC&apos;s 10+ year cycles, InVitro targets exit readiness within 3–5 year windows.
               </p>
 
               <div className="grid md:grid-cols-3 gap-6">
@@ -403,7 +403,7 @@ export default function InVitroInvestmentBuildProcess() {
                       </div>
                       <h4 className="font-semibold text-gray-900 mb-2">Shortlist Creation</h4>
                       <p className="text-sm text-gray-700">
-                        Filter to 10–15 "fertile ground" sectors for deeper analysis
+                        Filter to 10–15 &quot;fertile ground&quot; sectors for deeper analysis
                       </p>
                     </div>
                   </div>
@@ -606,7 +606,7 @@ export default function InVitroInvestmentBuildProcess() {
             <h2 className="text-2xl font-bold text-gray-900 mb-6 border-b-2" style={{ borderColor: '#0a2e4e' }}>IX. Conclusion</h2>
             <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-8 rounded-lg border border-blue-200">
               <p className="text-lg text-gray-800 leading-relaxed mb-4">
-                InVitro Capital is not just a response to structural inefficiencies in private markets—it's a strategy
+                InVitro Capital is not just a response to structural inefficiencies in private markets—it&apos;s a strategy
                 designed to thrive in them.
               </p>
               <p className="text-gray-700 leading-relaxed mb-4">
@@ -614,7 +614,7 @@ export default function InVitroInvestmentBuildProcess() {
                 InVitro unlocks a new path to venture-scale returns without the venture-style chaos.
               </p>
               <p className="text-gray-700 leading-relaxed font-medium">
-                This is not venture capital rebranded. It's a new category: a capital-controlled, outcome-aligned,
+                This is not venture capital rebranded. It&apos;s a new category: a capital-controlled, outcome-aligned,
                 execution-driven platform for building the next generation of enduring companies.
               </p>
             </div>
