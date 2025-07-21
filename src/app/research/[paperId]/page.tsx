@@ -5,8 +5,78 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { ArrowLeft, Download } from "lucide-react"
 import { useRouter, useParams } from "next/navigation"
+import Image from "next/image"
 
-const researchContent: Record<string, unknown> = {
+// Define the type for research paper content at the top or above the component
+
+type ResearchPaperContent = {
+  investorSummary?: string;
+  industryStructure?: Array<{ subsegment: string; description: string; examples: string }>;
+  studioFilter?: Array<{ filter: string; assessment: string; comment: string }>;
+  workflowDecomposition?: Array<{ stage: string; description: string; keyRisk: string; invitroControl: string }>;
+  studioWedges?: Array<{
+    title: string;
+    thesis: string;
+    fulfillmentRole?: string;
+    studioAdvantage?: string;
+    pharmacyAdvantage?: string;
+    pharmacyRole?: string;
+    applicableConditions?: string;
+    competitors?: string;
+    studioFit?: string;
+  }>;
+  summary?: Array<{ wedge: string; currentPractice: string; studioAdvantage: string }>;
+  conclusion?: string;
+  nextSteps?: string[];
+  marketSubsegmentation?: Array<{ subsegment: string; description: string; targetUser: string; primaryBuyer: string; examples: string }>;
+  studioFitTest?: {
+    structuralInefficiency: {
+      laborIntensive: string;
+      techStarved: string;
+      fragmented: string;
+    };
+    buildFeasibility: {
+      favorable: string;
+      avoid: string;
+    };
+    wedgeDefensibility: {
+      strong: string;
+      weak: string;
+    };
+    capitalEfficiency: string;
+    returnPotential: string;
+  };
+  productWedges?: Array<{
+    name: string;
+    description: string;
+    buyer: string;
+    market: string;
+    pricing: string;
+    acv: string;
+    competitiveWhitespace: string;
+    verdict: string;
+  }>;
+  summaryTable?: Array<{
+    wedge: string;
+    marketSize: string;
+    buyerStrength: string;
+    competitiveWhiteSpace: string;
+    studioFit: string;
+  }>;
+  [key: string]: unknown;
+};
+
+type ResearchPaperData = {
+  title: string;
+  category: string;
+  publishDate: string;
+  readTime: string;
+  tags: string[];
+  summary?: string;
+  content: ResearchPaperContent;
+};
+
+const researchContent: Record<string, ResearchPaperData> = {
   "venture-studio-methodology": {
     title: "The InVitro Venture Studio Methodology",
     category: "InVitro Build Process",
@@ -442,7 +512,7 @@ export default function ResearchPaper() {
   const router = useRouter()
   const params = useParams()
   const paperId = params.paperId as string
-  const paper = researchContent[paperId] || researchContent["healthcare-prescription-dtc-thesis"] as { title: string; content: any };
+  const paper = (researchContent[paperId] || researchContent["healthcare-prescription-dtc-thesis"]) as ResearchPaperData;
 
   return (
     <div className="min-h-screen bg-gray-50 text-foreground">
@@ -457,7 +527,7 @@ export default function ResearchPaper() {
             Back to Research
           </Button>
           <div className="flex-1 flex justify-center">
-            <img src="/logo.png" alt="InVitro Capital Logo" width={180} height={48} style={{ objectFit: 'contain' }} />
+            <Image src="/logo.png" alt="InVitro Capital Logo" width={180} height={48} style={{ objectFit: 'contain' }} />
           </div>
           <Button 
             className="bg-white text-[hsl(212,74%,15%)] border border-[hsl(212,74%,15%)] hover:bg-[hsl(212,74%,97%)] hover:text-[hsl(212,74%,20%)] ml-4"
@@ -480,24 +550,24 @@ export default function ResearchPaper() {
           </Button>
         </div>
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-foreground mb-2">{(paper as { title: string; content: any }).title}</h1>
+          <h1 className="text-3xl font-bold text-foreground mb-2">{paper.title}</h1>
         </div>
         <Card>
           <CardContent className="space-y-8">
             <Separator />
 
             {/* Investor Summary for DTC thesis */}
-            {(paper as { title: string; content: any }).content.investorSummary && (
+            {paper.content.investorSummary && (
               <div>
                 <h3 className="text-xl font-semibold mb-4">Investor Summary</h3>
                 <div className="bg-blue-50 p-6 rounded-lg border border-blue-200">
-                  <p className="text-gray-700 leading-relaxed whitespace-pre-line">{(paper as { title: string; content: any }).content.investorSummary}</p>
+                  <p className="text-gray-700 leading-relaxed whitespace-pre-line">{paper.content.investorSummary}</p>
                 </div>
               </div>
             )}
 
             {/* Industry Structure */}
-            {(paper as { title: string; content: any }).content.industryStructure && (
+            {paper.content.industryStructure && (
               <div>
                 <h3 className="text-xl font-semibold mb-4">I. Reframing the Industry Structure</h3>
                 <div className="overflow-x-auto mb-4">
@@ -516,7 +586,7 @@ export default function ResearchPaper() {
                       </tr>
                     </thead>
                     <tbody>
-                      {(paper as { title: string; content: any }).content.industryStructure.map((row: { subsegment: string; description: string; examples: string }, index: number) => (
+                      {paper.content.industryStructure.map((row: { subsegment: string; description: string; examples: string }, index: number) => (
                         <tr key={index} className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}>
                           <td className="border border-gray-300 px-4 py-3 font-medium text-gray-800">
                             {row.subsegment}
@@ -540,7 +610,7 @@ export default function ResearchPaper() {
             )}
 
             {/* Studio Filter Assessment */}
-            {(paper as { title: string; content: any }).content.studioFilter && (
+            {paper.content.studioFilter && (
               <div>
                 <h3 className="text-xl font-semibold mb-4">II. Studio Filter Assessment</h3>
                 <div className="overflow-x-auto">
@@ -559,7 +629,7 @@ export default function ResearchPaper() {
                       </tr>
                     </thead>
                     <tbody>
-                      {(paper as { title: string; content: any }).content.studioFilter.map((row: { filter: string; assessment: string; comment: string }, index: number) => (
+                      {paper.content.studioFilter.map((row: { filter: string; assessment: string; comment: string }, index: number) => (
                         <tr key={index} className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}>
                           <td className="border border-gray-300 px-4 py-3 font-medium text-gray-800">{row.filter}</td>
                           <td className="border border-gray-300 px-4 py-3 text-center">
@@ -583,7 +653,7 @@ export default function ResearchPaper() {
             )}
 
             {/* Workflow Decomposition */}
-            {(paper as { title: string; content: any }).content.workflowDecomposition && (
+            {paper.content.workflowDecomposition && (
               <div>
                 <h3 className="text-xl font-semibold mb-4">III. Workflow Decomposition for Drug Delivery Platforms</h3>
                 <div className="overflow-x-auto">
@@ -605,7 +675,7 @@ export default function ResearchPaper() {
                       </tr>
                     </thead>
                     <tbody>
-                      {(paper as { title: string; content: any }).content.workflowDecomposition.map((row: { stage: string; description: string; keyRisk: string; invitroControl: string }, index: number) => (
+                      {paper.content.workflowDecomposition.map((row: { stage: string; description: string; keyRisk: string; invitroControl: string }, index: number) => (
                         <tr key={index} className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}>
                           <td className="border border-gray-300 px-4 py-3 font-medium text-gray-800">{row.stage}</td>
                           <td className="border border-gray-300 px-4 py-3 text-gray-700">{row.description}</td>
@@ -620,11 +690,11 @@ export default function ResearchPaper() {
             )}
 
             {/* Studio Wedges */}
-            {(paper as { title: string; content: any }).content.studioWedges && (
+            {paper.content.studioWedges && (
               <div>
                 <h3 className="text-xl font-semibold mb-4">IV. Studio Wedges Anchored to Drug Delivery Workflow</h3>
                 <div className="space-y-6">
-                  {(paper as { title: string; content: any }).content.studioWedges.map((wedge: { title: string; thesis: string; fulfillmentRole?: string; studioAdvantage?: string; pharmacyAdvantage?: string; pharmacyRole?: string; applicableConditions?: string; studioFit?: string; competitors?: string }, index: number) => (
+                  {paper.content.studioWedges.map((wedge: { title: string; thesis: string; fulfillmentRole?: string; studioAdvantage?: string; pharmacyAdvantage?: string; pharmacyRole?: string; applicableConditions?: string; competitors?: string; studioFit?: string }, index: number) => (
                     <div
                       key={index}
                       className="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-lg border border-blue-200"
@@ -665,16 +735,16 @@ export default function ResearchPaper() {
                             <span className="text-gray-700">{wedge.applicableConditions}</span>
                           </div>
                         )}
-                        {wedge.studioFit && (
-                          <div>
-                            <span className="font-semibold text-gray-800">Studio Fit: </span>
-                            <span className="text-gray-700">{wedge.studioFit}</span>
-                          </div>
-                        )}
                         {wedge.competitors && (
                           <div>
                             <span className="font-semibold text-gray-800">Competitors: </span>
                             <span className="text-gray-700">{wedge.competitors}</span>
+                          </div>
+                        )}
+                        {wedge.studioFit && (
+                          <div>
+                            <span className="font-semibold text-gray-800">Studio Fit: </span>
+                            <span className="text-gray-700">{wedge.studioFit}</span>
                           </div>
                         )}
                       </div>
@@ -685,7 +755,7 @@ export default function ResearchPaper() {
             )}
 
             {/* Summary */}
-            {(paper as { title: string; content: any }).content.summary && (
+            {paper.content.summary && (
               <div>
                 <h3 className="text-xl font-semibold mb-4">V. Summary: Drug Delivery Workflow as Defensible Moat</h3>
                 <div className="overflow-x-auto">
@@ -704,7 +774,7 @@ export default function ResearchPaper() {
                       </tr>
                     </thead>
                     <tbody>
-                      {(paper as { title: string; content: any }).content.summary.map((row: { wedge: string; currentPractice: string; studioAdvantage: string }, index: number) => (
+                      {paper.content.summary.map((row: { wedge: string; currentPractice: string; studioAdvantage: string }, index: number) => (
                         <tr key={index} className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}>
                           <td className="border border-gray-300 px-4 py-3 font-medium text-gray-800">{row.wedge}</td>
                           <td className="border border-gray-300 px-4 py-3 text-gray-700">{row.currentPractice}</td>
@@ -720,7 +790,7 @@ export default function ResearchPaper() {
 
 
             {/* Healthcare E-Learning Market Subsegmentation */}
-            {(paper as { title: string; content: any }).content.marketSubsegmentation && (
+            {paper.content.marketSubsegmentation && (
               <div>
                 <h3 className="text-xl font-semibold mb-4">I. Subsegmenting the Healthcare E-Learning Market (MECE Framework)</h3>
                 <div className="overflow-x-auto mb-4">
@@ -735,7 +805,7 @@ export default function ResearchPaper() {
                       </tr>
                     </thead>
                     <tbody>
-                      {(paper as { title: string; content: any }).content.marketSubsegmentation.map((row: { subsegment: string; description: string; targetUser: string; primaryBuyer: string; examples: string }, index: number) => (
+                      {paper.content.marketSubsegmentation.map((row: { subsegment: string; description: string; targetUser: string; primaryBuyer: string; examples: string }, index: number) => (
                         <tr key={index} className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}>
                           <td className="border border-gray-300 px-4 py-3 font-medium text-gray-800">{row.subsegment}</td>
                           <td className="border border-gray-300 px-4 py-3 text-gray-700">{row.description}</td>
@@ -751,50 +821,50 @@ export default function ResearchPaper() {
             )}
 
             {/* Studio Model Fit Test for E-Learning */}
-            {(paper as { title: string; content: any }).content.studioFitTest && (
+            {paper.content.studioFitTest && (
               <div>
                 <h3 className="text-xl font-semibold mb-4">II. Studio Model Fit Test: Should We Build in Healthcare E-Learning?</h3>
                 <div className="space-y-6">
                   <div className="bg-red-50 p-6 rounded-lg border border-red-200">
                     <h4 className="text-lg font-semibold text-red-800 mb-4">1. Structural Inefficiency</h4>
                     <div className="space-y-3">
-                      <div><span className="font-semibold text-red-800">Labor-Intensive: </span><span className="text-red-700">{(paper as { title: string; content: any }).content.studioFitTest.structuralInefficiency.laborIntensive}</span></div>
-                      <div><span className="font-semibold text-red-800">Tech-Starved: </span><span className="text-red-700">{(paper as { title: string; content: any }).content.studioFitTest.structuralInefficiency.techStarved}</span></div>
-                      <div><span className="font-semibold text-red-800">Fragmented: </span><span className="text-red-700">{(paper as { title: string; content: any }).content.studioFitTest.structuralInefficiency.fragmented}</span></div>
+                      <div><span className="font-semibold text-red-800">Labor-Intensive: </span><span className="text-red-700">{(paper.content.studioFitTest.structuralInefficiency.laborIntensive)}</span></div>
+                      <div><span className="font-semibold text-red-800">Tech-Starved: </span><span className="text-red-700">{(paper.content.studioFitTest.structuralInefficiency.techStarved)}</span></div>
+                      <div><span className="font-semibold text-red-800">Fragmented: </span><span className="text-red-700">{(paper.content.studioFitTest.structuralInefficiency.fragmented)}</span></div>
                     </div>
                   </div>
                   <div className="bg-blue-50 p-6 rounded-lg border border-blue-200">
                     <h4 className="text-lg font-semibold text-blue-800 mb-4">2. Build Feasibility</h4>
                     <div className="space-y-3">
-                      <div><span className="font-semibold text-blue-800">Favorable: </span><span className="text-blue-700">{(paper as { title: string; content: any }).content.studioFitTest.buildFeasibility.favorable}</span></div>
-                      <div><span className="font-semibold text-blue-800">Avoid: </span><span className="text-blue-700">{(paper as { title: string; content: any }).content.studioFitTest.buildFeasibility.avoid}</span></div>
+                      <div><span className="font-semibold text-blue-800">Favorable: </span><span className="text-blue-700">{(paper.content.studioFitTest.buildFeasibility.favorable)}</span></div>
+                      <div><span className="font-semibold text-blue-800">Avoid: </span><span className="text-blue-700">{(paper.content.studioFitTest.buildFeasibility.avoid)}</span></div>
                     </div>
                   </div>
                   <div className="bg-green-50 p-6 rounded-lg border border-green-200">
                     <h4 className="text-lg font-semibold text-green-800 mb-4">3. Wedge Defensibility</h4>
                     <div className="space-y-3">
-                      <div><span className="font-semibold text-green-800">Strong: </span><span className="text-green-700">{(paper as { title: string; content: any }).content.studioFitTest.wedgeDefensibility.strong}</span></div>
-                      <div><span className="font-semibold text-green-800">Weak: </span><span className="text-green-700">{(paper as { title: string; content: any }).content.studioFitTest.wedgeDefensibility.weak}</span></div>
+                      <div><span className="font-semibold text-green-800">Strong: </span><span className="text-green-700">{(paper.content.studioFitTest.wedgeDefensibility.strong)}</span></div>
+                      <div><span className="font-semibold text-green-800">Weak: </span><span className="text-green-700">{(paper.content.studioFitTest.wedgeDefensibility.weak)}</span></div>
                     </div>
                   </div>
                   <div className="bg-yellow-50 p-6 rounded-lg border border-yellow-200">
                     <h4 className="text-lg font-semibold text-yellow-800 mb-4">4. Capital Efficiency</h4>
-                    <p className="text-yellow-700">{(paper as { title: string; content: any }).content.studioFitTest.capitalEfficiency}</p>
+                    <p className="text-yellow-700">{(paper.content.studioFitTest.capitalEfficiency)}</p>
                   </div>
                   <div className="bg-purple-50 p-6 rounded-lg border border-purple-200">
                     <h4 className="text-lg font-semibold text-purple-800 mb-4">5. Return Potential</h4>
-                    <p className="text-purple-700">{(paper as { title: string; content: any }).content.studioFitTest.returnPotential}</p>
+                    <p className="text-purple-700">{(paper.content.studioFitTest.returnPotential)}</p>
                   </div>
                 </div>
               </div>
             )}
 
             {/* Product Wedges for E-Learning */}
-            {(paper as { title: string; content: any }).content.productWedges && (
+            {paper.content.productWedges && (
               <div>
                 <h3 className="text-xl font-semibold mb-4">III. Defensible Product Wedges in Healthcare E-Learning</h3>
                 <div className="space-y-8">
-                  {(paper as { title: string; content: any }).content.productWedges.map((wedge: { name: string; description: string; buyer: string; market: string; pricing: string; acv: string; competitiveWhitespace: string; verdict: string }, index: number) => (
+                  {paper.content.productWedges.map((wedge: { name: string; description: string; buyer: string; market: string; pricing: string; acv: string; competitiveWhitespace: string; verdict: string }, index: number) => (
                     <div
                       key={index}
                       className={`p-6 rounded-lg border-2 ${
@@ -834,7 +904,7 @@ export default function ResearchPaper() {
             )}
 
             {/* Summary Table for E-Learning */}
-            {(paper as { title: string; content: any }).content.summaryTable && (
+            {paper.content.summaryTable && (
               <div>
                 <h3 className="text-xl font-semibold mb-4">IV. Summary Table: Studio Suitability by Wedge</h3>
                 <div className="overflow-x-auto">
@@ -849,7 +919,7 @@ export default function ResearchPaper() {
                       </tr>
                     </thead>
                     <tbody>
-                      {(paper as { title: string; content: any }).content.summaryTable.map((row: { wedge: string; marketSize: string; buyerStrength: string; competitiveWhiteSpace: string; studioFit: string }, index: number) => (
+                      {paper.content.summaryTable.map((row: { wedge: string; marketSize: string; buyerStrength: string; competitiveWhiteSpace: string; studioFit: string }, index: number) => (
                         <tr key={index} className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}>
                           <td className="border border-gray-300 px-4 py-3 font-medium text-gray-800">{row.wedge}</td>
                           <td className="border border-gray-300 px-4 py-3 text-center"><span className={`px-2 py-1 rounded text-sm font-medium ${
@@ -889,23 +959,23 @@ export default function ResearchPaper() {
             )}
 
             {/* Conclusion for E-Learning thesis */}
-            {(paper as { title: string; content: any }).content.conclusion && (paper as { title: string; content: any }).content.marketSubsegmentation && (
+            {paper.content.conclusion && paper.content.marketSubsegmentation && (
               <div>
                 <h3 className="text-xl font-semibold mb-4">V. Conclusion: Build the Infrastructure, Not the Content</h3>
                 <div className="space-y-6">
-                  <p className="text-gray-700 leading-relaxed whitespace-pre-line">{(paper as { title: string; content: any }).content.conclusion}</p>
+                  <p className="text-gray-700 leading-relaxed whitespace-pre-line">{paper.content.conclusion}</p>
                 </div>
               </div>
             )}
 
             {/* Conclusion for DTC thesis */}
-            {(paper as { title: string; content: any }).content.conclusion && !(paper as { title: string; content: any }).content.marketSubsegmentation && (
+            {paper.content.conclusion && !(paper.content.marketSubsegmentation) && (
               <div>
                 <h3 className="text-xl font-semibold mb-4">VI. Conclusion: Research Path Forward</h3>
                 <div className="space-y-6">
-                  <p className="text-gray-700 leading-relaxed whitespace-pre-line">{(paper as { title: string; content: any }).content.conclusion}</p>
+                  <p className="text-gray-700 leading-relaxed whitespace-pre-line">{paper.content.conclusion}</p>
 
-                  {(paper as { title: string; content: any }).content.nextSteps && (
+                  {paper.content.nextSteps && (
                     <div>
                       <h4 className="text-lg font-semibold text-gray-800 mb-4">
                         Next Steps: Research Process Framework
@@ -914,7 +984,7 @@ export default function ResearchPaper() {
                         To validate whether longitudinal personalization has sufficient market pull, we will undertake:
                       </p>
                       <ol className="space-y-3">
-                        {(paper as { title: string; content: any }).content.nextSteps.map((step: string, index: number) => (
+                        {paper.content.nextSteps.map((step: string, index: number) => (
                           <li key={index} className="flex items-start">
                             <div className="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center mr-4 flex-shrink-0 mt-1">
                               <span className="text-white font-bold text-sm">{index + 1}</span>
@@ -935,7 +1005,7 @@ export default function ResearchPaper() {
             )}
 
             {/* Default conclusion for other papers */}
-            {!(paper as { title: string; content: any }).content.conclusion && (
+            {!paper.content.conclusion && (
               <div className="bg-blue-50 p-6 rounded-lg">
                 <h3 className="text-xl font-semibold mb-3">Conclusion</h3>
                 <p className="text-gray-700">
