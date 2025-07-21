@@ -585,7 +585,7 @@ export default function ResearchPaper() {
                       </tr>
                     </thead>
                     <tbody>
-                      {(paper as ResearchPaper).content?.studioFilter.map((row: { filter: string; assessment: string; comment?: string }, index: number) => (
+                      {(paper as ResearchPaper).content?.studioFilter?.map((row: { filter: string; assessment: string; comment?: string }, index: number) => (
                         <tr key={index} className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}>
                           <td className="border border-gray-300 px-4 py-3 font-medium text-gray-800">{row.filter}</td>
                           <td className="border border-gray-300 px-4 py-3 text-center">
