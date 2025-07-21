@@ -5,7 +5,123 @@ import { ArrowLeft, Download } from "lucide-react"
 import { useRouter, useParams } from "next/navigation"
 import Image from "next/image"
 
-const thesisData: Record<string, any> = {
+// Define types for thesisData
+interface ExecutiveSummary {
+  title: string;
+  content: string;
+}
+
+interface Narrative {
+  title: string;
+  content: string;
+}
+
+interface StructuralObservation {
+  title: string;
+  observations: {
+    title: string;
+    content: string;
+  }[];
+}
+
+interface FundingSignals {
+  title: string;
+  intro: string;
+  wins: string[];
+  failures: string[];
+  conclusion: string;
+}
+
+interface WorkflowFit {
+  title: string;
+  intro: string;
+  table: {
+    workflow: string;
+    segmentFit: string;
+    productFit: string;
+    reason: string;
+  }[];
+  conclusion: string;
+}
+
+interface ProductStrategy {
+  title: string;
+  intro: string;
+  table: {
+    startingPoint: string;
+    expansionPath: string;
+    conditions: string;
+  }[];
+  whatNotToDo: string[];
+}
+
+interface SegmentStrategy {
+  title: string;
+  intro: string;
+  segments: {
+    name: string;
+    description: string;
+  }[];
+}
+
+interface SalesRealities {
+  title: string;
+  intro: string;
+  keyPoints: string[];
+  timelines: {
+    segment: string;
+    timeline: string;
+    note: string;
+  }[];
+  buyerPersonas: {
+    title: string;
+    description: string;
+  }[];
+  conclusion: string;
+}
+
+interface Conclusion {
+  title: string;
+  content: string;
+}
+
+interface Contact {
+  name: string;
+  title: string;
+  company: string;
+  email: string;
+}
+
+interface Sources {
+  [index: number]: string;
+}
+
+interface ThesisContent {
+  executiveSummary?: ExecutiveSummary;
+  narrative?: Narrative;
+  structuralObservations?: StructuralObservation;
+  fundingSignals?: FundingSignals;
+  workflowFit?: WorkflowFit;
+  productStrategy?: ProductStrategy;
+  segmentStrategy?: SegmentStrategy;
+  salesRealities?: SalesRealities;
+  conclusion?: Conclusion;
+  contact?: Contact;
+  sources?: Sources;
+}
+
+interface ThesisData {
+  [key: string]: {
+    title: string;
+    industry: string;
+    publishDate?: string;
+    readTime?: string;
+    tags?: string[];
+    content?: ThesisContent;
+  };
+}
+
+const thesisData: ThesisData = {
   curenta: {
     title: "InVitro Capital | Industry Thesis: Long-Term Care",
     industry: "Long-Term Care",
@@ -152,10 +268,10 @@ What follows is a structural breakdown of the major subsegments, their workflow 
           },
         ],
         whatNotToDo: [
-          'Don\'t oversell platform ambition. Operators pay to fix urgent problems—not to adopt "solutions."',
-          "Don't treat ops teams like software admins. They want fewer calls, fewer citations, and fewer surprises.",
-          "Don't assume integration is a selling point. Many prefer standalone tools that work from day one.",
-          "Don't confuse emotional value with ROI. Products must save time, reduce errors, or ensure compliance—or they won't get used.",
+          'Don&apos;t oversell platform ambition. Operators pay to fix urgent problems—not to adopt &quot;solutions.&quot;',
+          "Don&apos;t treat ops teams like software admins. They want fewer calls, fewer citations, and fewer surprises.",
+          "Don&apos;t assume integration is a selling point. Many prefer standalone tools that work from day one.",
+          "Don&apos;t confuse emotional value with ROI. Products must save time, reduce errors, or ensure compliance—or they won&apos;t get used.",
         ],
       },
       segmentStrategy: {
@@ -407,10 +523,10 @@ What follows is a structural breakdown of the major subsegments, their workflow 
           },
         ],
         whatNotToDo: [
-          'Don\'t oversell platform ambition. Operators pay to fix urgent problems—not to adopt "solutions."',
-          "Don't treat ops teams like software admins. They want fewer calls, fewer citations, and fewer surprises.",
-          "Don't assume integration is a selling point. Many prefer standalone tools that work from day one.",
-          "Don't confuse emotional value with ROI. Products must save time, reduce errors, or ensure compliance—or they won't get used.",
+          'Don&apos;t oversell platform ambition. Operators pay to fix urgent problems—not to adopt &quot;solutions.&quot;',
+          "Don&apos;t treat ops teams like software admins. They want fewer calls, fewer citations, and fewer surprises.",
+          "Don&apos;t assume integration is a selling point. Many prefer standalone tools that work from day one.",
+          "Don&apos;t confuse emotional value with ROI. Products must save time, reduce errors, or ensure compliance—or they won&apos;t get used.",
         ],
       },
       segmentStrategy: {
@@ -520,14 +636,6 @@ We aren't betting on digitizing LTC. We're betting on operators who desperately 
   allrx: {
     title: "Digital Health Industry Thesis",
     industry: "Pharmacy Operations",
-    marketSize: "$659B",
-    growthRate: "15.1% CAGR",
-    keyTrends: [
-      "Aging population driving healthcare demand",
-      "Shift towards preventive and personalized medicine",
-      "Integration of AI and machine learning in healthcare",
-      "Regulatory support for digital health solutions",
-    ],
   },
 }
 
@@ -566,28 +674,28 @@ export default function IndustryThesis() {
             {/* Executive Summary */}
             <section>
               <h2 className="text-2xl font-bold text-muted-foreground mb-6 border-b-2 border-accent pb-2">
-                {thesis.content.executiveSummary.title}
+                {thesis.content.executiveSummary?.title}
               </h2>
-              <p className="text-muted-foreground leading-relaxed text-base">{thesis.content.executiveSummary.content}</p>
+              <p className="text-muted-foreground leading-relaxed text-base">{thesis.content.executiveSummary?.content}</p>
             </section>
 
             {/* Narrative */}
             <section>
               <h2 className="text-2xl font-bold text-muted-foreground mb-6 border-b-2 border-accent pb-2">
-                {thesis.content.narrative.title}
+                {thesis.content.narrative?.title}
               </h2>
               <div className="text-muted-foreground leading-relaxed text-base whitespace-pre-line">
-                {thesis.content.narrative.content}
+                {thesis.content.narrative?.content}
               </div>
             </section>
 
             {/* Structural Observations */}
             <section>
               <h2 className="text-2xl font-bold text-muted-foreground mb-6 border-b-2 border-accent pb-2">
-                {thesis.content.structuralObservations.title}
+                {thesis.content.structuralObservations?.title}
               </h2>
               <div className="space-y-4">
-                {thesis.content.structuralObservations.observations.map((obs: any, index: number) => (
+                {thesis.content.structuralObservations?.observations?.map((obs: any, index: number) => (
                   <div
                     key={index}
                     className={`p-6 rounded-lg border-l-4 ${
@@ -606,14 +714,14 @@ export default function IndustryThesis() {
             {/* Funding Signals */}
             <section>
               <h2 className="text-2xl font-bold text-muted-foreground mb-6 border-b-2 border-accent pb-2">
-                {thesis.content.fundingSignals.title}
+                {thesis.content.fundingSignals?.title}
               </h2>
-              <p className="text-muted-foreground leading-relaxed text-base mb-8">{thesis.content.fundingSignals.intro}</p>
+              <p className="text-muted-foreground leading-relaxed text-base mb-8">{thesis.content.fundingSignals?.intro}</p>
 
               <div className="mb-8">
                 <h3 className="text-lg font-semibold text-green-700 mb-4">The wins are clear:</h3>
                 <ul className="space-y-3">
-                  {thesis.content.fundingSignals.wins.map((win: string, index: number) => (
+                  {thesis.content.fundingSignals?.wins?.map((win: string, index: number) => (
                     <li key={index} className="flex items-start">
                       <div className="w-2 h-2 bg-green-600 rounded-full mt-2 mr-4 flex-shrink-0"></div>
                       <span className="text-muted-foreground text-base">{win}</span>
@@ -625,7 +733,7 @@ export default function IndustryThesis() {
               <div className="mb-8">
                 <h3 className="text-lg font-semibold text-red-700 mb-4">Others didn't convert:</h3>
                 <ul className="space-y-3">
-                  {thesis.content.fundingSignals.failures.map((failure: string, index: number) => (
+                  {thesis.content.fundingSignals?.failures?.map((failure: string, index: number) => (
                     <li key={index} className="flex items-start">
                       <div className="w-2 h-2 bg-red-600 rounded-full mt-2 mr-4 flex-shrink-0"></div>
                       <span className="text-muted-foreground text-base">{failure}</span>
@@ -635,16 +743,16 @@ export default function IndustryThesis() {
               </div>
 
               <div className="bg-gray-100 p-6 rounded-lg">
-                <p className="text-accent-foreground leading-relaxed text-base">{thesis.content.fundingSignals.conclusion}</p>
+                <p className="text-accent-foreground leading-relaxed text-base">{thesis.content.fundingSignals?.conclusion}</p>
               </div>
             </section>
 
             {/* Workflow-Segment Fit */}
             <section>
               <h2 className="text-2xl font-bold text-muted-foreground mb-6 border-b-2 border-accent pb-2">
-                {thesis.content.workflowFit.title}
+                {thesis.content.workflowFit?.title}
               </h2>
-              <p className="text-muted-foreground leading-relaxed text-base mb-8">{thesis.content.workflowFit.intro}</p>
+              <p className="text-muted-foreground leading-relaxed text-base mb-8">{thesis.content.workflowFit?.intro}</p>
 
               <div className="overflow-x-auto mb-8">
                 <table className="w-full border-collapse border border-border">
@@ -665,7 +773,7 @@ export default function IndustryThesis() {
                     </tr>
                   </thead>
                   <tbody>
-                    {thesis.content.workflowFit.table.map((row: any, index: number) => (
+                    {thesis.content.workflowFit?.table?.map((row: any, index: number) => (
                       <tr key={index} className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}>
                         <td className="border border-border px-4 py-3 font-medium text-foreground text-base">{row.workflow}</td>
                         <td className="border border-border px-4 py-3 text-muted-foreground text-base">{row.segmentFit}</td>
@@ -692,16 +800,16 @@ export default function IndustryThesis() {
               </div>
 
               <div className="bg-gray-100 p-6 rounded-lg">
-                <p className="text-accent-foreground leading-relaxed text-base">{thesis.content.workflowFit.conclusion}</p>
+                <p className="text-accent-foreground leading-relaxed text-base">{thesis.content.workflowFit?.conclusion}</p>
               </div>
             </section>
 
             {/* Product Strategy */}
             <section>
               <h2 className="text-2xl font-bold text-muted-foreground mb-6 border-b-2 border-accent pb-2">
-                {thesis.content.productStrategy.title}
+                {thesis.content.productStrategy?.title}
               </h2>
-              <p className="text-muted-foreground leading-relaxed text-base mb-8">{thesis.content.productStrategy.intro}</p>
+              <p className="text-muted-foreground leading-relaxed text-base mb-8">{thesis.content.productStrategy?.intro}</p>
 
               <div className="overflow-x-auto mb-8">
                 <table className="w-full border-collapse border border-border">
@@ -719,7 +827,7 @@ export default function IndustryThesis() {
                     </tr>
                   </thead>
                   <tbody>
-                    {thesis.content.productStrategy.table.map((row: any, index: number) => (
+                    {thesis.content.productStrategy?.table?.map((row: any, index: number) => (
                       <tr key={index} className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}>
                         <td className="border border-border px-4 py-3 font-medium text-foreground text-base">
                           {row.startingPoint}
@@ -735,7 +843,7 @@ export default function IndustryThesis() {
               <div>
                 <h3 className="text-lg font-semibold text-red-700 mb-4">What Not to Do:</h3>
                 <ul className="space-y-3">
-                  {thesis.content.productStrategy.whatNotToDo.map((item: string, index: number) => (
+                  {thesis.content.productStrategy?.whatNotToDo?.map((item: string, index: number) => (
                     <li key={index} className="flex items-start">
                       <div className="w-2 h-2 bg-red-600 rounded-full mt-2 mr-4 flex-shrink-0"></div>
                       <span className="text-muted-foreground text-base">{item}</span>
@@ -748,12 +856,12 @@ export default function IndustryThesis() {
             {/* Segment Strategy */}
             <section>
               <h2 className="text-2xl font-bold text-muted-foreground mb-6 border-b-2 border-accent pb-2">
-                {thesis.content.segmentStrategy.title}
+                {thesis.content.segmentStrategy?.title}
               </h2>
-              <p className="text-muted-foreground leading-relaxed text-base mb-6">{thesis.content.segmentStrategy.intro}</p>
+              <p className="text-muted-foreground leading-relaxed text-base mb-6">{thesis.content.segmentStrategy?.intro}</p>
 
               <div className="space-y-2">
-                {thesis.content.segmentStrategy.segments.map((segment: any, index: number) => (
+                {thesis.content.segmentStrategy?.segments?.map((segment: any, index: number) => (
                   <div key={index} className="bg-gray-50 border border-accent/20 rounded-lg px-4 py-2">
                     <h3 className="text-base font-semibold text-foreground mb-1">{segment.name}</h3>
                     <p className="text-muted-foreground text-base leading-relaxed mb-0">{segment.description}</p>
@@ -765,12 +873,12 @@ export default function IndustryThesis() {
             {/* Sales Realities */}
             <section>
               <h2 className="text-2xl font-bold text-muted-foreground mb-6 border-b-2 border-accent pb-2">
-                {thesis.content.salesRealities.title}
+                {thesis.content.salesRealities?.title}
               </h2>
-              <p className="text-muted-foreground leading-relaxed text-base mb-6">{thesis.content.salesRealities.intro}</p>
+              <p className="text-muted-foreground leading-relaxed text-base mb-6">{thesis.content.salesRealities?.intro}</p>
 
               <ul className="list-disc pl-6 space-y-2 mb-8">
-                {thesis.content.salesRealities.keyPoints.map((point: string, index: number) => (
+                {thesis.content.salesRealities?.keyPoints?.map((point: string, index: number) => (
                   <li key={index} className="text-muted-foreground text-base leading-relaxed">
                     {point}
                   </li>
@@ -780,7 +888,7 @@ export default function IndustryThesis() {
               <div className="mb-8">
                 <h3 className="text-lg font-semibold text-foreground mb-4">Sales timelines vary by segment:</h3>
                 <div className="space-y-2">
-                  {thesis.content.salesRealities.timelines.map((timeline: any, index: number) => (
+                  {thesis.content.salesRealities?.timelines?.map((timeline: any, index: number) => (
                     <div key={index} className="flex items-start bg-gray-50 border border-accent/20 rounded-lg px-4 py-2">
                       <div className="flex-1 font-medium text-foreground text-base">
                         {timeline.segment}
@@ -795,7 +903,7 @@ export default function IndustryThesis() {
               <div className="mb-8">
                 <h3 className="text-lg font-semibold text-foreground mb-4">Key buyer personas across segments:</h3>
                 <div className="space-y-2">
-                  {thesis.content.salesRealities.buyerPersonas.map((persona: any, index: number) => (
+                  {thesis.content.salesRealities?.buyerPersonas?.map((persona: any, index: number) => (
                     <div key={index} className="bg-gray-50 border border-accent/20 rounded-lg px-4 py-2">
                       <div className="font-semibold text-foreground text-base">{persona.title}</div>
                       <div className="text-sm text-muted-foreground mb-1">{persona.description}</div>
@@ -805,18 +913,18 @@ export default function IndustryThesis() {
               </div>
 
               <div className="bg-gray-100 p-6 rounded-lg">
-                <p className="text-accent-foreground leading-relaxed text-base">{thesis.content.salesRealities.conclusion}</p>
+                <p className="text-accent-foreground leading-relaxed text-base">{thesis.content.salesRealities?.conclusion}</p>
               </div>
             </section>
 
             {/* Conclusion */}
             <section>
               <h2 className="text-2xl font-bold text-muted-foreground mb-6 border-b-2 border-accent pb-2">
-                {thesis.content.conclusion.title}
+                {thesis.content.conclusion?.title}
               </h2>
               <div className="bg-yellow-50 p-8 rounded-lg">
                 <div className="text-muted-foreground leading-relaxed text-base whitespace-pre-line">
-                  {thesis.content.conclusion.content}
+                  {thesis.content.conclusion?.content}
                 </div>
               </div>
             </section>
@@ -827,10 +935,10 @@ export default function IndustryThesis() {
                 For inquiries, detailed materials, or follow-up discussions, please contact:
               </h3>
               <div className="text-gray-700">
-                <p className="font-medium">{thesis.content.contact.name}</p>
-                <p>{thesis.content.contact.title}</p>
-                <p>{thesis.content.contact.company}</p>
-                <p className="text-blue-600">{thesis.content.contact.email}</p>
+                <p className="font-medium">{thesis.content.contact?.name}</p>
+                <p>{thesis.content.contact?.title}</p>
+                <p>{thesis.content.contact?.company}</p>
+                <p className="text-blue-600">{thesis.content.contact?.email}</p>
               </div>
             </section>
 
@@ -838,11 +946,11 @@ export default function IndustryThesis() {
             <section>
               <h2 className="text-2xl font-bold text-muted-foreground mb-6 border-b-2 border-accent pb-2">Sources</h2>
               <div className="space-y-2">
-                {thesis.content.sources.map((source: string, index: number) => (
+                {Array.isArray(thesis.content.sources) ? thesis.content.sources.map((source: string, index: number) => (
                   <p key={index} className="text-sm text-muted-foreground">
                     [{index + 1}] {source}
                   </p>
-                ))}
+                )) : null}
               </div>
             </section>
           </div>

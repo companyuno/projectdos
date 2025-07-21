@@ -5,7 +5,93 @@ import { ArrowLeft, Download } from "lucide-react"
 import { useRouter, useParams } from "next/navigation"
 import Image from "next/image"
 
-const decompositionData: Record<string, any> = {
+// Define types for decompositionData
+interface DecompositionContent {
+  criteriaScoring: {
+    title: string;
+    data: Array<{
+      filter: string;
+      score: number;
+      justification: string;
+    }>;
+  };
+  subsegmentation: {
+    title: string;
+    subtitle: string;
+    data: Array<{
+      subsegment: string;
+      description: string;
+      notes: string;
+    }>;
+  };
+  workflowDecomposition: {
+    title: string;
+    masterWorkflowList: {
+      title: string;
+      data: Array<{
+        workflow: string;
+        description: string;
+        currentTooling: string;
+        vendors: string;
+      }>;
+    };
+    functionalGroupings: {
+      title: string;
+      groups: string[];
+    };
+    workflowMatrices: {
+      title: string;
+      categories: Array<{
+        title: string;
+        workflows: Array<{
+          workflow: string;
+          snfs: string;
+          al: string;
+          boardCare: string;
+          homeHealth: string;
+          hospice: string;
+          competitors: string;
+        }>;
+      }>;
+    };
+  };
+  topPairs: {
+    title: string;
+    pairs: Array<{
+      title: string;
+      criteria: Array<{
+        item: string;
+        notes: string;
+      }>;
+    }>;
+  };
+  buyerPersonas: {
+    title: string;
+    personas: Array<{
+      buyer: string;
+      workflowOwned: string;
+      contextOfPain: string;
+      budgetControl: string;
+      notes: string;
+    }>;
+  };
+  // Add other sections as needed, using 'unknown' for now if structure is unclear
+  [key: string]: unknown;
+}
+
+interface DecompositionData {
+  [key: string]: {
+    title: string;
+    industry: string;
+    publishDate?: string;
+    readTime?: string;
+    tags?: string[];
+    summary?: string;
+    content?: DecompositionContent;
+  };
+}
+
+const decompositionData: DecompositionData = {
   curenta: {
     title: "Industry Decomposition: Long Term Care",
     industry: "Long Term Care",
@@ -69,7 +155,7 @@ const decompositionData: Record<string, any> = {
           },
           {
             subsegment: "Home Health Agencies",
-            description: "Provide care in a patient's home (e.g. nursing, therapy).",
+            description: "Provide care in a patient&apos;s home (e.g. nursing, therapy).",
             notes: "Heavily regulated. Some workflow digitization exists.",
           },
           {
@@ -412,7 +498,7 @@ const decompositionData: Record<string, any> = {
           {
             buyer: "Owner-Operator (Board & Care)",
             workflowOwned: "Staff Scheduling",
-            contextOfPain: "Constant call-offs, can't find coverage, no software",
+            contextOfPain: "Constant call-offs, can&apos;t find coverage, no software",
             budgetControl: "Yes",
             notes: "Tech-averse but open to low-friction tools.",
           },
@@ -512,7 +598,7 @@ export default function IndustryDecomposition() {
                     </tr>
                   </thead>
                   <tbody>
-                    {decomposition.content.criteriaScoring.data.map((row: any, index: number) => (
+                    {decomposition.content.criteriaScoring.data.map((row: { filter: string; score: number; justification: string }, index: number) => (
                       <tr key={index} className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}>
                         <td className="border border-gray-300 px-4 py-3 font-medium text-gray-800">{row.filter}</td>
                         <td className="border border-gray-300 px-4 py-3 text-center min-w-[120px]">
@@ -552,7 +638,7 @@ export default function IndustryDecomposition() {
                     </tr>
                   </thead>
                   <tbody>
-                    {decomposition.content.subsegmentation.data.map((row: any, index: number) => (
+                    {decomposition.content.subsegmentation.data.map((row: { subsegment: string; description: string; notes: string }, index: number) => (
                       <tr key={index} className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}>
                         <td className="border border-gray-300 px-4 py-3 font-medium text-gray-800">{row.subsegment}</td>
                         <td className="border border-gray-300 px-4 py-3 text-gray-700">{row.description}</td>
@@ -595,7 +681,7 @@ export default function IndustryDecomposition() {
                     </thead>
                     <tbody>
                       {decomposition.content.workflowDecomposition.masterWorkflowList.data.map(
-                        (row: any, index: number) => (
+                        (row: { workflow: string; description: string; currentTooling: string; vendors: string }, index: number) => (
                           <tr key={index} className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}>
                             <td className="border border-gray-300 px-4 py-3 font-medium text-gray-800">
                               {row.workflow}
@@ -640,7 +726,7 @@ export default function IndustryDecomposition() {
                 </h3>
                 <div className="space-y-8">
                   {decomposition.content.workflowDecomposition.workflowMatrices.categories.map(
-                    (category: any, categoryIndex: number) => (
+                    (category: { title: string; workflows: Array<{ workflow: string; snfs: string; al: string; boardCare: string; homeHealth: string; hospice: string; competitors: string }> }, categoryIndex: number) => (
                       <div key={categoryIndex} className="bg-gray-50 p-6 rounded-lg">
                         <h4 className="text-lg font-semibold text-gray-800 mb-4">{category.title}</h4>
                         <div className="overflow-x-auto">
@@ -671,7 +757,7 @@ export default function IndustryDecomposition() {
                               </tr>
                             </thead>
                             <tbody>
-                              {category.workflows.map((workflow: any, workflowIndex: number) => (
+                              {category.workflows.map((workflow: { workflow: string; snfs: string; al: string; boardCare: string; homeHealth: string; hospice: string; competitors: string }, workflowIndex: number) => (
                                 <tr key={workflowIndex} className={workflowIndex % 2 === 0 ? "bg-white" : "bg-gray-50"}>
                                   <td className="border border-gray-300 px-3 py-2 font-medium text-gray-800 text-sm">
                                     {workflow.workflow}
@@ -726,7 +812,7 @@ export default function IndustryDecomposition() {
                 {decomposition.content.topPairs.title}
               </h2>
               <div className="space-y-8">
-                {decomposition.content.topPairs.pairs.map((pair: any, index: number) => (
+                {decomposition.content.topPairs.pairs.map((pair: { title: string; criteria: Array<{ item: string; notes: string }> }, index: number) => (
                   <div
                     key={index}
                     className="bg-gradient-to-r from-accent/10 to-indigo-50 p-6 rounded-lg border border-accent/20"
@@ -745,7 +831,7 @@ export default function IndustryDecomposition() {
                           </tr>
                         </thead>
                         <tbody>
-                          {pair.criteria.map((criterion: any, criterionIndex: number) => (
+                          {pair.criteria.map((criterion: { item: string; notes: string }, criterionIndex: number) => (
                             <tr key={criterionIndex} className={criterionIndex % 2 === 0 ? "bg-white" : "bg-gray-50"}>
                               <td className="border border-gray-300 px-4 py-3 font-medium text-gray-800">
                                 {criterion.item}
@@ -786,7 +872,7 @@ export default function IndustryDecomposition() {
                     </tr>
                   </thead>
                   <tbody>
-                    {decomposition.content.buyerPersonas.personas.map((persona: any, index: number) => (
+                    {decomposition.content.buyerPersonas.personas.map((persona: { buyer: string; workflowOwned: string; contextOfPain: string; budgetControl: string; notes: string }, index: number) => (
                       <tr key={index} className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}>
                         <td className="border border-gray-300 px-4 py-3 font-medium text-gray-800">{persona.buyer}</td>
                         <td className="border border-gray-300 px-4 py-3 text-gray-700">{persona.workflowOwned}</td>

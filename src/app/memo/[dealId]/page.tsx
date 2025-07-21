@@ -6,7 +6,59 @@ import { ArrowLeft, Download, FileText } from "lucide-react"
 import { useRouter, useParams } from "next/navigation"
 import Image from "next/image"
 
-const memoData: Record<string, any> = {
+// Define types for memoData
+interface MemoContent {
+  executiveSummary?: {
+    title: string;
+    termDetails: {
+      transaction: string;
+      spvName: string;
+      targetRaise: string;
+      targetCloseDate: string;
+      preMoneyValuation: string;
+      postMoneyValuation: string;
+      targetOwnership: string;
+    };
+    companyOverview: string;
+    keyHighlights: string[];
+    whyNow: string[];
+  };
+  companySnapshot?: {
+    title: string;
+    data: { category: string; details: string }[];
+  };
+  dealSnapshot?: {
+    title: string;
+    terms: { item: string; terms: string }[];
+    returnScenarios: { exitValue: string; grossReturn: string; facilitiesLive: string }[];
+  };
+  industryFraming?: {
+    title: string;
+    marketSize: { segment: string; tam: string; sam: string; som: string }[];
+    competitive: { competitor: string; status: string; positioning: string }[];
+    workflowGaps: { workflow: string; pain: string; solution: string }[];
+    positioning: string;
+  };
+  keyRisks: string[];
+  nextSteps: string[];
+  [key: string]: unknown;
+}
+
+interface MemoData {
+  [key: string]: {
+    title: string;
+    category?: string;
+    publishDate?: string;
+    readTime?: string;
+    tags?: string[];
+    summary?: string;
+    industry?: string;
+    keyPoints?: string[];
+    content?: MemoContent;
+  };
+}
+
+const memoData: MemoData = {
   curenta: {
     title: "Curenta Investment Memorandum",
     category: "Investment Memorandum",
@@ -254,7 +306,7 @@ export default function InvestmentMemo() {
                 <h3 className="text-lg font-semibold text-foreground mb-4">Term Details</h3>
                 <div className="bg-gray-50 border border-gray-200 p-6 rounded-lg">
                   <div className="grid grid-cols-2 gap-4">
-                    {Object.entries(memo.content.executiveSummary.termDetails).map(([key, value]) => (
+                    {Object.entries(memo.content.executiveSummary?.termDetails || {}).map(([key, value]) => (
                       <div key={key} className="flex justify-between">
                         <span className="font-medium text-muted-foreground capitalize">{key.replace(/([A-Z])/g, " $1")}:</span>
                         <span className="font-semibold text-foreground">{String(value)}</span>
@@ -266,13 +318,13 @@ export default function InvestmentMemo() {
 
               <div className="mb-8">
                 <h3 className="text-lg font-semibold text-foreground mb-4">Company Overview</h3>
-                <p className="text-muted-foreground leading-relaxed">{memo.content.executiveSummary.companyOverview}</p>
+                <p className="text-muted-foreground leading-relaxed">{memo.content.executiveSummary?.companyOverview}</p>
               </div>
 
               <div className="mb-8">
                 <h3 className="text-lg font-semibold text-foreground mb-4">Key Investment Highlights</h3>
                 <ul className="space-y-2">
-                  {memo.content.executiveSummary.keyHighlights.map((highlight: string, index: number) => (
+                  {memo.content.executiveSummary?.keyHighlights.map((highlight: string, index: number) => (
                     <li key={index} className="flex items-start">
                       <div className="w-2 h-2 bg-blue-600 rounded-full mt-2 mr-4 flex-shrink-0"></div>
                       <span className="text-muted-foreground">{highlight}</span>
@@ -284,7 +336,7 @@ export default function InvestmentMemo() {
               <div>
                 <h3 className="text-lg font-semibold text-foreground mb-4">Why Now</h3>
                 <ul className="space-y-3">
-                  {memo.content.executiveSummary.whyNow.map((point: string, index: number) => (
+                  {memo.content.executiveSummary?.whyNow.map((point: string, index: number) => (
                     <li key={index} className="flex items-start">
                       <div className="w-2 h-2 bg-green-600 rounded-full mt-2 mr-4 flex-shrink-0"></div>
                       <span className="text-muted-foreground">{point}</span>
@@ -312,7 +364,7 @@ export default function InvestmentMemo() {
                     </tr>
                   </thead>
                   <tbody>
-                    {memo.content.companySnapshot.data.map((row: any, index: number) => (
+                    {memo.content.companySnapshot?.data.map((row: { category: string; details: string }, index: number) => (
                       <tr key={index} className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}>
                         <td className="border border-border px-4 py-3 font-medium text-foreground">{row.category}</td>
                         <td className="border border-border px-4 py-3 text-muted-foreground">{row.details}</td>
@@ -337,7 +389,7 @@ export default function InvestmentMemo() {
                     </tr>
                   </thead>
                   <tbody>
-                    {memo.content.dealSnapshot.terms.map((row: any, index: number) => (
+                    {memo.content.dealSnapshot?.terms.map((row: { item: string; terms: string }, index: number) => (
                       <tr key={index} className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}>
                         <td className="border border-border px-4 py-3 font-medium text-foreground">{row.item}</td>
                         <td className="border border-border px-4 py-3 text-muted-foreground">{row.terms}</td>
@@ -367,7 +419,7 @@ export default function InvestmentMemo() {
                       </tr>
                     </thead>
                     <tbody>
-                      {memo.content.dealSnapshot.returnScenarios.map((scenario: any, index: number) => (
+                      {memo.content.dealSnapshot?.returnScenarios.map((scenario: { exitValue: string; grossReturn: string; facilitiesLive: string }, index: number) => (
                         <tr key={index} className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}>
                           <td className="border border-border px-4 py-3 font-medium text-foreground">
                             {scenario.exitValue}
@@ -409,7 +461,7 @@ export default function InvestmentMemo() {
                       </tr>
                     </thead>
                     <tbody>
-                      {memo.content.industryFraming.marketSize.map((row: any, index: number) => (
+                      {memo.content.industryFraming?.marketSize.map((row: { segment: string; tam: string; sam: string; som: string }, index: number) => (
                         <tr key={index} className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}>
                           <td className="border border-border px-4 py-3 font-medium text-foreground">{row.segment}</td>
                           <td className="border border-border px-4 py-3 text-muted-foreground">{row.tam}</td>
@@ -440,7 +492,7 @@ export default function InvestmentMemo() {
                       </tr>
                     </thead>
                     <tbody>
-                      {memo.content.industryFraming.competitive.map((row: any, index: number) => (
+                      {memo.content.industryFraming?.competitive.map((row: { competitor: string; status: string; positioning: string }, index: number) => (
                         <tr key={index} className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}>
                           <td className="border border-border px-4 py-3 font-medium text-foreground">
                             {row.competitor}
@@ -472,7 +524,7 @@ export default function InvestmentMemo() {
                       </tr>
                     </thead>
                     <tbody>
-                      {memo.content.industryFraming.workflowGaps.map((row: any, index: number) => (
+                      {memo.content.industryFraming?.workflowGaps.map((row: { workflow: string; pain: string; solution: string }, index: number) => (
                         <tr key={index} className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}>
                           <td className="border border-border px-4 py-3 font-medium text-foreground">{row.workflow}</td>
                           <td className="border border-border px-4 py-3 text-muted-foreground">{row.pain}</td>
@@ -486,7 +538,7 @@ export default function InvestmentMemo() {
 
               <div>
                 <h3 className="text-lg font-semibold text-foreground mb-4">Why Curenta Is Uniquely Positioned</h3>
-                <p className="text-muted-foreground leading-relaxed">{memo.content.industryFraming.positioning}</p>
+                <p className="text-muted-foreground leading-relaxed">{memo.content.industryFraming?.positioning}</p>
               </div>
             </section>
 
@@ -551,8 +603,8 @@ export default function InvestmentMemo() {
               <div>
                 <h3 className="text-xl font-semibold mb-3">Key Investment Highlights</h3>
                 <ul className="space-y-2">
-                  {memo.keyPoints.map((point: string, index: number) => (
-                    <li key={index} className="flex items-start">
+                  {memo.keyPoints?.map((point, idx) => (
+                    <li key={idx} className="flex items-start">
                       <div className="w-2 h-2 bg-accent rounded-full mt-2 mr-3 flex-shrink-0"></div>
                       <span className="text-muted-foreground">{point}</span>
                     </li>

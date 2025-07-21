@@ -410,7 +410,7 @@ export default function ResearchHub() {
           Demand-First • Workflow-Deep • Segment-Precise
         </div>
         <p className="text-base text-gray-800 leading-relaxed text-left mb-1" style={{wordBreak: 'break-word'}}>
-          InVitro doesn't start with ideas—we start with pain. Our research maps labor-intensive, fragmented, and tech-starved industries from first principles, deconstructs workflows, and tests for urgency before anything gets built. We prioritize segments where software is absent, human effort is high, and willingness to pay is measurable. Every thesis begins with real buyer signal—not speculation. This is where disciplined demand generation meets structural insight.
+          InVitro doesn&apos;t start with ideas—we start with pain. Our research maps labor-intensive, fragmented, and tech-starved industries from first principles, deconstructs workflows, and tests for urgency before anything gets built. We prioritize segments where software is absent, human effort is high, and willingness to pay is measurable. Every thesis begins with real buyer signal—not speculation. This is where disciplined demand generation meets structural insight.
         </p>
       </div>
       {/* Research Folders */}
@@ -609,7 +609,7 @@ function FolderSection({
             <div className="text-gray-500 italic py-4">{placeholderText || "No documents available."}</div>
           ) : (
             <ul className="space-y-2">
-              {papers.map((paper) => (
+              {papers.map((paper: ResearchPaper) => (
                 <FileItem key={paper.id} paper={paper} onPaperClick={onPaperClick} />
               ))}
             </ul>
