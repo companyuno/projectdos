@@ -153,7 +153,7 @@ export default function InVitroInvestmentBuildProcess() {
             <div className="mb-8">
               <h3 className="text-xl font-semibold text-gray-800 mb-6">Structural Advantages</h3>
               <p className="text-gray-700 leading-relaxed mb-6">
-                InVitro's approach is built on three pillars: create, control, and compound.
+                InVitro&apos;s approach is built on three pillars: create, control, and compound.
               </p>
 
               <div className="grid gap-6">
