@@ -89,12 +89,27 @@ export default function AdminVisitorsPage() {
     <div className="min-h-screen bg-background text-foreground px-4 sm:px-8 py-8 sm:py-12 max-w-7xl mx-auto">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 sm:gap-0 mb-6 sm:mb-8">
         <h1 className="text-2xl sm:text-3xl font-bold">Visitor Log</h1>
-        <Link href="/admin/permissions">
-          <Button className="bg-blue-600 hover:bg-blue-700 text-white text-sm sm:text-base">
-            <Shield className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1.5 sm:mr-2" />
-            Manage Permissions
+        <div className="flex gap-2 items-center">
+          <Link href="/admin/permissions">
+            <Button className="bg-blue-600 hover:bg-blue-700 text-white text-sm sm:text-base">
+              <Shield className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1.5 sm:mr-2" />
+              Manage Permissions
+            </Button>
+          </Link>
+          <Button
+            variant="outline"
+            className="text-xs px-3 py-1 border-red-400 text-red-700 hover:bg-red-50 hover:border-red-500"
+            onClick={() => {
+              localStorage.removeItem("invitro-accredited");
+              localStorage.removeItem("invitro-accredited-selections");
+              localStorage.removeItem("invitro-user-info");
+              // Remove any other relevant keys if needed
+              window.location.reload();
+            }}
+          >
+            Reset Demo
           </Button>
-        </Link>
+        </div>
       </div>
 
       {/* Search and Filter Controls */}

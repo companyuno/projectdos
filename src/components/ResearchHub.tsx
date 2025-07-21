@@ -7,7 +7,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
-import { FileText, Building2, Folder, FolderOpen, ChevronRight, ChevronDown } from "lucide-react"
+import { FileText, Building2, Folder, FolderOpen, ChevronRight, ChevronDown, Lightbulb } from "lucide-react"
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 
@@ -383,32 +383,16 @@ export default function ResearchHub() {
 
   return (
     <div className="space-y-6">
-      {/* Reset Demo Button */}
-      <div className="flex justify-end mb-2">
-        <Button
-          variant="outline"
-          className="text-xs px-3 py-1 border-red-400 text-red-700 hover:bg-red-50 hover:border-red-500"
-          onClick={() => {
-            localStorage.removeItem("invitro-accredited");
-            localStorage.removeItem("invitro-accredited-selections");
-            localStorage.removeItem("invitro-user-info");
-            // Remove any other relevant keys if needed
-            window.location.reload();
-          }}
-        >
-          Reset Demo
-        </Button>
-      </div>
       {/* InVitro's Research Philosophy Box */}
-      <div className="bg-white border border-gray-200 rounded-lg px-6 py-8 md:py-12 shadow-lg w-full text-left mt-1 mb-8">
-        <div className="flex items-center gap-2 mb-4">
-          <Folder className="w-6 h-6 text-purple-400 flex-shrink-0" />
-          <h3 className="font-bold text-2xl text-[#0a2e4e]">InVitro’s Research Philosophy</h3>
+      <div className="bg-white border border-gray-200 rounded-lg px-4 sm:px-6 py-6 sm:py-8 md:py-12 shadow-lg w-full text-left mt-1 mb-6 sm:mb-8">
+        <div className="flex items-center gap-2 mb-3 sm:mb-4">
+          <Lightbulb className="w-5 h-5 sm:w-6 sm:h-6 text-yellow-400 flex-shrink-0" />
+          <h3 className="font-bold text-xl sm:text-2xl text-[#0a2e4e]">InVitro&apos;s Research Philosophy</h3>
         </div>
-        <div className="text-base font-semibold mb-6 text-left" style={{color: '#0a2e4e'}}>
+        <div className="text-sm sm:text-base font-semibold mb-4 sm:mb-6 text-left" style={{color: '#0a2e4e'}}>
           Demand-First • Workflow-Deep • Segment-Precise
         </div>
-        <p className="text-base text-gray-800 leading-relaxed text-left mb-1" style={{wordBreak: 'break-word'}}>
+        <p className="text-sm sm:text-base text-gray-800 leading-relaxed text-left mb-1" style={{wordBreak: 'break-word'}}>
           InVitro doesn&apos;t start with ideas—we start with pain. Our research maps labor-intensive, fragmented, and tech-starved industries from first principles, deconstructs workflows, and tests for urgency before anything gets built. We prioritize segments where software is absent, human effort is high, and willingness to pay is measurable. Every thesis begins with real buyer signal—not speculation. This is where disciplined demand generation meets structural insight.
         </p>
       </div>
