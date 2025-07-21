@@ -13,7 +13,7 @@ export default function B2BSalesMarketingSoftwareDecomposition() {
   return (
     <div className="min-h-screen bg-gray-50 text-foreground">
       <div className="max-w-5xl mx-auto px-8 py-12">
-        <div className="flex items-center justify-between mb-8">
+        <div className="sticky top-0 z-20 bg-white border-b border-gray-200 mb-8 px-2 py-3 shadow-sm flex flex-col items-stretch gap-2 sm:flex-row sm:items-center sm:justify-between">
           <Button
             variant="outline"
             onClick={() => router.back()}
@@ -28,7 +28,7 @@ export default function B2BSalesMarketingSoftwareDecomposition() {
           <Button 
             className="bg-white text-[hsl(212,74%,15%)] border border-[hsl(212,74%,15%)] hover:bg-[hsl(212,74%,97%)] hover:text-[hsl(212,74%,20%)] ml-4"
             onClick={() => {
-              window.open('/Industry%20Decomposition-%20B2B%20Sales%20%26%20Marketing%20Technology.pdf', '_blank');
+              window.open('/Industry Decomposition- B2B Sales & Marketing Technology.pdf', '_blank');
             }}
           >
             <Download className="w-4 h-4 mr-2" />

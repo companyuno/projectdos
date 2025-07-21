@@ -158,7 +158,7 @@ export default function IndustryDecompositionConstructionTech() {
   return (
     <div className="min-h-screen bg-white">
       <div className="max-w-6xl mx-auto px-8 py-12">
-        <div className="flex items-center justify-between mb-8">
+        <div className="sticky top-0 z-20 bg-white border-b border-gray-200 mb-8 px-2 py-3 shadow-sm flex flex-col items-stretch gap-2 sm:flex-row sm:items-center sm:justify-between">
           <Button
             variant="outline"
             onClick={() => router.back()}
@@ -170,16 +170,15 @@ export default function IndustryDecompositionConstructionTech() {
           <div className="flex-1 flex justify-center">
             <Image src="/logo.png" alt="InVitro Capital Logo" width={180} height={48} priority />
           </div>
-          <a
-            href="/Industry%20Decomposition%20Construction%20Tech.pdf"
-            target="_blank"
-            rel="noopener noreferrer"
+          <Button 
+            className="bg-white text-[hsl(212,74%,15%)] border border-[hsl(212,74%,15%)] hover:bg-[hsl(212,74%,97%)] hover:text-[hsl(212,74%,20%)] ml-4"
+            onClick={() => {
+              window.open('/Industry Decomposition Construction Tech.pdf', '_blank');
+            }}
           >
-            <Button className="bg-white text-[hsl(212,74%,15%)] border border-[hsl(212,74%,15%)] hover:bg-[hsl(212,74%,97%)] hover:text-[hsl(212,74%,20%)] ml-4">
-              <Download className="w-4 h-4 mr-2" />
-              Download PDF
-            </Button>
-          </a>
+            <Download className="w-4 h-4 mr-2" />
+            Download PDF
+          </Button>
         </div>
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Industry Decomposition: Construction Tech</h1>

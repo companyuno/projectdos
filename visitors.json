@@ -1,23 +1,5 @@
 [
   {
-    "firstName": "Access",
-    "lastName": "Request",
-    "email": "jas2278@cornell.edu",
-    "timestamp": "2025-07-19T00:34:08.885Z"
-  },
-  {
-    "firstName": "Investment",
-    "lastName": "Access",
-    "email": "jonathan.schroeder@invitrocapital.com",
-    "timestamp": "2025-07-19T00:34:13.244Z"
-  },
-  {
-    "firstName": "Investment",
-    "lastName": "Access",
-    "email": "jonathan.schroeder@invitrocapital.com",
-    "timestamp": "2025-07-19T00:34:15.468Z"
-  },
-  {
     "firstName": "Investment",
     "lastName": "Access",
     "email": "jonathan.schroeder@invitrocapital.com",
@@ -528,5 +510,28 @@
     "lastName": "Access",
     "email": "jonathan.schroeder@invitrocapital.com",
     "timestamp": "2025-07-21T19:00:57.571Z"
+  },
+  {
+    "firstName": "Jonathan",
+    "lastName": "Schroeder",
+    "email": "jonathan.schroeder@invitrocapital.com",
+    "timestamp": "2025-07-21T22:19:41.462Z"
+  },
+  {
+    "firstName": "Jonathan",
+    "lastName": "Schroeder",
+    "email": "jonathan.schroeder@invitrocapital.com",
+    "timestamp": "2025-07-21T22:19:44.112Z",
+    "accredited": "true",
+    "accreditedSelections": [
+      "I earned over $200,000 individually (or $300,000 with my spouse) in each of the last two years and expect the same this year",
+      "I have a net worth over $1 million, excluding my primary residence"
+    ]
+  },
+  {
+    "firstName": "Investment",
+    "lastName": "Access",
+    "email": "jonathan.schroeder@invitrocapital.com",
+    "timestamp": "2025-07-21T22:19:54.770Z"
   }
 ]
