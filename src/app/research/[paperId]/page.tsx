@@ -542,7 +542,7 @@ export default function ResearchPaper() {
                       </tr>
                     </thead>
                     <tbody>
-                      {(paper as ResearchPaper).content?.industryStructure.map((row: { subsegment: string; description: string; examples: string }, index: number) => (
+                      {(paper as ResearchPaper).content?.industryStructure?.map((row: { subsegment: string; description: string; examples: string }, index: number) => (
                         <tr key={index} className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}>
                           <td className="border border-gray-300 px-4 py-3 font-medium text-gray-800">
                             {row.subsegment}
