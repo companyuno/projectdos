@@ -1,10 +1,9 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
+import { Card, CardContent } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
-import { ArrowLeft, Download, Calendar, BookOpen, Share2 } from "lucide-react"
+import { ArrowLeft, Download } from "lucide-react"
 import { useRouter, useParams } from "next/navigation"
 
 const researchContent: Record<string, any> = {

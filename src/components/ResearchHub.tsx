@@ -8,7 +8,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
-import { FileText, Calendar, ExternalLink, Building2, BookOpen, Lightbulb, Folder, FolderOpen, ChevronRight, ChevronDown } from "lucide-react"
+import { FileText, Building2, Folder, FolderOpen, ChevronRight, ChevronDown } from "lucide-react"
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 
@@ -98,7 +98,7 @@ const categoryConfig: Record<string, {
   },
   "industry-theses": {
     title: "Industry Theses",
-    icon: Lightbulb,
+    icon: Folder,
     color: "bg-purple-50 border-purple-200",
     iconColor: "text-purple-600",
   },
@@ -403,7 +403,7 @@ export default function ResearchHub() {
       {/* InVitro's Research Philosophy Box */}
       <div className="bg-white border border-gray-200 rounded-lg px-6 py-8 md:py-12 shadow-lg w-full text-left mt-1 mb-8">
         <div className="flex items-center gap-2 mb-4">
-          <Lightbulb className="w-6 h-6 text-yellow-400 flex-shrink-0" />
+          <Folder className="w-6 h-6 text-purple-400 flex-shrink-0" />
           <h3 className="font-bold text-2xl text-[#0a2e4e]">InVitro’s Research Philosophy</h3>
         </div>
         <div className="text-base font-semibold mb-6 text-left" style={{color: '#0a2e4e'}}>

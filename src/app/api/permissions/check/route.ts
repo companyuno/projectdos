@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
     try {
       const file = await fs.readFile(PERMISSIONS_FILE, 'utf-8');
       permissions = JSON.parse(file);
-    } catch (e) {
+    } catch {
       // No permissions file exists, so no one has access
       return NextResponse.json({ hasPermission: false });
     }
@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
     // Use Permission instead of any
     const hasPermission = permissions.some((p: Permission) => p.email === body.email.toLowerCase().trim());
     return NextResponse.json({ hasPermission });
-  } catch (e) {
+  } catch {
     return NextResponse.json({ error: 'Server error' }, { status: 500 });
   }
 } 

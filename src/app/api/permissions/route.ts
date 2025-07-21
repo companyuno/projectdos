@@ -15,7 +15,7 @@ export async function GET() {
     const file = await fs.readFile(PERMISSIONS_FILE, 'utf-8');
     const permissions = JSON.parse(file);
     return NextResponse.json(permissions);
-  } catch (e) {
+  } catch {
     return NextResponse.json([]);
   }
 }
@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
     try {
       const file = await fs.readFile(PERMISSIONS_FILE, 'utf-8');
       permissions = JSON.parse(file);
-    } catch (e) {
+    } catch {
       // File does not exist or is empty
       permissions = [];
     }
@@ -51,7 +51,7 @@ export async function POST(req: NextRequest) {
     permissions.push(newPermission);
     await fs.writeFile(PERMISSIONS_FILE, JSON.stringify(permissions, null, 2));
     return NextResponse.json({ success: true });
-  } catch (e) {
+  } catch {
     return NextResponse.json({ error: 'Server error' }, { status: 500 });
   }
 }
@@ -67,7 +67,7 @@ export async function DELETE(req: NextRequest) {
     try {
       const file = await fs.readFile(PERMISSIONS_FILE, 'utf-8');
       permissions = JSON.parse(file);
-    } catch (e) {
+    } catch {
       return NextResponse.json({ error: 'No permissions found' }, { status: 404 });
     }
 
@@ -79,7 +79,7 @@ export async function DELETE(req: NextRequest) {
 
     await fs.writeFile(PERMISSIONS_FILE, JSON.stringify(filteredPermissions, null, 2));
     return NextResponse.json({ success: true });
-  } catch (e) {
+  } catch {
     return NextResponse.json({ error: 'Server error' }, { status: 500 });
   }
 } 
