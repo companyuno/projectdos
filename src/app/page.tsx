@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, Suspense } from "react"
 import { useRouter, usePathname, useSearchParams } from "next/navigation"
 import DealsShowcase from "@/components/DealsShowcase"
 import ResearchHub from "@/components/ResearchHub"
@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button"
 import { Building2, FileText, Lightbulb } from "lucide-react"
 import Image from "next/image"
 
-export default function Home() {
+function HomeContent() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -103,5 +103,13 @@ export default function Home() {
         )}
       </main>
     </div>
-  )
+  );
+}
+
+export default function Home() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <HomeContent />
+    </Suspense>
+  );
 }
