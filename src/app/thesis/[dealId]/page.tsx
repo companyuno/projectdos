@@ -731,7 +731,7 @@ export default function IndustryThesis() {
               </div>
 
               <div className="mb-8">
-                <h3 className="text-lg font-semibold text-red-700 mb-4">Others didn't convert:</h3>
+                <h3 className="text-lg font-semibold text-red-700 mb-4">Others didn&apos;t convert:</h3>
                 <ul className="space-y-3">
                   {thesis.content.fundingSignals?.failures?.map((failure: string, index: number) => (
                     <li key={index} className="flex items-start">
@@ -768,7 +768,7 @@ export default function IndustryThesis() {
                         Product Fit
                       </th>
                       <th className="border border-border px-4 py-3 text-left font-semibold text-foreground text-base">
-                        Why It Works / Doesn't
+                        Why It Works / Doesn&apos;t
                       </th>
                     </tr>
                   </thead>
