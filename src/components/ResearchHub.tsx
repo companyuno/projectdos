@@ -318,7 +318,7 @@ export default function ResearchHub() {
   ]
 
   // If there is an industryDecompositions array, sort it alphabetically by title before rendering
-  let industryDecompositionsSorted: ResearchPaper[] = [
+  const industryDecompositionsSorted: ResearchPaper[] = [
     {
       id: "curenta-industry-decomposition",
       title: "Long Term Care",

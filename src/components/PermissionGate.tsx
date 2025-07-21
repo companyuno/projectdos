@@ -198,8 +198,8 @@ export default function PermissionGate({ children, fallback }: PermissionGatePro
           <CardContent>
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
               <p className="text-blue-700 text-sm">
-                Thank you for your interest in our InVitro Capital's investment opportunities. 
-                We'll review your request and contact you if access is granted.
+                Thank you for your interest in our InVitro Capital&apos;s investment opportunities. 
+                We&apos;ll review your request and contact you if access is granted.
               </p>
             </div>
             <Button 
