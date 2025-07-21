@@ -1,9 +1,12 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
 import {
   ArrowLeft,
   Download,
+  Calendar,
+  BookOpen,
   Building2,
   Target,
   TrendingUp,
@@ -268,7 +271,7 @@ export default function InVitroInvestmentBuildProcess() {
                   <TrendingUp className="w-5 h-5 mr-2" />
                   Overlooked
                 </h4>
-                <p className="text-green-700">"Boring" industries neglected by traditional venture despite large TAM</p>
+                <p className="text-green-700">&quot;Boring&quot; industries neglected by traditional venture despite large TAM</p>
               </div>
             </div>
 
