@@ -1,12 +1,9 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
 import {
   ArrowLeft,
   Download,
-  Calendar,
-  BookOpen,
   Building2,
   Target,
   TrendingUp,
@@ -414,7 +411,7 @@ export default function InVitroInvestmentBuildProcess() {
                 <h3 className="text-xl font-semibold text-gray-800 mb-4">B. Problem Validation and Signal Testing</h3>
                 <p className="text-gray-700 leading-relaxed mb-4">
                   Only after whitespace is mapped do we move into problem validation. The goal is to answer one clear
-                  question before building anything: "Will you buy?"
+                  question before building anything: &quot;Will you buy?&quot;
                 </p>
 
                 <div className="bg-yellow-50 p-6 rounded-lg border border-yellow-200">
