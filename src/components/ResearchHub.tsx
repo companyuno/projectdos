@@ -2,7 +2,6 @@
 
 import type React from "react"
 
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
@@ -80,7 +79,7 @@ const researchPapers: ResearchPaper[] = [
 
 const categoryConfig: Record<string, {
   title: string
-  icon: React.FC<any>
+  icon: React.FC<React.SVGProps<SVGSVGElement>>
   color: string
   iconColor: string
 }> = {

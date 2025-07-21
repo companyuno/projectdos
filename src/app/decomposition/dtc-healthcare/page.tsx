@@ -9,7 +9,7 @@ const criteriaScoring = [
   { filter: "Tech-starved", score: 2, justification: "Many DTC healthcare businesses operate on a patchwork of generic tools; though some vertical SaaS exists, specialized end-to-end solutions remain limited." },
   { filter: "Labor-intensive", score: 3, justification: "Fulfillment, clinical oversight, compliance, and customer service remain heavily manual and resource-intensive." },
   { filter: "Fragmented", score: 3, justification: "Highly fragmented across clinical categories, care modalities, and target populations with limited consolidation." },
-  { filter: "Overlooked", score: 2, justification: "Significant capital has chased DTC healthcare recently, but much is concentrated in a few crowded categories (e.g. men's health, weight loss), leaving many niches underexplored." },
+  { filter: "Overlooked", score: 2, justification: "Significant capital has chased DTC healthcare recently, but much is concentrated in a few crowded categories (e.g. men&apos;s health, weight loss), leaving many niches underexplored." },
   { filter: "Capital-efficient", score: 2, justification: "Can be capital-efficient with strong unit economics at smaller scale but often requires significant upfront investment in marketing, compliance, and fulfillment." },
 ];
 
@@ -18,7 +18,7 @@ const subsegmentation = [
   { subsegment: "Preventive / Wellness", description: "Supplements, longevity, preventive screenings, general health optimization", notes: "Large consumer interest; compliance lower than clinical categories." },
   { subsegment: "Chronic Condition Mgmt", description: "Ongoing management for chronic diseases (e.g. diabetes, hypertension)", notes: "Payer models emerging but many remain cash-pay DTC." },
   { subsegment: "Mental Health", description: "Therapy, coaching, behavioral programs, medication mgmt for mental health", notes: "Increasingly competitive but significant unmet demand." },
-  { subsegment: "Women's Health", description: "Fertility, menopause, hormonal health, gynecologic care", notes: "Growing but still highly fragmented with clinical complexities." },
+  { subsegment: "Women&apos;s Health", description: "Fertility, menopause, hormonal health, gynecologic care", notes: "Growing but still highly fragmented with clinical complexities." },
   { subsegment: "Pediatric / Adolescent", description: "Youth-focused care across physical and mental health", notes: "Emerging but limited focus; parental involvement adds complexity." },
   { subsegment: "Senior / Geriatric", description: "Aging-in-place support, medication mgmt, chronic care for seniors", notes: "High friction on caregiver integration and clinical compliance." },
   { subsegment: "Procedural / Surgical Adj", description: "Pre/post surgical care, recovery programs, physical therapy", notes: "Often overlooked for tech enablement; requires clinical involvement." },
@@ -291,7 +291,7 @@ export default function IndustryDecompositionDTCHC() {
                         <th className="border border-gray-300 px-4 py-3 text-left font-semibold text-gray-900">Preventive</th>
                         <th className="border border-gray-300 px-4 py-3 text-left font-semibold text-gray-900">Chronic</th>
                         <th className="border border-gray-300 px-4 py-3 text-left font-semibold text-gray-900">Mental</th>
-                        <th className="border border-gray-300 px-4 py-3 text-left font-semibold text-gray-900">Women's Health</th>
+                        <th className="border border-gray-300 px-4 py-3 text-left font-semibold text-gray-900">Women&apos;s Health</th>
                         <th className="border border-gray-300 px-4 py-3 text-left font-semibold text-gray-900">Pediatric</th>
                         <th className="border border-gray-300 px-4 py-3 text-left font-semibold text-gray-900">Senior</th>
                         <th className="border border-gray-300 px-4 py-3 text-left font-semibold text-gray-900">Procedural</th>

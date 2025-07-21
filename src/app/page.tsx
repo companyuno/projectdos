@@ -86,7 +86,7 @@ export default function Home() {
               <div className="bg-white border border-gray-200 rounded-lg px-4 sm:px-6 py-6 sm:py-8 md:py-12 shadow-lg w-full text-left mt-1 mb-6 sm:mb-8">
                 <div className="flex items-center gap-2 mb-3 sm:mb-4">
                   <Lightbulb className="w-5 h-5 sm:w-6 sm:h-6 text-yellow-400 flex-shrink-0" />
-                  <h3 className="font-bold text-xl sm:text-2xl text-[#0a2e4e]">InVitro's Investment Philosophy</h3>
+                  <h3 className="font-bold text-xl sm:text-2xl text-[#0a2e4e]">InVitro&apos;s Investment Philosophy</h3>
                 </div>
                 <div className="text-sm sm:text-base font-semibold mb-4 sm:mb-6 text-left" style={{color: '#0a2e4e'}}>
                   Labor Intensive • Fragmented • Tech-Starved
