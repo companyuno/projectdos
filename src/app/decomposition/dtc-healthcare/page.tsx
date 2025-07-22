@@ -189,19 +189,15 @@ export default function IndustryDecompositionDTCHC() {
           <Download className="w-7 h-7" />
         </Button>
       </div>
-      <div className="max-w-6xl mx-auto px-8 py-12">
+      <div className="max-w-6xl mx-auto px-4 sm:px-8 py-6 sm:py-12">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Industry Decomposition: DTC Healthcare</h1>
-          <div className="flex justify-center gap-4 mb-2">
-            <span className="text-sm text-muted-foreground">Published: 2024</span>
-            <span className="text-sm text-muted-foreground">Format: PDF available</span>
-          </div>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2 break-words">Industry Decomposition: DTC Healthcare</h1>
         </div>
         {/* I. InVitro Criteria Scoring */}
         <section className="mb-12">
-          <h2 className="text-2xl font-bold text-muted-foreground mb-6 border-b-2 border-accent pb-2">I. InVitro Criteria Scoring</h2>
+          <h2 className="text-xl sm:text-2xl font-bold text-muted-foreground mb-6 border-b-2 border-accent pb-2 break-words">I. InVitro Criteria Scoring</h2>
           <div className="overflow-x-auto">
-            <table className="w-full border-collapse border border-gray-300">
+            <table className="w-full border-collapse border border-gray-300 text-xs sm:text-sm">
               <thead>
                 <tr className="bg-gray-100">
                   <th className="border border-gray-300 px-4 py-3 text-left font-semibold text-gray-900">Filter</th>
@@ -227,7 +223,7 @@ export default function IndustryDecompositionDTCHC() {
         <section className="mb-12">
           <h2 className="text-2xl font-bold text-muted-foreground mb-6 border-b-2 border-accent pb-2">II. MECE Subsegmentation of the Industry</h2>
           <div className="overflow-x-auto">
-            <table className="w-full border-collapse border border-gray-300">
+            <table className="w-full border-collapse border border-gray-300 text-xs sm:text-sm">
               <thead>
                 <tr className="bg-gray-100">
                   <th className="border border-gray-300 px-4 py-3 text-left font-semibold text-gray-900">Subsegment</th>
@@ -254,7 +250,7 @@ export default function IndustryDecompositionDTCHC() {
           <div className="mb-10">
             <h3 className="text-xl font-semibold text-gray-800 mb-6">A. Master Workflow List</h3>
             <div className="overflow-x-auto">
-              <table className="w-full border-collapse border border-gray-300">
+              <table className="w-full border-collapse border border-gray-300 text-xs sm:text-sm">
                 <thead>
                   <tr className="bg-gray-100">
                     <th className="border border-gray-300 px-4 py-3 text-left font-semibold text-gray-900">Workflow Name</th>
@@ -294,7 +290,7 @@ export default function IndustryDecompositionDTCHC() {
               <div key={idx} className="mb-8">
                 <h4 className="text-lg font-bold text-gray-900 mb-2">{matrix.title}</h4>
                 <div className="overflow-x-auto">
-                  <table className="w-full border-collapse border border-gray-300">
+                  <table className="w-full border-collapse border border-gray-300 text-xs sm:text-sm">
                     <thead>
                       <tr className="bg-gray-100">
                         <th className="border border-gray-300 px-4 py-3 text-left font-semibold text-gray-900">Workflow</th>
@@ -337,7 +333,7 @@ export default function IndustryDecompositionDTCHC() {
           {topPairs.map((pair, idx) => (
             <div key={idx} className="mb-8 p-6 bg-blue-50 rounded-lg shadow-md">
               <h3 className="text-xl font-bold text-gray-900 mb-4">{pair.title}</h3>
-              <table className="w-full border-collapse border border-gray-300 mb-2">
+              <table className="w-full border-collapse border border-gray-300 text-xs sm:text-sm mb-2">
                 <tbody>
                   {pair.criteria.map((row, jdx) => (
                     <tr key={jdx} className={jdx % 2 === 0 ? "bg-white" : "bg-gray-50"}>
@@ -354,7 +350,7 @@ export default function IndustryDecompositionDTCHC() {
         <section className="mb-12">
           <h2 className="text-2xl font-bold text-muted-foreground mb-6 border-b-2 border-accent pb-2">V. Condition-Specific DTC Deep Dive (Accessibility & Complexity Map)</h2>
           <div className="overflow-x-auto">
-            <table className="w-full border-collapse border border-gray-300">
+            <table className="w-full border-collapse border border-gray-300 text-xs sm:text-sm">
               <thead>
                 <tr className="bg-gray-100">
                   <th className="border border-gray-300 px-4 py-3 text-left font-semibold text-gray-900">Condition</th>
@@ -452,7 +448,7 @@ export default function IndustryDecompositionDTCHC() {
         <section className="mb-12">
           <h2 className="text-2xl font-bold text-muted-foreground mb-6 border-b-2 border-accent pb-2">VII. Buyer Personas</h2>
           <div className="overflow-x-auto">
-            <table className="w-full border-collapse border border-gray-300">
+            <table className="w-full border-collapse border border-gray-300 text-xs sm:text-sm">
               <thead>
                 <tr className="bg-gray-100">
                   <th className="border border-gray-300 px-4 py-3 text-left font-semibold text-gray-900">Buyer Title / Role</th>
