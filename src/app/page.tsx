@@ -48,9 +48,7 @@ function HomeContent() {
           className="w-full flex items-center justify-between"
           style={{
             maxWidth: "80rem",
-            margin: "0 auto",
-            paddingLeft: 20, // 20px is slightly more out than px-8 (32px)
-            paddingRight: 32,
+            margin: "0 auto"
           }}
         >
           <div>
