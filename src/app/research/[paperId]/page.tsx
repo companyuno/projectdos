@@ -563,9 +563,9 @@ export default function ResearchPaper() {
           </a>
         </Button>
       </div>
-      <div className="max-w-5xl mx-auto px-8 py-12">
+      <div className="max-w-5xl mx-auto px-4 sm:px-8 py-6 sm:py-12">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-foreground mb-2">{paper.title}</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-2 break-words">{paper.title}</h1>
         </div>
         <Card>
           <CardContent className="space-y-8">
@@ -586,7 +586,7 @@ export default function ResearchPaper() {
               <div>
                 <h3 className="text-xl font-semibold mb-4">I. Reframing the Industry Structure</h3>
                 <div className="overflow-x-auto mb-4">
-                  <table className="w-full border-collapse border border-gray-300">
+                  <table className="w-full border-collapse border border-gray-300 text-xs sm:text-sm">
                     <thead>
                       <tr className="bg-gray-100">
                         <th className="border border-gray-300 px-4 py-3 text-left font-semibold text-gray-900">
@@ -629,7 +629,7 @@ export default function ResearchPaper() {
               <div>
                 <h3 className="text-xl font-semibold mb-4">II. Studio Filter Assessment</h3>
                 <div className="overflow-x-auto">
-                  <table className="w-full border-collapse border border-gray-300">
+                  <table className="w-full border-collapse border border-gray-300 text-xs sm:text-sm">
                     <thead>
                       <tr className="bg-gray-100">
                         <th className="border border-gray-300 px-4 py-3 text-left font-semibold text-gray-900">
@@ -672,7 +672,7 @@ export default function ResearchPaper() {
               <div>
                 <h3 className="text-xl font-semibold mb-4">III. Workflow Decomposition for Drug Delivery Platforms</h3>
                 <div className="overflow-x-auto">
-                  <table className="w-full border-collapse border border-gray-300">
+                  <table className="w-full border-collapse border border-gray-300 text-xs sm:text-sm">
                     <thead>
                       <tr className="bg-gray-100">
                         <th className="border border-gray-300 px-4 py-3 text-left font-semibold text-gray-900">
@@ -774,7 +774,7 @@ export default function ResearchPaper() {
               <div>
                 <h3 className="text-xl font-semibold mb-4">V. Summary: Drug Delivery Workflow as Defensible Moat</h3>
                 <div className="overflow-x-auto">
-                  <table className="w-full border-collapse border border-gray-300">
+                  <table className="w-full border-collapse border border-gray-300 text-xs sm:text-sm">
                     <thead>
                       <tr className="bg-gray-100">
                         <th className="border border-gray-300 px-4 py-3 text-left font-semibold text-gray-900">
@@ -809,7 +809,7 @@ export default function ResearchPaper() {
               <div>
                 <h3 className="text-xl font-semibold mb-4">I. Subsegmenting the Healthcare E-Learning Market (MECE Framework)</h3>
                 <div className="overflow-x-auto mb-4">
-                  <table className="w-full border-collapse border border-gray-300">
+                  <table className="w-full border-collapse border border-gray-300 text-xs sm:text-sm">
                     <thead>
                       <tr className="bg-gray-100">
                         <th className="border border-gray-300 px-4 py-3 text-left font-semibold text-gray-900">Subsegment</th>
@@ -923,7 +923,7 @@ export default function ResearchPaper() {
               <div>
                 <h3 className="text-xl font-semibold mb-4">IV. Summary Table: Studio Suitability by Wedge</h3>
                 <div className="overflow-x-auto">
-                  <table className="w-full border-collapse border border-gray-300">
+                  <table className="w-full border-collapse border border-gray-300 text-xs sm:text-sm">
                     <thead>
                       <tr className="bg-gray-100">
                         <th className="border border-gray-300 px-4 py-3 text-left font-semibold text-gray-900">Wedge</th>
