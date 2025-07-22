@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Shield, Trash2, Search, Filter } from "lucide-react";
+import { Shield, Trash2, Search } from "lucide-react";
 import Link from "next/link";
 
 interface Visitor {

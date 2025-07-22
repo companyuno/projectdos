@@ -38,7 +38,7 @@ export default function TestPermissionsPage() {
           message: "❌ This email does NOT have permission to access deal documents"
         })
       }
-    } catch (error) {
+    } catch {
       setResult({
         hasPermission: false,
         message: "❌ Error checking permission"

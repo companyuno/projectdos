@@ -658,11 +658,14 @@ export default function IndustryThesis() {
           <ArrowLeft className="w-7 h-7" />
         </Button>
         <div className="flex-1 flex justify-center">
-          <img
+          <Image
             src="/logo.png"
             alt="InVitro Capital Logo"
+            width={180}
+            height={48}
             className="h-16 w-auto"
             style={{ objectFit: 'contain' }}
+            priority
           />
         </div>
         <Button

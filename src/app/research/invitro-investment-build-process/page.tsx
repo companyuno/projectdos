@@ -1,12 +1,9 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
 import {
   ArrowLeft,
   Download,
-  Calendar,
-  BookOpen,
   Building2,
   Target,
   TrendingUp,
@@ -15,6 +12,7 @@ import {
   DollarSign,
 } from "lucide-react"
 import { useRouter } from "next/navigation"
+import Image from "next/image"
 
 export default function InVitroInvestmentBuildProcess() {
   const router = useRouter()
@@ -32,11 +30,14 @@ export default function InVitroInvestmentBuildProcess() {
           <ArrowLeft className="w-7 h-7" />
         </Button>
         <div className="flex-1 flex justify-center">
-          <img
+          <Image
             src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/logo-shlzMTEcKSNu9d3nfRlo4Lr2ixbYXL.png"
             alt="InVitro Capital Logo"
+            width={180}
+            height={48}
             className="h-16 w-auto"
             style={{ objectFit: "contain" }}
+            priority
           />
         </div>
         <Button
