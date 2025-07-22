@@ -7,9 +7,10 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
-import { FileText, Building2, Folder, FolderOpen, ChevronRight, ChevronDown, Lightbulb } from "lucide-react"
+import { FileText, Building2, Folder, FolderOpen, ChevronRight, ChevronDown, Lightbulb, Star, Calendar, BookOpen, ExternalLink } from "lucide-react"
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
+import { Badge } from "@/components/ui/badge"
 
 interface ResearchPaper {
   id: string
@@ -27,26 +28,24 @@ const researchPapers: ResearchPaper[] = [
   {
     id: "invitro-investment-build-process",
     title: "InVitro Capital Investment & Build Process",
-          description:
-        "Our comprehensive methodology for identifying, building, and scaling high-growth companies from ideation to exit",
+    description: "Our comprehensive methodology for identifying, building, and scaling high-growth companies from ideation to exit",
     category: "build-process",
-    publishDate: "2024-01-15",
+    publishDate: "2025-05-30",
     readTime: "15 min read",
     tags: ["Investment Process", "Venture Studio", "Company Building"],
+    featured: true,
   },
-
   // WhitePapers
   {
     id: "invitro-private-markets-whitepaper",
     title: "InVitro Capital Private Markets White Paper",
-    description:
-      "A comparative analysis of private company ownership models: private equity, venture capital & venture builders",
+    description: "A comparative analysis of private company ownership models: private equity, venture capital & venture builders",
     category: "whitepapers",
-    publishDate: "2024-02-01",
+    publishDate: "2025-07-10",
     readTime: "20 min read",
     tags: ["Private Markets", "Investment Strategy", "Market Analysis"],
+    featured: true,
   },
-
   // Industry Theses
   {
     id: "healthcare-elearning-thesis",
@@ -69,11 +68,12 @@ const researchPapers: ResearchPaper[] = [
   {
     id: "long-term-care",
     title: "Long Term Care",
-    description: "",
+    description: "Capitalizing on the Demographic Shift and Operational Gaps in Long-Term Care",
     category: "industry-theses",
-    publishDate: "2023-10-15",
+    publishDate: "2025-07-22",
     readTime: "16 min read",
     tags: ["Long Term Care", "Healthcare", "Assisted Living"],
+    featured: true,
   },
 ]
 
@@ -118,6 +118,58 @@ const ACCREDITED_OPTIONS = [
   "I represent an entity with over $5 million in assets, or where all equity owners are accredited investors",
   "I am not an accredited investor",
 ]
+
+const featuredResearch = researchPapers.filter((paper) => paper.featured);
+
+function FeaturedCard({ paper, onPaperClick }: { paper: ResearchPaper; onPaperClick: (paperId: string) => void }) {
+  const config = categoryConfig[paper.category] || {
+    title: paper.category,
+    icon: FileText,
+    color: "bg-gray-50 border-gray-200",
+    iconColor: "text-gray-400",
+  };
+  const CategoryIcon = config.icon;
+  // Fix timezone issue: parse as local date
+  const [year, month, day] = paper.publishDate.split("-");
+  const localDate = new Date(Number(year), Number(month) - 1, Number(day));
+  return (
+    <button
+      onClick={() => onPaperClick(paper.id)}
+      className="group relative bg-gradient-to-br from-white to-gray-50 rounded-lg border border-gray-200 hover:border-gray-300 hover:shadow-md transition-all duration-200 p-6 text-left cursor-pointer"
+    >
+      <div className="flex items-start justify-between mb-4">
+        <div className={`p-2 rounded-lg ${config.color}`}>
+          <CategoryIcon className={`w-5 h-5 ${config.iconColor}`} />
+        </div>
+        <Badge variant="secondary" className="text-xs">
+          {config.title}
+        </Badge>
+      </div>
+      <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">{paper.title}</h3>
+      {paper.description && (
+        <div className="text-xs text-gray-500 mb-2 line-clamp-2">{paper.description}</div>
+      )}
+      <div className="flex items-center justify-between text-xs text-gray-500">
+        <div className="flex items-center gap-1">
+          <Calendar className="w-3 h-3" />
+          {localDate.toLocaleString("en-US", { month: "long", day: "numeric", year: "numeric" })}
+        </div>
+        <div className="flex items-center gap-1">
+          <BookOpen className="w-3 h-3" />
+          {paper.readTime}
+        </div>
+      </div>
+      <div className="flex flex-wrap gap-1 mt-3">
+        {paper.tags.slice(0, 2).map((tag) => (
+          <Badge key={tag} variant="outline" className="text-xs">
+            {tag}
+          </Badge>
+        ))}
+      </div>
+      <ExternalLink className="w-4 h-4 text-gray-400 absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity" />
+    </button>
+  );
+}
 
 export default function ResearchHub() {
   const [showForm, setShowForm] = useState(false)
@@ -382,7 +434,7 @@ export default function ResearchHub() {
   industryDecompositionsSorted.sort((a, b) => a.title.localeCompare(b.title));
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* InVitro's Research Philosophy Box */}
       <div className="bg-white border border-gray-200 rounded-lg px-4 sm:px-6 py-6 sm:py-8 md:py-12 shadow-lg w-full text-left mt-1 mb-6 sm:mb-8">
         <div className="flex items-center gap-2 mb-3 sm:mb-4">
@@ -396,8 +448,29 @@ export default function ResearchHub() {
           InVitro doesn&apos;t start with ideas—we start with pain. Our research maps labor-intensive, fragmented, and tech-starved industries from first principles, deconstructs workflows, and tests for urgency before anything gets built. We prioritize segments where software is absent, human effort is high, and willingness to pay is measurable. Every thesis begins with real buyer signal—not speculation. This is where disciplined demand generation meets structural insight.
         </p>
       </div>
-      {/* Research Folders */}
+      {/* Featured Research Section */}
+      {featuredResearch.length > 0 && (
+        <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
+          <div className="flex items-center gap-2 mb-6">
+            <Star className="w-5 h-5 text-yellow-500 fill-current" />
+            <h2 className="text-2xl font-semibold text-gray-900">Featured Research</h2>
+          </div>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {featuredResearch.map((paper) => (
+              <FeaturedCard key={paper.id} paper={paper} onPaperClick={handlePaperClick} />
+            ))}
+          </div>
+        </div>
+      )}
+      {/* Research Folders Panel */}
       <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
+        {/* Research Archive Section (box format, inside folders panel, same size as Featured Research) */}
+        <div className="p-6">
+          <div className="flex items-center gap-2 mb-2">
+            <Folder className="w-5 h-5 text-gray-500" />
+            <h2 className="text-2xl font-semibold text-gray-900">Research Archive</h2>
+          </div>
+        </div>
         {/* InVitro Builder Folder */}
         <FolderSection
           category="build-process"
@@ -614,7 +687,9 @@ function FileItem({ paper, onPaperClick }: { paper: ResearchPaper; onPaperClick:
         <div className="truncate text-sm sm:text-base font-semibold">
           {paper.title}
         </div>
-        <div className="text-xs text-gray-500 truncate">{paper.description}</div>
+        {paper.description && (
+          <div className="text-xs text-gray-500 truncate">{paper.description}</div>
+        )}
       </div>
       <span className="text-xs text-gray-400 whitespace-nowrap ml-1 sm:ml-2 flex-shrink-0">{paper.readTime}</span>
     </li>
