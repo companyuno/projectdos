@@ -627,7 +627,7 @@ export default function InVitroInvestmentBuildProcess() {
                 InVitro unlocks a new path to venture-scale returns without the venture-style chaos.
               </p>
               <p className="text-gray-700 leading-relaxed font-medium">
-                This is not venture capital rebranded. It's a new category: a capital-controlled, outcome-aligned,
+                This is not venture capital rebranded. It&#39;s a new category: a capital-controlled, outcome-aligned,
                 execution-driven platform for building the next generation of enduring companies.
               </p>
             </div>
