@@ -648,21 +648,42 @@ export default function IndustryThesis() {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <div className="max-w-5xl mx-auto px-8 py-12">
-        <div className="flex items-center justify-between mb-8">
+        <div className="sticky top-0 z-20 bg-white border-b border-gray-200 mb-8 px-1 py-1 shadow-sm flex items-center justify-between h-12 sm:h-auto sm:px-2 sm:py-3">
           <Button
-            variant="outline"
+            variant="ghost"
+            size="icon"
             onClick={() => router.back()}
-            className="border-[hsl(212,74%,15%)] text-[hsl(212,74%,15%)] rounded-full px-5 py-2 text-sm font-medium hover:bg-[hsl(212,74%,97%)] hover:text-[hsl(212,74%,20%)] transition"
+            className="rounded-full p-2 text-[hsl(212,74%,15%)] hover:bg-[hsl(212,74%,97%)]"
+            aria-label="Back"
           >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Deals
+            <ArrowLeft className="w-6 h-6" />
           </Button>
           <div className="flex-1 flex justify-center">
-            <Image src="/logo.png" alt="InVitro Capital Logo" width={180} height={48} priority />
+            <Image
+              src="/logo.png"
+              alt="InVitro Capital Logo"
+              className="h-7 w-auto sm:h-12"
+              style={{ objectFit: 'contain' }}
+              width={180}
+              height={48}
+              priority
+            />
           </div>
-          <Button className="bg-white text-[hsl(212,74%,15%)] border border-[hsl(212,74%,15%)] hover:bg-[hsl(212,74%,97%)] hover:text-[hsl(212,74%,20%)] ml-4">
-            <Download className="w-4 h-4 mr-2" />
-            Download PDF
+          <Button
+            variant="ghost"
+            size="icon"
+            className="rounded-full p-2 text-[hsl(212,74%,15%)] hover:bg-[hsl(212,74%,97%)]"
+            asChild
+            aria-label="Download PDF"
+          >
+            <a
+              href="/Industry Thesis - Long Term Care - V4 (1) (2).pdf"
+              download
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Download className="w-6 h-6" />
+            </a>
           </Button>
         </div>
         <div className="text-center mb-8">

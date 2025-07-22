@@ -14,26 +14,36 @@ export default function AccountingServicesDecomposition() {
     <div className="min-h-screen bg-gray-50 text-foreground">
       <div className="max-w-5xl mx-auto px-8 py-12">
         {/* Polished, Responsive Sticky Header for Mobile */}
-        <div className="sticky top-0 z-20 bg-white border-b border-gray-200 mb-8 px-2 py-3 shadow-sm flex flex-col items-stretch gap-2 sm:flex-row sm:items-center sm:justify-between">
+        <div className="sticky top-0 z-20 bg-white border-b border-gray-200 mb-8 px-1 py-1 shadow-sm flex items-center justify-between h-12 sm:h-auto sm:px-2 sm:py-3">
           <Button
-            variant="outline"
+            variant="ghost"
+            size="icon"
             onClick={() => router.back()}
-            className="border-[hsl(212,74%,15%)] text-[hsl(212,74%,15%)] rounded-full px-5 py-2 text-sm font-medium hover:bg-[hsl(212,74%,97%)] hover:text-[hsl(212,74%,20%)] transition"
+            className="rounded-full p-2 text-[hsl(212,74%,15%)] hover:bg-[hsl(212,74%,97%)]"
+            aria-label="Back"
           >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Research
+            <ArrowLeft className="w-6 h-6" />
           </Button>
           <div className="flex-1 flex justify-center">
-            <Image src="/logo.png" alt="InVitro Capital Logo" width={180} height={48} style={{ objectFit: 'contain' }} />
+            <Image
+              src="/logo.png"
+              alt="InVitro Capital Logo"
+              className="h-7 w-auto sm:h-12"
+              style={{ objectFit: 'contain' }}
+              width={180}
+              height={48}
+            />
           </div>
-          <Button 
-            className="bg-white text-[hsl(212,74%,15%)] border border-[hsl(212,74%,15%)] hover:bg-[hsl(212,74%,97%)] hover:text-[hsl(212,74%,20%)] ml-4"
+          <Button
+            variant="ghost"
+            size="icon"
+            className="rounded-full p-2 text-[hsl(212,74%,15%)] hover:bg-[hsl(212,74%,97%)]"
             onClick={() => {
               window.open('/Industry Decomposition - Accounting Services.pdf', '_blank');
             }}
+            aria-label="Download PDF"
           >
-            <Download className="w-4 h-4 mr-2" />
-            Download PDF
+            <Download className="w-6 h-6" />
           </Button>
         </div>
         <div className="text-center mb-8">
