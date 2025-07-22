@@ -156,8 +156,7 @@ export default function IndustryDecompositionDTCHC() {
   const router = useRouter();
   return (
     <div className="min-h-screen bg-white">
-      {/* Sticky header: full width, matches all other updated pages */}
-      <div className="sticky top-0 z-20 bg-white border-b border-gray-200 mb-8 px-1 py-1 shadow-sm flex items-center justify-between h-12 sm:h-auto sm:px-2 sm:py-3 w-full">
+      <div className="sticky top-0 z-20 bg-white border-b border-gray-200 w-full shadow-sm flex items-center justify-between h-12 sm:h-16 px-2 sm:px-4">
         <Button
           variant="ghost"
           size="icon"

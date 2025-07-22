@@ -514,53 +514,57 @@ export default function ResearchPaper() {
   const paperId = params.paperId as string
   const paper = (researchContent[paperId] || researchContent["healthcare-prescription-dtc-thesis"]) as ResearchPaperData;
 
+  // PDF link logic
+  let pdfLink = "#";
+  if (paperId === "healthcare-elearning-thesis") {
+    pdfLink = "/Industry Thesis - Healthcare E-Learning.pdf";
+  } else if (paperId === "healthcare-prescription-dtc-thesis") {
+    pdfLink = "/Industry Thesis - DTC Prescription Healthcare.pdf";
+  } else if (paperId === "accounting-services-industry-decomposition") {
+    pdfLink = "/Industry Decomposition - Accounting Services.pdf";
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 text-foreground">
-      <div className="max-w-5xl mx-auto px-8 py-12">
-        {/* Polished, Responsive Sticky Header for Mobile */}
-        <div className="sticky top-0 z-20 bg-white border-b border-gray-200 mb-8 px-1 py-1 shadow-sm flex items-center justify-between h-12 sm:h-auto sm:px-2 sm:py-3">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => router.back()}
-            className="rounded-full p-2 text-[hsl(212,74%,15%)] hover:bg-[hsl(212,74%,97%)]"
-            aria-label="Back"
-          >
-            <ArrowLeft className="w-6 h-6" />
-          </Button>
-          <div className="flex-1 flex justify-center">
-            <Image
-              src="/logo.png"
-              alt="InVitro Capital Logo"
-              className="h-7 w-auto sm:h-12"
-              style={{ objectFit: 'contain' }}
-              width={180}
-              height={48}
-              priority
-            />
-          </div>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="rounded-full p-2 text-[hsl(212,74%,15%)] hover:bg-[hsl(212,74%,97%)]"
-            asChild
-            aria-label="Download PDF"
-          >
-            <a
-              href={
-                paperId === "healthcare-elearning-thesis" ? "/Industry Thesis - Healthcare E-Learning.pdf" :
-                paperId === "healthcare-prescription-dtc-thesis" ? "/Industry Thesis - DTC Prescription Healthcare.pdf" :
-                paperId === "accounting-services-industry-decomposition" ? "/Industry Decomposition - Accounting Services.pdf" :
-                "#"
-              }
-              download
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Download className="w-6 h-6" />
-            </a>
-          </Button>
+      {/* Uniform sticky header, full width, matches homepage */}
+      <div className="sticky top-0 z-20 bg-white border-b border-gray-200 w-full shadow-sm flex items-center justify-between h-16 px-4">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => router.back()}
+          className="rounded-full p-2.5 text-[hsl(212,74%,15%)] hover:bg-[hsl(212,74%,97%)]"
+          aria-label="Back"
+        >
+          <ArrowLeft className="w-6 h-6" />
+        </Button>
+        <div className="flex-1 flex justify-center">
+          <Image
+            src="/logo.png"
+            alt="InVitro Capital Logo"
+            className="h-10 w-auto"
+            style={{ objectFit: 'contain' }}
+            width={180}
+            height={48}
+          />
         </div>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="rounded-full p-2.5 text-[hsl(212,74%,15%)] hover:bg-[hsl(212,74%,97%)]"
+          asChild
+          aria-label="Download PDF"
+        >
+          <a
+            href={pdfLink}
+            download
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Download className="w-6 h-6" />
+          </a>
+        </Button>
+      </div>
+      <div className="max-w-5xl mx-auto px-8 py-12">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-foreground mb-2">{paper.title}</h1>
         </div>
