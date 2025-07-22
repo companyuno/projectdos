@@ -42,7 +42,7 @@ export default function PermissionGate({ children, fallback }: PermissionGatePro
       setHasPermission(false)
       setRequestSubmitted(false)
     }
-  }, [hasPermission]) // Add hasPermission to dependency array
+  }, [hasPermission, checkPermission]) // Add hasPermission to dependency array
 
   const checkPermission = async (emailToCheck: string) => {
     // Check if we already have a cached result for this email
