@@ -110,7 +110,7 @@ export default function InVitroInvestmentBuildProcess() {
               </h3>
               <p className="text-gray-700 leading-relaxed mb-6">
                 Private company investing has become foundational in allocator portfolios, but the playbook is changing.
-                In both venture and private equity, the ability to source and exit deals is under pressure:
+                In both venture and private equity, the ability to source and exit deals is under pressure: &quot;winner&#39;s curse&quot;
               </p>
 
               <div className="grid md:grid-cols-2 gap-6">
@@ -178,7 +178,7 @@ export default function InVitroInvestmentBuildProcess() {
                     <div>
                       <h4 className="text-lg font-semibold text-[#0a2e4e] mb-2">Create</h4>
                       <p className="text-gray-800">
-                        The fund doesn't chase deals, it builds them. By identifying overlooked sectors with high labor
+                        The fund doesn&#39;t chase deals, it builds them. By identifying overlooked sectors with high labor
                         intensity, low tech penetration, and fragmentation, InVitro launches companies with embedded
                         operational leverage and consolidation potential.
                       </p>
@@ -211,7 +211,7 @@ export default function InVitroInvestmentBuildProcess() {
                       <p className="text-gray-800">
                         Centralized tech and talent infrastructure reduce marginal build cost and increase execution
                         speed. Investments are staged across 3–4 tranches based on live commercial traction, ensuring
-                        capital only scales what's working.
+                        capital only scales what&#39;s working.
                       </p>
                     </div>
                   </div>
@@ -416,7 +416,7 @@ export default function InVitroInvestmentBuildProcess() {
                       </div>
                       <h4 className="font-semibold text-gray-900 mb-2">Shortlist Creation</h4>
                       <p className="text-sm text-gray-700">
-                        Filter to 10–15 "fertile ground" sectors for deeper analysis
+                        Filter to 10–15 &quot;fertile ground&quot; sectors for deeper analysis
                       </p>
                     </div>
                   </div>
@@ -427,7 +427,7 @@ export default function InVitroInvestmentBuildProcess() {
                 <h3 className="text-xl font-semibold text-gray-800 mb-4">B. Problem Validation and Signal Testing</h3>
                 <p className="text-gray-700 leading-relaxed mb-4">
                   Only after whitespace is mapped do we move into problem validation. The goal is to answer one clear
-                  question before building anything: "Will you buy?"
+                  question before building anything: &quot;Will you buy?&quot;
                 </p>
 
                 <div className="bg-yellow-50 p-6 rounded-lg border border-yellow-200">
