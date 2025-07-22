@@ -44,27 +44,43 @@ export default function B2BSalesMarketingSoftwareDecomposition() {
           <Download className="w-7 h-7" />
         </Button>
       </div>
-      <div className="max-w-5xl mx-auto px-8 py-12">
+      <div className="max-w-5xl mx-auto px-4 sm:px-8 py-6 sm:py-12">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-foreground mb-2">Industry Decomposition: B2B Sales & Marketing Software</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-2 break-words">Industry Decomposition: B2B Sales & Marketing Software</h1>
         </div>
-        <Card>
-          <CardContent className="space-y-8">
+        {/* Responsive: Card on desktop, plain div on mobile to avoid double boxing */}
+        <div className="block sm:hidden">
+          <div className="space-y-8 p-4">
             <Separator />
-            
             {/* Download Section */}
             <div>
-              <h3 className="text-xl font-semibold mb-4">Download Full Report</h3>
-              <div className="bg-blue-50 p-6 rounded-lg border border-blue-200">
-                <p className="text-blue-800 leading-relaxed">
+              <h3 className="text-lg sm:text-xl font-semibold mb-4 break-words">Download Full Report</h3>
+              <div className="bg-blue-50 p-4 sm:p-6 rounded-lg border border-blue-200">
+                <p className="text-blue-800 leading-relaxed break-words">
                   The industry decomposition is available for download as a PDF. Click the button above to access the complete document.
                 </p>
               </div>
             </div>
-
             <Separator />
-          </CardContent>
-        </Card>
+          </div>
+        </div>
+        <div className="hidden sm:block">
+          <Card>
+            <CardContent className="space-y-8 p-8">
+              <Separator />
+              {/* Download Section */}
+              <div>
+                <h3 className="text-lg sm:text-xl font-semibold mb-4 break-words">Download Full Report</h3>
+                <div className="bg-blue-50 p-4 sm:p-6 rounded-lg border border-blue-200">
+                  <p className="text-blue-800 leading-relaxed break-words">
+                    The industry decomposition is available for download as a PDF. Click the button above to access the complete document.
+                  </p>
+                </div>
+              </div>
+              <Separator />
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   )
