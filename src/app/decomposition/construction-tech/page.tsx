@@ -192,10 +192,6 @@ export default function IndustryDecompositionConstructionTech() {
       <div className="max-w-6xl mx-auto px-8 py-12">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Industry Decomposition: Construction Tech</h1>
-          <div className="flex justify-center gap-4 mb-2">
-            <span className="text-sm text-muted-foreground">Published: 2024</span>
-            <span className="text-sm text-muted-foreground">Format: PDF available</span>
-          </div>
         </div>
         {/* Criteria Scoring */}
         <section className="mb-12">
