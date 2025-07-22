@@ -43,36 +43,49 @@ function HomeContent() {
   return (
     <div className="min-h-screen bg-background text-foreground">
       {/* Navigation Header */}
-      <header className="bg-background border-b border-border sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <Image src="/logo.png" alt="InVitro Capital Logo" width={180} height={50} className="w-[140px] sm:w-[180px] h-auto" priority />
-            </div>
-            <div className="flex space-x-2 sm:space-x-4">
-              <Button
-                onClick={() => setActiveTab("research")}
-                className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 text-sm sm:text-base cursor-pointer ${
-                  activeTab === "research"
-                    ? "bg-[hsl(212,74%,15%)] text-white hover:bg-[hsl(212,74%,20%)]"
-                    : "border border-gray-300 bg-white text-gray-900 hover:bg-gray-50"
-                }`}
-              >
-                <FileText className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                Research
-              </Button>
-              <Button
-                onClick={() => setActiveTab("deals")}
-                className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 text-sm sm:text-base cursor-pointer ${
-                  activeTab === "deals"
-                    ? "bg-[hsl(212,74%,15%)] text-white hover:bg-[hsl(212,74%,20%)]"
-                    : "border border-gray-300 bg-white text-gray-900 hover:bg-gray-50"
-                }`}
-              >
-                <Building2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                Investments
-              </Button>
-            </div>
+      <header className="bg-background sticky top-0 z-50 w-full h-20 flex items-center px-0 shadow-sm">
+        <div
+          className="w-full flex items-center justify-between"
+          style={{
+            maxWidth: "80rem",
+            margin: "0 auto",
+            paddingLeft: 20, // 20px is slightly more out than px-8 (32px)
+            paddingRight: 32,
+          }}
+        >
+          <div>
+            <Image
+              src="/logo.png"
+              alt="InVitro Capital Logo"
+              width={180}
+              height={48}
+              className="h-16 w-auto"
+              priority
+            />
+          </div>
+          <div className="flex space-x-1">
+            <Button
+              onClick={() => setActiveTab("research")}
+              className={`flex items-center gap-1 px-2.5 py-1.5 text-sm rounded-full ${
+                activeTab === "research"
+                  ? "bg-[hsl(212,74%,15%)] text-white hover:bg-[hsl(212,74%,20%)]"
+                  : "border border-gray-300 bg-white text-gray-900 hover:bg-gray-50"
+              }`}
+            >
+              <FileText className="w-4 h-4" />
+              Research
+            </Button>
+            <Button
+              onClick={() => setActiveTab("deals")}
+              className={`flex items-center gap-1 px-2.5 py-1.5 text-sm rounded-full ${
+                activeTab === "deals"
+                  ? "bg-[hsl(212,74%,15%)] text-white hover:bg-[hsl(212,74%,20%)]"
+                  : "border border-gray-300 bg-white text-gray-900 hover:bg-gray-50"
+              }`}
+            >
+              <Building2 className="w-4 h-4" />
+              Investments
+            </Button>
           </div>
         </div>
       </header>

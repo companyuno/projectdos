@@ -12,21 +12,21 @@ export default function AccountingServicesDecomposition() {
 
   return (
     <div className="min-h-screen bg-white">
-      <div className="sticky top-0 z-20 bg-white border-b border-gray-200 w-full shadow-sm flex items-center justify-between h-12 sm:h-16 px-2 sm:px-4">
+      <div className="sticky top-0 z-20 bg-white border-b border-gray-200 w-full shadow-sm flex items-center justify-between h-20 px-6">
         <Button
           variant="ghost"
           size="icon"
           onClick={() => router.back()}
-          className="rounded-full p-2 text-[hsl(212,74%,15%)] hover:bg-[hsl(212,74%,97%)]"
+          className="rounded-full p-3 text-[hsl(212,74%,15%)] hover:bg-[hsl(212,74%,97%)]"
           aria-label="Back"
         >
-          <ArrowLeft className="w-6 h-6" />
+          <ArrowLeft className="w-7 h-7" />
         </Button>
         <div className="flex-1 flex justify-center">
           <Image
             src="/logo.png"
             alt="InVitro Capital Logo"
-            className="h-7 w-auto sm:h-12"
+            className="h-16 w-auto"
             style={{ objectFit: 'contain' }}
             width={180}
             height={48}
@@ -35,13 +35,13 @@ export default function AccountingServicesDecomposition() {
         <Button
           variant="ghost"
           size="icon"
-          className="rounded-full p-2 text-[hsl(212,74%,15%)] hover:bg-[hsl(212,74%,97%)]"
+          className="rounded-full p-3 text-[hsl(212,74%,15%)] hover:bg-[hsl(212,74%,97%)]"
           onClick={() => {
             window.open('/Industry Decomposition - Accounting Services.pdf', '_blank');
           }}
           aria-label="Download PDF"
         >
-          <Download className="w-6 h-6" />
+          <Download className="w-7 h-7" />
         </Button>
       </div>
       <div className="max-w-5xl mx-auto px-8 py-12">

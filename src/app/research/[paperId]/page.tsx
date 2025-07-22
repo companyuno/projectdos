@@ -526,22 +526,21 @@ export default function ResearchPaper() {
 
   return (
     <div className="min-h-screen bg-gray-50 text-foreground">
-      {/* Uniform sticky header, full width, matches homepage */}
-      <div className="sticky top-0 z-20 bg-white border-b border-gray-200 w-full shadow-sm flex items-center justify-between h-16 px-4">
+      <div className="sticky top-0 z-20 bg-white border-b border-gray-200 w-full shadow-sm flex items-center justify-between h-20 px-6">
         <Button
           variant="ghost"
           size="icon"
           onClick={() => router.back()}
-          className="rounded-full p-2.5 text-[hsl(212,74%,15%)] hover:bg-[hsl(212,74%,97%)]"
+          className="rounded-full p-3 text-[hsl(212,74%,15%)] hover:bg-[hsl(212,74%,97%)]"
           aria-label="Back"
         >
-          <ArrowLeft className="w-6 h-6" />
+          <ArrowLeft className="w-7 h-7" />
         </Button>
         <div className="flex-1 flex justify-center">
           <Image
             src="/logo.png"
             alt="InVitro Capital Logo"
-            className="h-10 w-auto"
+            className="h-16 w-auto"
             style={{ objectFit: 'contain' }}
             width={180}
             height={48}
@@ -550,7 +549,7 @@ export default function ResearchPaper() {
         <Button
           variant="ghost"
           size="icon"
-          className="rounded-full p-2.5 text-[hsl(212,74%,15%)] hover:bg-[hsl(212,74%,97%)]"
+          className="rounded-full p-3 text-[hsl(212,74%,15%)] hover:bg-[hsl(212,74%,97%)]"
           asChild
           aria-label="Download PDF"
         >
@@ -560,7 +559,7 @@ export default function ResearchPaper() {
             target="_blank"
             rel="noopener noreferrer"
           >
-            <Download className="w-6 h-6" />
+            <Download className="w-7 h-7" />
           </a>
         </Button>
       </div>
