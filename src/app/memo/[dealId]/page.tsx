@@ -302,25 +302,25 @@ export default function InvestmentMemo() {
           </a>
         </Button>
       </div>
-      <div className="max-w-5xl mx-auto px-8 py-12">
+      <div className="max-w-5xl mx-auto px-4 sm:px-8 py-6 sm:py-12">
         <div className="text-center mb-16">
-          <h1 className="text-3xl font-bold text-foreground mb-2">{memo.title}</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-2 break-words">{memo.title}</h1>
         </div>
 
         {memo.content ? (
           <div className="space-y-12">
             {/* Executive Summary */}
             <section>
-              <h2 className="text-2xl font-semibold text-muted-foreground mb-6 border-b-2 border-accent pb-2">
+              <h2 className="text-xl sm:text-2xl font-semibold text-muted-foreground mb-6 border-b-2 border-accent pb-2 break-words">
                 {`I. Executive Summary`}
               </h2>
 
               <div className="mb-8">
                 <h3 className="text-lg font-semibold text-foreground mb-4">Term Details</h3>
-                <div className="bg-gray-50 border border-gray-200 p-6 rounded-lg">
-                  <div className="grid grid-cols-2 gap-4">
+                <div className="bg-gray-50 border border-gray-200 p-4 sm:p-6 rounded-lg">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {Object.entries(memo.content.executiveSummary?.termDetails || {}).map(([key, value]) => (
-                      <div key={key} className="flex justify-between">
+                      <div key={key} className="flex justify-between break-words">
                         <span className="font-medium text-muted-foreground capitalize">{key.replace(/([A-Z])/g, " $1")}:</span>
                         <span className="font-semibold text-foreground">{String(value)}</span>
                       </div>
@@ -331,7 +331,7 @@ export default function InvestmentMemo() {
 
               <div className="mb-8">
                 <h3 className="text-lg font-semibold text-foreground mb-4">Company Overview</h3>
-                <p className="text-muted-foreground leading-relaxed">{memo.content.executiveSummary?.companyOverview}</p>
+                <p className="text-muted-foreground leading-relaxed break-words">{memo.content.executiveSummary?.companyOverview}</p>
               </div>
 
               <div className="mb-8">
@@ -340,7 +340,7 @@ export default function InvestmentMemo() {
                   {memo.content.executiveSummary?.keyHighlights.map((highlight: string, index: number) => (
                     <li key={index} className="flex items-start">
                       <div className="w-2 h-2 bg-blue-600 rounded-full mt-2 mr-4 flex-shrink-0"></div>
-                      <span className="text-muted-foreground">{highlight}</span>
+                      <span className="text-muted-foreground break-words">{highlight}</span>
                     </li>
                   ))}
                 </ul>
@@ -352,7 +352,7 @@ export default function InvestmentMemo() {
                   {memo.content.executiveSummary?.whyNow.map((point: string, index: number) => (
                     <li key={index} className="flex items-start">
                       <div className="w-2 h-2 bg-green-600 rounded-full mt-2 mr-4 flex-shrink-0"></div>
-                      <span className="text-muted-foreground">{point}</span>
+                      <span className="text-muted-foreground break-words">{point}</span>
                     </li>
                   ))}
                 </ul>
