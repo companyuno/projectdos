@@ -26,54 +26,54 @@ export default function InVitroInvestmentBuildProcess() {
           variant="ghost"
           size="icon"
           onClick={() => router.back()}
-          className="rounded-full p-3 text-[hsl(212,74%,15%)] hover:bg-[hsl(212,74%,97%)]"
+          className="rounded-full p-3 text-[#0a2e4e] hover:bg-[#f0f6fc]"
           aria-label="Back"
         >
           <ArrowLeft className="w-7 h-7" />
         </Button>
         <div className="flex-1 flex justify-center">
           <img
-            src="/logo.png"
+            src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/logo-shlzMTEcKSNu9d3nfRlo4Lr2ixbYXL.png"
             alt="InVitro Capital Logo"
             className="h-16 w-auto"
-            style={{ objectFit: 'contain' }}
+            style={{ objectFit: "contain" }}
           />
         </div>
         <Button
           variant="ghost"
           size="icon"
-          className="rounded-full p-3 text-[hsl(212,74%,15%)] hover:bg-[hsl(212,74%,97%)]"
+          className="rounded-full p-3 text-[#0a2e4e] hover:bg-[#f0f6fc]"
           asChild
           aria-label="Download PDF"
         >
-          <a
-            href="/IVC%20--%20Investment%20&%20Build%20Thesis.pdf"
-            download
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+          <a href="/IVC%20--%20Investment%20&%20Build%20Thesis.pdf" download target="_blank" rel="noopener noreferrer">
             <Download className="w-7 h-7" />
           </a>
         </Button>
       </div>
+
       <div className="max-w-5xl mx-auto px-8 py-12">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-foreground mb-2">InVitro Capital – Investment & Build Thesis</h1>
         </div>
+
         <div className="space-y-12">
           {/* Executive Summary */}
           <section>
-            <h2 className="text-2xl font-bold text-gray-900 mb-6 border-b-2" style={{ borderColor: '#0a2e4e' }}>
-              <span className="flex items-center"><Building2 className="w-6 h-6 mr-2 text-blue-600" />I. Executive Summary</span>
+            <h2 className="text-2xl font-bold text-gray-900 mb-6 border-b-2 border-[#0a2e4e] pb-2">
+              <span className="flex items-center">
+                <Building2 className="w-6 h-6 mr-2 text-[#0a2e4e]" />
+                I. Executive Summary
+              </span>
             </h2>
-            <div className="bg-blue-50 p-8 rounded-lg">
+            <div className="bg-[#f0f6fc] p-8 rounded-lg border border-[#6ba3d6]/20">
               <p className="text-lg text-gray-800 leading-relaxed mb-6">
                 InVitro Capital is a venture studio fund purpose-built to generate alpha through structural control,
                 capital discipline, and operational focus.
               </p>
               <div className="grid md:grid-cols-3 gap-6">
                 <div className="text-center">
-                  <div className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <div className="w-12 h-12 bg-[#0a2e4e] rounded-full flex items-center justify-center mx-auto mb-3">
                     <Building2 className="w-6 h-6 text-white" />
                   </div>
                   <h3 className="font-semibold text-gray-900 mb-2">Company Creation</h3>
@@ -82,14 +82,14 @@ export default function InVitroInvestmentBuildProcess() {
                   </p>
                 </div>
                 <div className="text-center">
-                  <div className="w-12 h-12 bg-green-600 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <div className="w-12 h-12 bg-[#6ba3d6] rounded-full flex items-center justify-center mx-auto mb-3">
                     <Target className="w-6 h-6 text-white" />
                   </div>
                   <h3 className="font-semibold text-gray-900 mb-2">Capital Discipline</h3>
                   <p className="text-sm text-gray-700">Milestone-based capital deployment with structural control</p>
                 </div>
                 <div className="text-center">
-                  <div className="w-12 h-12 bg-purple-600 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <div className="w-12 h-12 bg-[#0a2e4e] rounded-full flex items-center justify-center mx-auto mb-3">
                     <TrendingUp className="w-6 h-6 text-white" />
                   </div>
                   <h3 className="font-semibold text-gray-900 mb-2">Superior Returns</h3>
@@ -101,7 +101,7 @@ export default function InVitroInvestmentBuildProcess() {
 
           {/* Market Backdrop */}
           <section>
-            <h2 className="text-2xl font-bold text-gray-900 mb-6 border-b-2" style={{ borderColor: '#0a2e4e' }}>
+            <h2 className="text-2xl font-bold text-gray-900 mb-6 border-b-2 border-[#0a2e4e] pb-2">
               II. Market Backdrop
             </h2>
             <div className="mb-8">
@@ -134,7 +134,7 @@ export default function InVitroInvestmentBuildProcess() {
                   <h4 className="font-semibold text-yellow-800 mb-3">Extended Timelines</h4>
                   <ul className="space-y-2 text-sm text-yellow-700">
                     <li>• VC companies: 10-12 years to liquidity</li>
-                    <li>• Growing &quot;zombie&quot; startup population</li>
+                    <li>• Growing "zombie" startup population</li>
                     <li>• Capital-draining, unexitable assets</li>
                   </ul>
                 </div>
@@ -148,8 +148,8 @@ export default function InVitroInvestmentBuildProcess() {
                 </div>
               </div>
 
-              <div className="bg-blue-50 p-6 rounded-lg mt-6">
-                <p className="text-blue-800 font-medium">
+              <div className="bg-[#f0f6fc] p-6 rounded-lg mt-6 border border-[#6ba3d6]/20">
+                <p className="text-[#0a2e4e] font-medium">
                   In this context, allocators are increasingly seeking upstream exposure—models that offer tighter
                   control, lower capital burn, and earlier time to value.
                 </p>
@@ -159,26 +159,26 @@ export default function InVitroInvestmentBuildProcess() {
 
           {/* The Case for Venture Studio Model */}
           <section>
-            <h2 className="text-2xl font-bold text-gray-900 mb-6 border-b-2" style={{ borderColor: '#0a2e4e' }}>
+            <h2 className="text-2xl font-bold text-gray-900 mb-6 border-b-2 border-[#0a2e4e] pb-2">
               III. The Case for a Venture Studio Model
             </h2>
 
             <div className="mb-8">
               <h3 className="text-xl font-semibold text-gray-800 mb-6">Structural Advantages</h3>
               <p className="text-gray-700 leading-relaxed mb-6">
-                InVitro&apos;s approach is built on three pillars: create, control, and compound.
+                InVitro's approach is built on three pillars: create, control, and compound.
               </p>
 
               <div className="grid gap-6">
-                <div className="bg-gradient-to-r from-blue-50 to-blue-100 p-6 rounded-lg border border-blue-200">
+                <div className="bg-gradient-to-r from-[#f0f6fc] to-[#e6f2ff] p-6 rounded-lg border border-[#6ba3d6]/30">
                   <div className="flex items-start gap-4">
-                    <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
+                    <div className="w-10 h-10 bg-[#0a2e4e] rounded-full flex items-center justify-center flex-shrink-0">
                       <span className="text-white font-bold">1</span>
                     </div>
                     <div>
-                      <h4 className="text-lg font-semibold text-blue-900 mb-2">Create</h4>
-                      <p className="text-blue-800">
-                        The fund doesn&apos;t chase deals, it builds them. By identifying overlooked sectors with high labor
+                      <h4 className="text-lg font-semibold text-[#0a2e4e] mb-2">Create</h4>
+                      <p className="text-gray-800">
+                        The fund doesn't chase deals, it builds them. By identifying overlooked sectors with high labor
                         intensity, low tech penetration, and fragmentation, InVitro launches companies with embedded
                         operational leverage and consolidation potential.
                       </p>
@@ -186,14 +186,14 @@ export default function InVitroInvestmentBuildProcess() {
                   </div>
                 </div>
 
-                <div className="bg-gradient-to-r from-green-50 to-green-100 p-6 rounded-lg border border-green-200">
+                <div className="bg-gradient-to-r from-[#f0f6fc] to-[#e6f2ff] p-6 rounded-lg border border-[#6ba3d6]/30">
                   <div className="flex items-start gap-4">
-                    <div className="w-10 h-10 bg-green-600 rounded-full flex items-center justify-center flex-shrink-0">
+                    <div className="w-10 h-10 bg-[#6ba3d6] rounded-full flex items-center justify-center flex-shrink-0">
                       <span className="text-white font-bold">2</span>
                     </div>
                     <div>
-                      <h4 className="text-lg font-semibold text-green-900 mb-2">Control</h4>
-                      <p className="text-green-800">
+                      <h4 className="text-lg font-semibold text-[#0a2e4e] mb-2">Control</h4>
+                      <p className="text-gray-800">
                         Each portfolio company is majority-owned post-dilution through a combination of fund and studio
                         equity, preserving strategic control and exit flexibility.
                       </p>
@@ -201,17 +201,17 @@ export default function InVitroInvestmentBuildProcess() {
                   </div>
                 </div>
 
-                <div className="bg-gradient-to-r from-purple-50 to-purple-100 p-6 rounded-lg border border-purple-200">
+                <div className="bg-gradient-to-r from-[#f0f6fc] to-[#e6f2ff] p-6 rounded-lg border border-[#6ba3d6]/30">
                   <div className="flex items-start gap-4">
-                    <div className="w-10 h-10 bg-purple-600 rounded-full flex items-center justify-center flex-shrink-0">
+                    <div className="w-10 h-10 bg-[#0a2e4e] rounded-full flex items-center justify-center flex-shrink-0">
                       <span className="text-white font-bold">3</span>
                     </div>
                     <div>
-                      <h4 className="text-lg font-semibold text-purple-900 mb-2">Compound</h4>
-                      <p className="text-purple-800">
+                      <h4 className="text-lg font-semibold text-[#0a2e4e] mb-2">Compound</h4>
+                      <p className="text-gray-800">
                         Centralized tech and talent infrastructure reduce marginal build cost and increase execution
                         speed. Investments are staged across 3–4 tranches based on live commercial traction, ensuring
-                        capital only scales what&apos;s working.
+                        capital only scales what's working.
                       </p>
                     </div>
                   </div>
@@ -223,21 +223,21 @@ export default function InVitroInvestmentBuildProcess() {
               <h4 className="text-lg font-semibold text-gray-800 mb-4">Key Allocator Benefits:</h4>
               <div className="grid md:grid-cols-3 gap-4">
                 <div className="flex items-start gap-3">
-                  <CheckCircle className="w-5 h-5 text-green-600 mt-1 flex-shrink-0" />
+                  <CheckCircle className="w-5 h-5 text-[#6ba3d6] mt-1 flex-shrink-0" />
                   <div>
                     <p className="font-medium text-gray-900">Governance Alignment</p>
                     <p className="text-sm text-gray-600">Majority equity ensures value realization focus</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
-                  <CheckCircle className="w-5 h-5 text-green-600 mt-1 flex-shrink-0" />
+                  <CheckCircle className="w-5 h-5 text-[#6ba3d6] mt-1 flex-shrink-0" />
                   <div>
                     <p className="font-medium text-gray-900">Capital Efficiency</p>
                     <p className="text-sm text-gray-600">Controlled burn and milestone funding</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
-                  <CheckCircle className="w-5 h-5 text-green-600 mt-1 flex-shrink-0" />
+                  <CheckCircle className="w-5 h-5 text-[#6ba3d6] mt-1 flex-shrink-0" />
                   <div>
                     <p className="font-medium text-gray-900">Early Validation</p>
                     <p className="text-sm text-gray-600">Products tested before outside capital</p>
@@ -249,7 +249,7 @@ export default function InVitroInvestmentBuildProcess() {
 
           {/* Market Fit */}
           <section>
-            <h2 className="text-2xl font-bold text-gray-900 mb-6 border-b-2" style={{ borderColor: '#0a2e4e' }}>
+            <h2 className="text-2xl font-bold text-gray-900 mb-6 border-b-2 border-[#0a2e4e] pb-2">
               IV. Market Fit: Where InVitro Operates
             </h2>
 
@@ -284,29 +284,29 @@ export default function InVitroInvestmentBuildProcess() {
                   <TrendingUp className="w-5 h-5 mr-2" />
                   Overlooked
                 </h4>
-                <p className="text-green-700">&quot;Boring&quot; industries neglected by traditional venture despite large TAM</p>
+                <p className="text-green-700">"Boring" industries neglected by traditional venture despite large TAM</p>
               </div>
             </div>
 
-            <div className="bg-blue-50 p-6 rounded-lg">
-              <h4 className="font-semibold text-blue-800 mb-3">Initial Target Verticals:</h4>
+            <div className="bg-[#f0f6fc] p-6 rounded-lg border border-[#6ba3d6]/20">
+              <h4 className="font-semibold text-[#0a2e4e] mb-3">Initial Target Verticals:</h4>
               <div className="grid md:grid-cols-2 gap-4">
-                <ul className="space-y-2 text-blue-700">
+                <ul className="space-y-2 text-[#0a2e4e]">
                   <li>• Senior care</li>
                   <li>• Healthcare services</li>
                 </ul>
-                <ul className="space-y-2 text-blue-700">
+                <ul className="space-y-2 text-[#0a2e4e]">
                   <li>• Local logistics</li>
                   <li>• Home maintenance</li>
                 </ul>
               </div>
-              <p className="text-blue-700 mt-4 italic">Markets with real unit economics and systemic inefficiencies</p>
+              <p className="text-[#0a2e4e] mt-4 italic">Markets with real unit economics and systemic inefficiencies</p>
             </div>
           </section>
 
           {/* Portfolio Construction */}
           <section>
-            <h2 className="text-2xl font-bold text-gray-900 mb-6 border-b-2" style={{ borderColor: '#0a2e4e' }}>
+            <h2 className="text-2xl font-bold text-gray-900 mb-6 border-b-2 border-[#0a2e4e] pb-2">
               V. Portfolio Construction and Liquidity Engineering
             </h2>
 
@@ -337,7 +337,7 @@ export default function InVitroInvestmentBuildProcess() {
                   },
                 ].map((item, index) => (
                   <div key={index} className="flex items-start gap-4 p-4 bg-gray-50 rounded-lg">
-                    <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
+                    <div className="w-8 h-8 bg-[#0a2e4e] rounded-full flex items-center justify-center flex-shrink-0">
                       <span className="text-white font-bold text-sm">{index + 1}</span>
                     </div>
                     <div>
@@ -359,13 +359,13 @@ export default function InVitroInvestmentBuildProcess() {
             <div>
               <h3 className="text-xl font-semibold text-gray-800 mb-6">Liquidity Outlook</h3>
               <p className="text-gray-700 leading-relaxed mb-6">
-                In contrast to traditional VC&apos;s 10+ year cycles, InVitro targets exit readiness within 3–5 year windows.
+                In contrast to traditional VC's 10+ year cycles, InVitro targets exit readiness within 3–5 year windows.
               </p>
 
               <div className="grid md:grid-cols-3 gap-6">
-                <div className="bg-blue-50 p-6 rounded-lg border border-blue-200 text-center">
-                  <h4 className="font-semibold text-blue-800 mb-3">Strategic Acquisition</h4>
-                  <p className="text-blue-700 text-sm">By incumbents seeking automation or market access</p>
+                <div className="bg-[#f0f6fc] p-6 rounded-lg border border-[#6ba3d6]/30 text-center">
+                  <h4 className="font-semibold text-[#0a2e4e] mb-3">Strategic Acquisition</h4>
+                  <p className="text-gray-700 text-sm">By incumbents seeking automation or market access</p>
                 </div>
                 <div className="bg-green-50 p-6 rounded-lg border border-green-200 text-center">
                   <h4 className="font-semibold text-green-800 mb-3">Private Equity Buyout</h4>
@@ -381,7 +381,7 @@ export default function InVitroInvestmentBuildProcess() {
 
           {/* Validation Process */}
           <section>
-            <h2 className="text-2xl font-bold text-gray-900 mb-6 border-b-2" style={{ borderColor: '#0a2e4e' }}>
+            <h2 className="text-2xl font-bold text-gray-900 mb-6 border-b-2 border-[#0a2e4e] pb-2">
               VI. How We Validate and Build Companies
             </h2>
 
@@ -393,7 +393,7 @@ export default function InVitroInvestmentBuildProcess() {
                 <div className="bg-gray-50 p-6 rounded-lg">
                   <div className="grid md:grid-cols-3 gap-6">
                     <div className="text-center">
-                      <div className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-3">
+                      <div className="w-12 h-12 bg-[#0a2e4e] rounded-full flex items-center justify-center mx-auto mb-3">
                         <span className="text-white font-bold">1</span>
                       </div>
                       <h4 className="font-semibold text-gray-900 mb-2">Industry Mapping</h4>
@@ -402,7 +402,7 @@ export default function InVitroInvestmentBuildProcess() {
                       </p>
                     </div>
                     <div className="text-center">
-                      <div className="w-12 h-12 bg-green-600 rounded-full flex items-center justify-center mx-auto mb-3">
+                      <div className="w-12 h-12 bg-[#6ba3d6] rounded-full flex items-center justify-center mx-auto mb-3">
                         <span className="text-white font-bold">2</span>
                       </div>
                       <h4 className="font-semibold text-gray-900 mb-2">Criteria Scoring</h4>
@@ -411,12 +411,12 @@ export default function InVitroInvestmentBuildProcess() {
                       </p>
                     </div>
                     <div className="text-center">
-                      <div className="w-12 h-12 bg-purple-600 rounded-full flex items-center justify-center mx-auto mb-3">
+                      <div className="w-12 h-12 bg-[#0a2e4e] rounded-full flex items-center justify-center mx-auto mb-3">
                         <span className="text-white font-bold">3</span>
                       </div>
                       <h4 className="font-semibold text-gray-900 mb-2">Shortlist Creation</h4>
                       <p className="text-sm text-gray-700">
-                        Filter to 10–15 &quot;fertile ground&quot; sectors for deeper analysis
+                        Filter to 10–15 "fertile ground" sectors for deeper analysis
                       </p>
                     </div>
                   </div>
@@ -427,7 +427,7 @@ export default function InVitroInvestmentBuildProcess() {
                 <h3 className="text-xl font-semibold text-gray-800 mb-4">B. Problem Validation and Signal Testing</h3>
                 <p className="text-gray-700 leading-relaxed mb-4">
                   Only after whitespace is mapped do we move into problem validation. The goal is to answer one clear
-                  question before building anything: &quot;Will you buy?&quot;
+                  question before building anything: "Will you buy?"
                 </p>
 
                 <div className="bg-yellow-50 p-6 rounded-lg border border-yellow-200">
@@ -521,7 +521,7 @@ export default function InVitroInvestmentBuildProcess() {
 
           {/* Performance */}
           <section>
-            <h2 className="text-2xl font-bold text-gray-900 mb-6 border-b-2" style={{ borderColor: '#0a2e4e' }}>
+            <h2 className="text-2xl font-bold text-gray-900 mb-6 border-b-2 border-[#0a2e4e] pb-2">
               VII. Performance and Team
             </h2>
 
@@ -538,12 +538,12 @@ export default function InVitroInvestmentBuildProcess() {
                       </div>
                     </div>
                   </div>
-                  <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                  <div className="bg-[#f0f6fc] p-4 rounded-lg border border-[#6ba3d6]/30">
                     <div className="flex items-center gap-3">
-                      <TrendingUp className="w-6 h-6 text-blue-600" />
+                      <TrendingUp className="w-6 h-6 text-[#0a2e4e]" />
                       <div>
-                        <p className="font-semibold text-blue-800">37.2%</p>
-                        <p className="text-sm text-blue-700">Gross IRR (mature companies)</p>
+                        <p className="font-semibold text-[#0a2e4e]">37.2%</p>
+                        <p className="text-sm text-gray-700">Gross IRR (mature companies)</p>
                       </div>
                     </div>
                   </div>
@@ -578,14 +578,14 @@ export default function InVitroInvestmentBuildProcess() {
 
           {/* Allocator Fit */}
           <section>
-            <h2 className="text-2xl font-bold text-gray-900 mb-6 border-b-2" style={{ borderColor: '#0a2e4e' }}>
+            <h2 className="text-2xl font-bold text-gray-900 mb-6 border-b-2 border-[#0a2e4e] pb-2">
               VIII. Allocator Fit
             </h2>
 
             <div className="grid md:grid-cols-3 gap-6 mb-8">
-              <div className="bg-blue-50 p-6 rounded-lg border border-blue-200 text-center">
-                <h4 className="font-semibold text-blue-800 mb-3">Pacing Buffer</h4>
-                <p className="text-blue-700 text-sm">
+              <div className="bg-[#f0f6fc] p-6 rounded-lg border border-[#6ba3d6]/30 text-center">
+                <h4 className="font-semibold text-[#0a2e4e] mb-3">Pacing Buffer</h4>
+                <p className="text-gray-700 text-sm">
                   Venture building absorbs capital during dry PE/VC deployment cycles
                 </p>
               </div>
@@ -616,10 +616,10 @@ export default function InVitroInvestmentBuildProcess() {
 
           {/* Conclusion */}
           <section>
-            <h2 className="text-2xl font-bold text-gray-900 mb-6 border-b-2" style={{ borderColor: '#0a2e4e' }}>IX. Conclusion</h2>
-            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-8 rounded-lg border border-blue-200">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6 border-b-2 border-[#0a2e4e] pb-2">IX. Conclusion</h2>
+            <div className="bg-gradient-to-r from-[#f0f6fc] to-[#e6f2ff] p-8 rounded-lg border border-[#6ba3d6]/30">
               <p className="text-lg text-gray-800 leading-relaxed mb-4">
-                InVitro Capital is not just a response to structural inefficiencies in private markets—it&apos;s a strategy
+                InVitro Capital is not just a response to structural inefficiencies in private markets—it's a strategy
                 designed to thrive in them.
               </p>
               <p className="text-gray-700 leading-relaxed mb-4">
@@ -627,7 +627,7 @@ export default function InVitroInvestmentBuildProcess() {
                 InVitro unlocks a new path to venture-scale returns without the venture-style chaos.
               </p>
               <p className="text-gray-700 leading-relaxed font-medium">
-                This is not venture capital rebranded. It&apos;s a new category: a capital-controlled, outcome-aligned,
+                This is not venture capital rebranded. It's a new category: a capital-controlled, outcome-aligned,
                 execution-driven platform for building the next generation of enduring companies.
               </p>
             </div>
