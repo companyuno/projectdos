@@ -439,7 +439,7 @@ export default function ResearchHub() {
       <div className="bg-white border border-gray-200 rounded-lg px-4 sm:px-6 py-6 sm:py-8 md:py-12 shadow-lg w-full text-left mt-1 mb-6 sm:mb-8">
         <div className="flex items-center gap-2 mb-3 sm:mb-4">
           <Lightbulb className="w-5 h-5 sm:w-6 sm:h-6 text-yellow-400 flex-shrink-0" />
-          <h3 className="font-bold text-xl sm:text-2xl text-[#0a2e4e]">InVitro&apos;s Research Philosophy</h3>
+          <h2 className="text-2xl font-semibold text-gray-900">InVitro&apos;s Research Philosophy</h2>
         </div>
         <div className="text-sm sm:text-base font-semibold mb-4 sm:mb-6 text-left" style={{color: '#0a2e4e'}}>
           Demand-First • Workflow-Deep • Segment-Precise
@@ -453,7 +453,7 @@ export default function ResearchHub() {
         <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
           <div className="flex items-center gap-2 mb-6">
             <Star className="w-5 h-5 text-yellow-500 fill-current" />
-            <h2 className="text-2xl font-semibold text-gray-900">Featured Research</h2>
+            <h2 className="text-xl font-semibold text-gray-900">Featured Research</h2>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {featuredResearch.map((paper) => (
@@ -468,7 +468,7 @@ export default function ResearchHub() {
         <div className="p-6">
           <div className="flex items-center gap-2 mb-2">
             <Folder className="w-5 h-5 text-gray-500" />
-            <h2 className="text-2xl font-semibold text-gray-900">Research Archive</h2>
+            <h2 className="text-xl font-semibold text-gray-900">Research Archive</h2>
           </div>
         </div>
         {/* InVitro Builder Folder */}
