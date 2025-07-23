@@ -29,21 +29,6 @@ export default function PermissionGate({ children, fallback }: PermissionGatePro
   const [requestSubmitted, setRequestSubmitted] = useState(false)
   const [showAccessBanner, setShowAccessBanner] = useState(false)
 
-  useEffect(() => {
-    // Check if user already has permission from localStorage
-    const savedEmail = localStorage.getItem("invitro-user-email")
-    if (savedEmail) {
-      setEmail(savedEmail)
-      // Only check permission if we haven't already determined it
-      if (hasPermission === null) {
-        checkPermission(savedEmail)
-      }
-    } else {
-      setHasPermission(false)
-      setRequestSubmitted(false)
-    }
-  }, [hasPermission, checkPermission]) // Add hasPermission to dependency array
-
   const checkPermission = async (emailToCheck: string) => {
     // Check if we already have a cached result for this email
     const cachedPermission = localStorage.getItem(`invitro-permission-${emailToCheck}`)
@@ -100,6 +85,21 @@ export default function PermissionGate({ children, fallback }: PermissionGatePro
       setIsChecking(false)
     }
   }
+
+  useEffect(() => {
+    // Check if user already has permission from localStorage
+    const savedEmail = localStorage.getItem("invitro-user-email")
+    if (savedEmail) {
+      setEmail(savedEmail)
+      // Only check permission if we haven't already determined it
+      if (hasPermission === null) {
+        checkPermission(savedEmail)
+      }
+    } else {
+      setHasPermission(false)
+      setRequestSubmitted(false)
+    }
+  }, [hasPermission, checkPermission]) // Add hasPermission to dependency array
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()

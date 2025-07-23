@@ -111,7 +111,7 @@ export default function InVitroInvestmentBuildProcess() {
               </h3>
               <p className="text-gray-700 leading-relaxed mb-6">
                 Private company investing has become foundational in allocator portfolios, but the playbook is changing.
-                In both venture and private equity, the ability to source and exit deals is under pressure: &quot;winner&#39;s curse&quot;
+                In both venture and private equity, the ability to source and exit deals is under pressure:
               </p>
 
               <div className="grid md:grid-cols-2 gap-6">
