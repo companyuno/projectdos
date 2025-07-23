@@ -285,7 +285,7 @@ export default function InVitroInvestmentBuildProcess() {
                   <TrendingUp className="w-5 h-5 mr-2" />
                   Overlooked
                 </h4>
-                <p className="text-green-700">"Boring" industries neglected by traditional venture despite large TAM</p>
+                <p className="text-green-700">&quot;Boring&quot; industries neglected by traditional venture despite large TAM</p>
               </div>
             </div>
 
@@ -360,7 +360,7 @@ export default function InVitroInvestmentBuildProcess() {
             <div>
               <h3 className="text-xl font-semibold text-gray-800 mb-6">Liquidity Outlook</h3>
               <p className="text-gray-700 leading-relaxed mb-6">
-                In contrast to traditional VC's 10+ year cycles, InVitro targets exit readiness within 3–5 year windows.
+                In contrast to traditional VC&#39;s 10+ year cycles, InVitro targets exit readiness within 3–5 year windows.
               </p>
 
               <div className="grid md:grid-cols-3 gap-6">
@@ -620,7 +620,7 @@ export default function InVitroInvestmentBuildProcess() {
             <h2 className="text-2xl font-bold text-gray-900 mb-6 border-b-2 border-[#0a2e4e] pb-2">IX. Conclusion</h2>
             <div className="bg-gradient-to-r from-[#f0f6fc] to-[#e6f2ff] p-8 rounded-lg border border-[#6ba3d6]/30">
               <p className="text-lg text-gray-800 leading-relaxed mb-4">
-                InVitro Capital is not just a response to structural inefficiencies in private markets—it's a strategy
+                InVitro Capital is not just a response to structural inefficiencies in private markets—it&#39;s a strategy
                 designed to thrive in them.
               </p>
               <p className="text-gray-700 leading-relaxed mb-4">
