@@ -135,7 +135,7 @@ export default function InVitroInvestmentBuildProcess() {
                   <h4 className="font-semibold text-yellow-800 mb-3">Extended Timelines</h4>
                   <ul className="space-y-2 text-sm text-yellow-700">
                     <li>• VC companies: 10-12 years to liquidity</li>
-                    <li>• Growing "zombie" startup population</li>
+                    <li>• Growing &quot;zombie&quot; startup population</li>
                     <li>• Capital-draining, unexitable assets</li>
                   </ul>
                 </div>
