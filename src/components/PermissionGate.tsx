@@ -125,7 +125,7 @@ export default function PermissionGate({ children }: PermissionGateProps) {
           <CardContent>
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
               <p className="text-blue-700 text-sm">
-                We've received your request to access our deals. We will be in touch shortly.
+                We&apos;ve received your request to access our deals. We will be in touch shortly.
               </p>
             </div>
             <Button onClick={() => { setSubmitted(false); setEmail(""); setHasPermission(null); }} className="w-full">
