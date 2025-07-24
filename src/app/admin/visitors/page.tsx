@@ -103,11 +103,30 @@ export default function AdminVisitorsPage() {
               localStorage.removeItem("invitro-accredited");
               localStorage.removeItem("invitro-accredited-selections");
               localStorage.removeItem("invitro-user-info");
+              localStorage.removeItem("invitro-user-email");
+              localStorage.removeItem("invitro-user-permission");
               // Remove any other relevant keys if needed
               window.location.reload();
             }}
           >
             Reset Demo
+          </Button>
+          <Button
+            variant="destructive"
+            className="text-xs px-3 py-1 border-red-400 text-red-700 hover:bg-red-50 hover:border-red-500"
+            onClick={async () => {
+              if (!window.confirm('Are you sure you want to delete all visitor records? This cannot be undone.')) return;
+              // Fetch all visitors
+              const res = await fetch('/api/visitors');
+              const visitors = await res.json();
+              // Delete each visitor by index (from last to first to avoid index shifting)
+              for (let i = visitors.length - 1; i >= 0; i--) {
+                await fetch(`/api/visitors?index=${i}`, { method: 'DELETE' });
+              }
+              window.location.reload();
+            }}
+          >
+            Clear All
           </Button>
         </div>
       </div>

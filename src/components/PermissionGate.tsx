@@ -1,223 +1,143 @@
-"use client"
-
-import { useState, useEffect } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Label } from "@/components/ui/label"
-import { Lock, Mail, CheckCircle } from "lucide-react"
+import React, { useState, useEffect } from "react";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Lock, Mail, CheckCircle, LogOut } from "lucide-react";
 
 interface PermissionGateProps {
-  children: React.ReactNode
-  fallback?: React.ReactNode
+  children: React.ReactNode;
 }
 
-export default function PermissionGate({ children, fallback }: PermissionGateProps) {
-  const [hasPermission, setHasPermission] = useState<boolean | null>(() => {
-    // Initialize with cached permission state if available
-    if (typeof window !== 'undefined') {
-      const savedEmail = localStorage.getItem("invitro-user-email")
-      if (savedEmail) {
-        return null // Will be set after permission check
-      }
-    }
-    return false
-  })
-  const [email, setEmail] = useState("")
-  const [isChecking, setIsChecking] = useState(false)
-  const [error, setError] = useState("")
-  const [requestSubmitted, setRequestSubmitted] = useState(false)
-  const [showAccessBanner, setShowAccessBanner] = useState(false)
+const STORAGE_KEY_EMAIL = "invitro-user-email";
+const STORAGE_KEY_PERMISSION = "invitro-user-permission";
 
-  const checkPermission = async (emailToCheck: string) => {
-    // Check if we already have a cached result for this email
-    const cachedPermission = localStorage.getItem(`invitro-permission-${emailToCheck}`)
-    if (cachedPermission) {
-      const hasPermission = cachedPermission === 'true'
-      setHasPermission(hasPermission)
-      setEmail(emailToCheck)
-      return
-    }
+export default function PermissionGate({ children }: PermissionGateProps) {
+  const [email, setEmail] = useState("");
+  const [hasPermission, setHasPermission] = useState<null | boolean>(null);
+  const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [showAccessBanner, setShowAccessBanner] = useState(false);
 
-    setIsChecking(true)
-    try {
-      const response = await fetch('/api/permissions/check', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email: emailToCheck }),
-      })
-
-      const data = await response.json()
-      setHasPermission(data.hasPermission)
-      setError("")
-      
-      // Cache the permission result
-      localStorage.setItem(`invitro-permission-${emailToCheck}`, String(data.hasPermission))
-      
-      if (data.hasPermission) {
-        const wasAlreadyLoggedIn = localStorage.getItem("invitro-user-email") !== null
-        localStorage.setItem("invitro-user-email", emailToCheck)
-        
-        // Only show banner if this is a new login (not a refresh)
-        if (!wasAlreadyLoggedIn) {
-          setShowAccessBanner(true)
-          setTimeout(() => setShowAccessBanner(false), 3000)
-        }
-      } else {
-        // If access denied, show request submitted message only if this was a form submission
-        if (emailToCheck !== "") {
-          setRequestSubmitted(true)
-        }
-      }
-      
-      // Log the access attempt
-      await logAccessAttempt(emailToCheck, data.hasPermission)
-    } catch (error) {
-      console.error('Error checking permission:', error)
-      setError("Error checking permission")
-      setHasPermission(false)
-      
-      // Log failed attempt
-      await logAccessAttempt(emailToCheck, false)
-    } finally {
-      setIsChecking(false)
-    }
-  }
-
+  // On mount, check localStorage for previous session
   useEffect(() => {
-    // Check if user already has permission from localStorage
-    const savedEmail = localStorage.getItem("invitro-user-email")
-    if (savedEmail) {
-      setEmail(savedEmail)
-      // Only check permission if we haven't already determined it
-      if (hasPermission === null) {
-        checkPermission(savedEmail)
-      }
-    } else {
-      setHasPermission(false)
-      setRequestSubmitted(false)
+    const storedEmail = localStorage.getItem(STORAGE_KEY_EMAIL);
+    const storedPermission = localStorage.getItem(STORAGE_KEY_PERMISSION);
+    if (storedEmail && storedPermission === "true") {
+      setEmail(storedEmail);
+      setHasPermission(true);
+      setSubmitted(true);
     }
-  }, [hasPermission, checkPermission]) // Add hasPermission to dependency array
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!email.trim()) return
-
-    await checkPermission(email.trim())
-  }
-
-  const logAccessAttempt = async (email: string, hasAccess: boolean) => {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+    setHasPermission(null);
+    setSubmitted(false);
     try {
-      await fetch('/api/visitors', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+      // Check permission
+      const res = await fetch("/api/permissions/check", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      const data = await res.json();
+      setHasPermission(data.hasPermission);
+
+      // Log the access attempt
+      await fetch("/api/visitors", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          firstName: hasAccess ? 'Investment' : 'Access',
-          lastName: hasAccess ? 'Access' : 'Request',
-          email: email,
+          email,
           accessAttempt: true,
-          hasAccess: hasAccess,
-          accessType: hasAccess ? 'investments_tab' : 'access_request',
-          requestType: hasAccess ? 'authorized_access' : 'unauthorized_request'
+          hasAccess: data.hasPermission,
+          accessType: data.hasPermission ? "investments_tab" : "access_request",
+          requestType: data.hasPermission ? "authorized_access" : "unauthorized_request",
         }),
-      })
-    } catch (error) {
-      console.error('Error logging access attempt:', error)
-    }
-  }
+      });
 
+      setSubmitted(true);
+      if (data.hasPermission) {
+        setShowAccessBanner(true);
+        localStorage.setItem(STORAGE_KEY_EMAIL, email);
+        localStorage.setItem(STORAGE_KEY_PERMISSION, "true");
+      } else {
+        localStorage.removeItem(STORAGE_KEY_EMAIL);
+        localStorage.setItem(STORAGE_KEY_PERMISSION, "false");
+      }
+    } catch (err) {
+      setError("Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Hide the access granted banner after 3 seconds
+  useEffect(() => {
+    if (showAccessBanner) {
+      const timer = setTimeout(() => setShowAccessBanner(false), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [showAccessBanner]);
+
+  // Logout handler
   const handleLogout = () => {
-    const savedEmail = localStorage.getItem("invitro-user-email")
-    if (savedEmail) {
-      localStorage.removeItem(`invitro-permission-${savedEmail}`)
-    }
-    localStorage.removeItem("invitro-user-email")
-    setHasPermission(false)
-    setEmail("")
-    setRequestSubmitted(false)
-    setShowAccessBanner(false)
-  }
+    localStorage.removeItem(STORAGE_KEY_EMAIL);
+    localStorage.removeItem(STORAGE_KEY_PERMISSION);
+    setEmail("");
+    setHasPermission(null);
+    setSubmitted(false);
+    setError("");
+  };
 
-  // Show loading state while checking permission
-  if (hasPermission === null) {
+  // If user has permission and submitted, show children (protected content) and logout button
+  if (submitted && hasPermission) {
     return (
-      <div className="flex items-center justify-center py-12">
-        <div className="text-gray-500">Checking access...</div>
-      </div>
-    )
-  }
-
-  // Show access granted banner
-  if (showAccessBanner) {
-    return (
-      <div className="fixed top-4 right-4 z-50">
-        <div className="bg-green-50 border border-green-200 rounded-lg p-4 shadow-lg">
-          <div className="flex items-center gap-2">
-            <CheckCircle className="w-5 h-5 text-green-600" />
-            <span className="text-green-800 font-medium">Access Granted</span>
+      <>
+        {showAccessBanner && (
+          <div className="fixed top-4 right-4 z-50">
+            <div className="bg-green-50 border border-green-200 rounded-lg p-4 shadow-lg flex items-center gap-2">
+              <CheckCircle className="w-5 h-5 text-green-600" />
+              <span className="text-green-800 font-medium">Access Granted</span>
+            </div>
           </div>
-        </div>
-      </div>
-    )
-  }
-
-  // Show content if user has permission
-  if (hasPermission === true) {
-    return (
-      <div>
+        )}
         {children}
-        <div className="fixed top-4 right-4 z-50">
-          <Button
-            onClick={handleLogout}
-            variant="outline"
-            size="sm"
-            className="bg-white shadow-lg"
-          >
-            Logout
-          </Button>
-        </div>
-      </div>
-    )
+      </>
+    );
   }
 
-  // Show request submitted message
-  if (requestSubmitted) {
+  // If submitted and no permission, show request received message
+  if (submitted && hasPermission === false) {
     return (
       <div className="max-w-md mx-auto py-12">
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Mail className="w-5 h-5 text-blue-600" />
-              Request Submitted
+              Request Received
             </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
               <p className="text-blue-700 text-sm">
-                Thank you for your interest in our InVitro Capital&apos;s investment opportunities. 
-                We&apos;ll review your request and contact you if access is granted.
+                We've received your request to access our deals. We will be in touch shortly.
               </p>
             </div>
-            <Button 
-              onClick={() => {
-                setRequestSubmitted(false)
-                setEmail("")
-              }}
-              className="w-full"
-            >
+            <Button onClick={() => { setSubmitted(false); setEmail(""); setHasPermission(null); }} className="w-full">
               Submit Another Request
             </Button>
           </CardContent>
         </Card>
       </div>
-    )
+    );
   }
 
-  // Show access form if user doesn't have permission
+  // Show access form
   return (
     <div className="max-w-md mx-auto py-12">
       <Card>
@@ -242,26 +162,16 @@ export default function PermissionGate({ children, fallback }: PermissionGatePro
                 placeholder="Enter your email"
                 required
                 className="mt-1"
+                disabled={loading}
               />
             </div>
-            {error && (
-              <p className="text-red-600 text-sm">{error}</p>
-            )}
-            <Button 
-              type="submit" 
-              className="w-full"
-              disabled={isChecking || !email.trim()}
-            >
-              {isChecking ? "Checking..." : "Request Access"}
+            {error && <p className="text-red-600 text-sm">{error}</p>}
+            <Button type="submit" className="w-full" disabled={loading || !email.trim()}>
+              {loading ? "Checking..." : "Request Access"}
             </Button>
           </form>
-          {fallback && (
-            <div className="mt-6 pt-6 border-t">
-              {fallback}
-            </div>
-          )}
         </CardContent>
       </Card>
     </div>
-  )
+  );
 } 

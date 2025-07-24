@@ -688,7 +688,7 @@ function FileItem({ paper, onPaperClick }: { paper: ResearchPaper; onPaperClick:
           {paper.title}
         </div>
         {paper.description && (
-          <div className="text-xs text-gray-500 truncate">{paper.description}</div>
+        <div className="text-xs text-gray-500 truncate">{paper.description}</div>
         )}
       </div>
       <span className="text-xs text-gray-400 whitespace-nowrap ml-1 sm:ml-2 flex-shrink-0">{paper.readTime}</span>

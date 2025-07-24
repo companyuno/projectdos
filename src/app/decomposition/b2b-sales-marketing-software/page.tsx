@@ -77,9 +77,9 @@ export default function B2BSalesMarketingSoftwareDecomposition() {
                   </p>
                 </div>
               </div>
-              <Separator />
-            </CardContent>
-          </Card>
+            <Separator />
+          </CardContent>
+        </Card>
         </div>
       </div>
     </div>

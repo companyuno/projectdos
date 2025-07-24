@@ -264,27 +264,27 @@ export default function InvestmentMemo() {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <div className="sticky top-0 z-20 bg-white border-b border-gray-200 w-full shadow-sm flex items-center justify-between h-20 px-6">
-        <Button
+          <Button
           variant="ghost"
           size="icon"
-          onClick={() => {
-            const source = typeof window !== 'undefined' ? localStorage.getItem('invitro-doc-source') : null;
-            if (source === 'deals') {
-              router.push('/?tab=deals');
-            } else if (source === 'research') {
-              router.push('/?tab=research');
-            } else {
-              router.back();
-            }
-          }}
+            onClick={() => {
+              const source = typeof window !== 'undefined' ? localStorage.getItem('invitro-doc-source') : null;
+              if (source === 'deals') {
+                router.push('/?tab=deals');
+              } else if (source === 'research') {
+                router.push('/?tab=research');
+              } else {
+                router.back();
+              }
+            }}
           className="rounded-full p-3 text-[hsl(212,74%,15%)] hover:bg-[hsl(212,74%,97%)]"
           aria-label="Back"
-        >
+          >
           <ArrowLeft className="w-7 h-7" />
-        </Button>
-        <div className="flex-1 flex justify-center">
+          </Button>
+          <div className="flex-1 flex justify-center">
           <Image src="/logo.png" alt="InVitro Capital Logo" width={180} height={48} priority className="h-16 w-auto" style={{ objectFit: 'contain' }} />
-        </div>
+          </div>
         <Button
           variant="ghost"
           size="icon"
@@ -300,8 +300,8 @@ export default function InvestmentMemo() {
           >
             <Download className="w-7 h-7" />
           </a>
-        </Button>
-      </div>
+          </Button>
+        </div>
       <div className="max-w-5xl mx-auto px-4 sm:px-8 py-6 sm:py-12">
         <div className="text-center mb-16">
           <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-2 break-words">{memo.title}</h1>

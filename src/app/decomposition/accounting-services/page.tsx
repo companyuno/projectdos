@@ -78,9 +78,9 @@ export default function AccountingServicesDecomposition() {
                   </p>
                 </div>
               </div>
-              <Separator />
-            </CardContent>
-          </Card>
+            <Separator />
+          </CardContent>
+        </Card>
         </div>
       </div>
     </div>
