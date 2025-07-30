@@ -811,12 +811,12 @@ export default function ThesisAdmin() {
         content += 'Key Points:\n' + sectionData.keyPoints.map((point: string) => `• ${point}`).join('\n') + '\n\n'
       }
       if (sectionData.timelines) {
-        content += 'Timelines:\n' + sectionData.timelines.map((timeline: any) => 
+        content += 'Timelines:\n' + sectionData.timelines.map((timeline: Record<string, unknown>) => 
           `${timeline.segment}: ${timeline.timeline} - ${timeline.note}`
         ).join('\n') + '\n\n'
       }
       if (sectionData.buyerPersonas) {
-        content += 'Buyer Personas:\n' + sectionData.buyerPersonas.map((persona: any) => 
+        content += 'Buyer Personas:\n' + sectionData.buyerPersonas.map((persona: Record<string, unknown>) => 
           `${persona.title}: ${persona.description}`
         ).join('\n\n') + '\n\n'
       }
@@ -830,7 +830,7 @@ export default function ThesisAdmin() {
     if (selectedSection === 'productStrategy' && sectionData.intro) {
       let content = sectionData.intro + '\n\n'
       if (sectionData.table) {
-        content += 'Table:\n' + sectionData.table.map((row: any) => 
+        content += 'Table:\n' + sectionData.table.map((row: Record<string, unknown>) => 
           `${row.startingPoint} | ${row.expansionPath} | ${row.conditions}`
         ).join('\n') + '\n\n'
       }
