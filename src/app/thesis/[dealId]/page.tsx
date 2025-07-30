@@ -671,7 +671,7 @@ export default function IndustryThesis() {
               // Get all sections and sort them by Roman numeral
               const allSections = thesis.content && Object.keys(thesis.content)
                 .map((sectionKey) => {
-                  const sectionData = (thesis.content as any)[sectionKey]
+                  const sectionData = (thesis.content as Record<string, unknown>)[sectionKey]
                   const sectionTitle = typeof sectionData === 'object' && sectionData.title ? sectionData.title : sectionKey
                   
                   // Extract Roman numeral position for sorting

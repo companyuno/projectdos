@@ -394,7 +394,7 @@ export default function ThesisAdmin() {
 
     setSaving(true)
     try {
-      let contentToSave: any = editContent
+      let contentToSave: unknown = editContent
       
       // Handle different section types
       if (selectedSection === 'tags') {
@@ -494,7 +494,7 @@ export default function ThesisAdmin() {
       }
 
               // Prepare the request body
-        const requestBody: any = {
+        const requestBody: Record<string, unknown> = {
           thesisId: selectedThesis,
           section: selectedSection,
           content: contentToSave
@@ -759,7 +759,7 @@ export default function ThesisAdmin() {
     
     // For sections with complex structure, return a formatted version
     if (selectedSection === 'structuralObservations' && sectionData.observations) {
-      return sectionData.observations.map((obs: any, index: number) => 
+      return sectionData.observations.map((obs: Record<string, unknown>, index: number) => 
         `${obs.title}\n\n${obs.content}`
       ).join('\n\n')
     }
@@ -783,7 +783,7 @@ export default function ThesisAdmin() {
     if (selectedSection === 'workflowFit' && sectionData.intro) {
       let content = sectionData.intro + '\n\n'
       if (sectionData.table) {
-        content += 'Table:\n' + sectionData.table.map((row: any) => 
+        content += 'Table:\n' + sectionData.table.map((row: Record<string, unknown>) => 
           `${row.workflow} | ${row.segmentFit} | ${row.productFit} | ${row.reason}`
         ).join('\n') + '\n\n'
       }
@@ -797,7 +797,7 @@ export default function ThesisAdmin() {
     if (selectedSection === 'segmentStrategy' && sectionData.intro) {
       let content = sectionData.intro + '\n\n'
       if (sectionData.segments) {
-        content += 'Segments:\n' + sectionData.segments.map((segment: any) => 
+        content += 'Segments:\n' + sectionData.segments.map((segment: Record<string, unknown>) => 
           `${segment.name}: ${segment.description}`
         ).join('\n\n') + '\n\n'
       }
