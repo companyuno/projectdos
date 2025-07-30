@@ -1,0 +1,161 @@
+{
+  "invitro-investment-build-process": {
+    "title": "InVitro Capital Investment & Build Process",
+    "subtitle": "Our comprehensive methodology for identifying, building, and scaling high-growth companies from ideation to exit",
+    "industry": "Venture Building",
+    "publishDate": "2025-05-30",
+    "readTime": "15 min read",
+    "tags": [
+      "Investment Process",
+      "Venture Studio",
+      "Company Building"
+    ],
+    "category": "build-process",
+    "featured": true,
+    "content": {
+      "executiveSummary": {
+        "title": "I. Executive Summary",
+        "content": "Our comprehensive methodology for identifying, building, and scaling high-growth companies from ideation to exit"
+      }
+    }
+  },
+  "invitro-private-markets-whitepaper": {
+    "title": "InVitro Capital Private Markets White Paper",
+    "subtitle": "A comparative analysis of private company ownership models: private equity, venture capital & venture builders",
+    "industry": "Private Markets",
+    "publishDate": "2025-07-10",
+    "readTime": "20 min read",
+    "tags": [
+      "Private Markets",
+      "Investment Strategy",
+      "Market Analysis"
+    ],
+    "category": "whitepapers",
+    "featured": true,
+    "content": {
+      "executiveSummary": {
+        "title": "I. Executive Summary",
+        "content": "A comparative analysis of private company ownership models: private equity, venture capital & venture builders"
+      }
+    }
+  },
+  "healthcare-elearning-thesis": {
+    "title": "Healthcare E-Learning",
+    "subtitle": "Analysis of healthcare education and credentialing market opportunities, focusing on infrastructure gaps rather than content delivery",
+    "industry": "Healthcare Education",
+    "publishDate": "2024-01-01",
+    "readTime": "10 min read",
+    "tags": [
+      "Healthcare",
+      "E-Learning",
+      "Digital Education"
+    ],
+    "category": "industry-theses",
+    "featured": false,
+    "content": {
+      "executiveSummary": {
+        "title": "I. Executive Summary",
+        "content": ""
+      }
+    }
+  },
+  "healthcare-prescription-dtc-thesis": {
+    "title": "Healthcare Prescription DTC",
+    "subtitle": "Analysis of direct-to-consumer prescription healthcare market opportunities and regulatory landscape",
+    "industry": "Healthcare DTC",
+    "publishDate": "2023-11-01",
+    "readTime": "12 min read",
+    "tags": [
+      "Healthcare",
+      "DTC",
+      "Telehealth",
+      "Prescription"
+    ],
+    "category": "industry-theses",
+    "featured": false,
+    "content": {
+      "executiveSummary": {
+        "title": "I. Executive Summary",
+        "content": ""
+      }
+    }
+  },
+  "build-thesis-long-term-care-test": {
+    "title": "Industry Build Thesis: Long Term Care",
+    "subtitle": "Analysis of long-term care market opportunities and operational challenges in healthcare facilities",
+    "industry": "Healthcare",
+    "publishDate": "2025-07-30",
+    "readTime": "23 min read",
+    "tags": [
+      "Long Term Care",
+      "Healthcare",
+      "SaaS"
+    ],
+    "category": "industry-theses",
+    "featured": true,
+    "content": {
+      "executiveSummary": {
+        "title": "I. Executive Summary",
+        "content": "Long-Term Care (LTC) sits at the intersection of a massive demographic shift and deep operational dysfunction. The aging U.S. population is the obvious macro driver—by 2030, over 20% of Americans will be 65 or older [1], and demand for facility- and home-based care will outpace the system’s capacity. But the more compelling opportunity lies beneath the surface: LTC providers still operate with manual workflows, fragmented tooling, and brittle labor models. Staff shortages, regulatory complexity, and increasing acuity have exposed the limitations of legacy systems designed decades ago.\n\n<div class=\"text-center\">![Image](/uploads/build-thesis-long-term-care-test/1753901192499.png)</div>\n\nWhile parts of the industry—especially in SNFs—have seen software adoption, much of the day-to-day operational core remains underserved. Most tooling focuses on documentation or billing. Few products are built for workflows that break down every day: staff coverage, audit readiness, family communication, onboarding, and in-facility coordination."
+      },
+      "section-7wbhmqph2": {
+        "title": "II. Narrative: How Operators Actually Buy",
+        "content": "Carol runs a 90-bed assisted living facility. She manages people, families, regulators, and logistics—all in real time. She’s competent, skeptical, and busy.\n\nWhen software vendors pitch her, they lead with dashboards, analytics, or platforms. Carol nods politely. Then she goes back to her notebook and group text thread—because those still work.\n\nIf you want her attention, solve one problem. Today. Help her cover a shift without six texts. Show her what’s missing before the inspector does. Let her update a family without logging into something new.\n\nShe doesn’t want features. She wants fewer fires. And if your product solves one this week, she’ll trust you next week. That’s how decisions get made in this market: through quiet utility.\n\nCarol isn’t unique. Her day reflects the operational reality across most LTC segments. But the challenges—and opportunities—differ by setting.\n\nWhat follows is a structural breakdown of the major subsegments, their workflow maturity, and where software fits—and doesn’t.\n"
+      },
+      "section-kr91nprh0": {
+        "title": "III. Structural Observations in Long Term Care",
+        "content": "**1.\tSNFs Are the Most Tooled, But Not Fully Solved**\nSkilled Nursing Facilities have high software penetration—EHRs like PointClickCare dominate, and layers like Quick MAR, OnShift, and SmartLinx exist. But many workflows are still partially manual (e.g., training tracking, shift call-offs, incident response). SNFs also have compliance-heavy needs and budget, but they are not greenfield.\n\n\n\n<div class=\"text-center\">![Image](/uploads/build-thesis-long-term-care-test/1753901417718.png)</div>\n\n\n\n**2.\tAssisted Living Facilities (ALFs) Are Mixed**\nLarger ALFs (50+ beds) behave more like SNFs—they have budget, multi-site ownership, and regulatory exposure. But ALFs also span down into fragmented, operator-owned sites with little tooling. Family communication, staff onboarding, and activity scheduling are rarely digitized, even in well-resourced ALFs.\n\n**3.\tBoard & Care and Home Health Have High Friction**\nThese segments are deeply underserved, often still using binders, texting, and spreadsheets. But they are hard to monetize buyers are price-sensitive, tech-skeptical, and fragmented. This makes them unattractive for standalone software—unless GTM is highly optimized.\n\n**4.\tHospice Is Separate, but Closely Related to Home Health**\nHospice care is palliative, often end-of-life, and usually Medicare-funded. It is operationally distinct from home health, which is outcome-driven and rehabilitative. Yet both segments rely heavily on nurse routing, visit tracking, medication coordination, and interdisciplinary documentation. While software adoption is low, trust and emotional stakes are high.\n\n**5.\tWorkflow Ownership Is Critical**\nAcross segments, the same few personas control key workflows: Executive Directors, DONs, Regional Ops, Admins, and Compliance Officers. The most viable wedges target workflows owned by these buyers—especially ones with urgency and compliance or labor implications.\n"
+      },
+      "section-w0rvrr8bk": {
+        "title": "IV. Funding Signals: What’s Worked, What Hasn’t",
+        "content": "LTC software is clearly fundable — capital has flowed across clinical, operational, and engagement categories. But adoption has lagged behind investment. The problem hasn’t been demand — it’s been fit. The companies that gained real traction focused on urgent, regulated workflows. The ones that stalled misunderstood how fragmented, time-starved, and structurally limited most operators actually are.\n\n**The wins are clear:**\n\n• **PointClickCare** anchored to billing, audits, and compliance. It became essential infrastructure in SNFs and received a minority investment from  Hellman & Friedman valuing PCC at ~$4B. [2]\n• **Relias** scaled through mandatory training with minimal onboarding friction. It sold for ~$500M. [3]\n• **AlayaCare** focused on visit tracking and care routing in home health. It raised $294M and generated an estimated $100M in 2024 revenue. [4]\n• **Axxess**, a bootstrapped home health platform, reached ~$525M in revenue without outside capital through a lightweight, self-serve approach. [4]\n• **SmartLinx**, ($6M raised, ~$19M revenue) [5] was a success by private equity standards, completing a full PE cycle with Marlin Equity and exiting to Lone View Capital, followed by continued growth through strategic acquisitions.\n\n**Others didn’t convert:**\n\n• **Caremerge ($25M raised):** Built around family communication and engagement, but failed to tie value to operational outcomes. Quietly acquired by VoiceFriend.\n• **Silversheet ($10M raised):** Automated credentialing, but never embedded in daily workflows. Acquired by AMN Healthcare with limited post-acquisition traction.\n• **OnShift ($34M raised) **: Scheduling tool that couldn’t scale beyond large enterprise SNFs. Sustained operations, but has shown limited evidence of scale, exit, or significant investor returns.\n• Several bundled “platform” plays ($5–15M raised): Attempted to combine EHR, CRM, and billing but lacked a clear wedge and struggled to implement.\n• In ALFs and Board & Care, basic scheduling still lives on whiteboards and group texts—despite funding in the category.\n\n\n<div class=\"callout-block\">\n\nThe signal is clear: capital has entered, but usage only follows where tools solve something painful, habitual, and owned by someone with decision power. This isn’t an underfunded category—it’s an under-fit one. The opportunity is wide open for products that start narrow, embed deeply, and grow only after they’ve earned trust. EHRs may capture documentation, but they leave much of the operational core—shift coverage, audit prep, medication coordination—untouched.\n\n</div>"
+      },
+      "section-nud3ui5k9": {
+        "title": "V. Workflow–Segment Fit: Where Software Can Win",
+        "content": "Not all workflows are equally urgent, and not all segments are equally ready. The table below maps which day-to-day problems offer strong entry points—and where the segment conditions support adoption.\n\n<table class=\"w-full border-collapse border border-gray-200 rounded-lg overflow-hidden shadow-sm mb-6\">\n  <thead>\n    <tr class=\"bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200\">\n      <th class=\"px-6 py-4 text-left font-semibold text-gray-900 text-sm tracking-wide\">Workflow</th>\n      <th class=\"px-6 py-4 text-left font-semibold text-gray-900 text-sm tracking-wide\">Segment Fit</th>\n      <th class=\"px-6 py-4 text-left font-semibold text-gray-900 text-sm tracking-wide\">Product Fit</th>\n      <th class=\"px-6 py-4 text-left font-semibold text-gray-900 text-sm tracking-wide\">Why It Works / Doesn’t</th>\n    </tr>\n  </thead>\n  <tbody class=\"bg-white\">\n    <tr class=\"bg-white hover:bg-gray-50 transition-colors duration-150\">\n      <td class=\"px-6 py-4 text-gray-700 text-sm border-b border-gray-100\">Staff Scheduling</td>\n      <td class=\"px-6 py-4 text-gray-700 text-sm border-b border-gray-100\">ALFs (50+ beds), SNFs</td>\n      <td class=\"px-6 py-4 text-gray-700 text-sm border-b border-gray-100\">High</td>\n      <td class=\"px-6 py-4 text-gray-700 text-sm border-b border-gray-100\">Urgent, daily, and owned by ops; many still use texting or printouts</td>\n    </tr>\n    <tr class=\"bg-gray-50/50 hover:bg-gray-50 transition-colors duration-150\">\n      <td class=\"px-6 py-4 text-gray-700 text-sm border-b border-gray-100\">Credential Tracking</td>\n      <td class=\"px-6 py-4 text-gray-700 text-sm border-b border-gray-100\">SNFs, Home Health</td>\n      <td class=\"px-6 py-4 text-gray-700 text-sm border-b border-gray-100\">Moderate</td>\n      <td class=\"px-6 py-4 text-gray-700 text-sm border-b border-gray-100\">Regulated need; tracked manually; valuable for audit prep</td>\n    </tr>\n    <tr class=\"bg-white hover:bg-gray-50 transition-colors duration-150\">\n      <td class=\"px-6 py-4 text-gray-700 text-sm border-b border-gray-100\">Family Communication</td>\n      <td class=\"px-6 py-4 text-gray-700 text-sm border-b border-gray-100\">ALFs, Board & Care</td>\n      <td class=\"px-6 py-4 text-gray-700 text-sm border-b border-gray-100\">Mixed</td>\n      <td class=\"px-6 py-4 text-gray-700 text-sm border-b border-gray-100\">High emotional value; ignored unless deeply embedded in workflows</td>\n    </tr>\n    <tr class=\"bg-gray-50/50 hover:bg-gray-50 transition-colors duration-150\">\n      <td class=\"px-6 py-4 text-gray-700 text-sm border-b border-gray-100\">Survey Readiness</td>\n      <td class=\"px-6 py-4 text-gray-700 text-sm border-b border-gray-100\">SNFs, ALFs</td>\n      <td class=\"px-6 py-4 text-gray-700 text-sm border-b border-gray-100\">High</td>\n      <td class=\"px-6 py-4 text-gray-700 text-sm border-b border-gray-100\">Compliance-driven; prep is manual, fragmented, and high-risk</td>\n    </tr>\n    <tr class=\"bg-white hover:bg-gray-50 transition-colors duration-150\">\n      <td class=\"px-6 py-4 text-gray-700 text-sm border-b border-gray-100\">Medication Coordination</td>\n      <td class=\"px-6 py-4 text-gray-700 text-sm border-b border-gray-100\">Home Health, Hospice</td>\n      <td class=\"px-6 py-4 text-gray-700 text-sm border-b border-gray-100\">High</td>\n      <td class=\"px-6 py-4 text-gray-700 text-sm border-b border-gray-100\">Fragmented across fax, phone, and EMR; errors are costly and workflows are fragile</td>\n    </tr>\n    <tr class=\"bg-gray-50/50 hover:bg-gray-50 transition-colors duration-150\">\n      <td class=\"px-6 py-4 text-gray-700 text-sm border-b border-gray-100\">Activity Management</td>\n      <td class=\"px-6 py-4 text-gray-700 text-sm border-b border-gray-100\">ALFs</td>\n      <td class=\"px-6 py-4 text-gray-700 text-sm border-b border-gray-100\">Low</td>\n      <td class=\"px-6 py-4 text-gray-700 text-sm border-b border-gray-100\">Nice-to-have; lacks urgency or budget</td>\n    </tr>\n    <tr class=\"bg-white hover:bg-gray-50 transition-colors duration-150\">\n      <td class=\"px-6 py-4 text-gray-700 text-sm border-b border-gray-100\">Billing / EHR</td>\n      <td class=\"px-6 py-4 text-gray-700 text-sm border-b border-gray-100\">SNFs, ALFs</td>\n      <td class=\"px-6 py-4 text-gray-700 text-sm border-b border-gray-100\">Moderate</td>\n      <td class=\"px-6 py-4 text-gray-700 text-sm border-b border-gray-100\">Dominated by incumbents; difficult to replace, but extensions are viable</td>\n    </tr>\n  </tbody>\n</table>\n\nIn some cases, the best entry point isn’t pure software — it’s operational execution wrapped in tech. Tools that layer into daily routines without adding load—and help operators act, not just record—are the ones that earn usage. Think shift coverage tools that actually fill the gap, not just display it. These models earn trust by directly solving high-friction workflows. Over time, they create credibility that supports horizontal expansion into adjacent areas like credentialing, scheduling, or compliance. It’s a harder business to run, but a much stickier one."
+      },
+      "section-j1tp1svlk": {
+        "title": "VI. Product Strategy: From Entry Point to Expansion",
+        "content": "Once a product earns daily use in a critical workflow, it creates surface area for expansion. But not all wedges lead naturally to depth—and not all buyers welcome complexity. Expansion must feel like an extension of what already works, not a shift in posture.\n\n<table class=\"w-full border-collapse border border-gray-200 rounded-lg overflow-hidden shadow-sm mb-6\">\n  <thead>\n    <tr class=\"bg-gradient-to-r from-gray-50 to-gray-100 border-b border-gray-200\">\n      <th class=\"px-6 py-4 text-left font-semibold text-gray-900 text-sm tracking-wide\">Starting Point</th>\n      <th class=\"px-6 py-4 text-left font-semibold text-gray-900 text-sm tracking-wide\">Expansion Path</th>\n      <th class=\"px-6 py-4 text-left font-semibold text-gray-900 text-sm tracking-wide\">Conditions for Success</th>\n    </tr>\n  </thead>\n  <tbody class=\"bg-white\">\n    <tr class=\"bg-white hover:bg-gray-50 transition-colors duration-150\">\n      <td class=\"px-6 py-4 text-gray-700 text-sm border-b border-gray-100\">Scheduling</td>\n      <td class=\"px-6 py-4 text-gray-700 text-sm border-b border-gray-100\">HRIS, agency management, payroll</td>\n      <td class=\"px-6 py-4 text-gray-700 text-sm border-b border-gray-100\">Must be SMS-native, low-friction, and require zero training</td>\n    </tr>\n    <tr class=\"bg-gray-50/50 hover:bg-gray-50 transition-colors duration-150\">\n      <td class=\"px-6 py-4 text-gray-700 text-sm border-b border-gray-100\">Compliance</td>\n      <td class=\"px-6 py-4 text-gray-700 text-sm border-b border-gray-100\">PolicyOps, credentialing, audit tools</td>\n      <td class=\"px-6 py-4 text-gray-700 text-sm border-b border-gray-100\">Must align with survey timelines and staff routines</td>\n    </tr>\n    <tr class=\"bg-white hover:bg-gray-50 transition-colors duration-150\">\n      <td class=\"px-6 py-4 text-gray-700 text-sm border-b border-gray-100\">Family Communication</td>\n      <td class=\"px-6 py-4 text-gray-700 text-sm border-b border-gray-100\">Intake, satisfaction analytics</td>\n      <td class=\"px-6 py-4 text-gray-700 text-sm border-b border-gray-100\">Must integrate with incident logs or staffing visibility</td>\n    </tr>\n    <tr class=\"bg-gray-50/50 hover:bg-gray-50 transition-colors duration-150\">\n      <td class=\"px-6 py-4 text-gray-700 text-sm border-b border-gray-100\">Medication Coordination</td>\n      <td class=\"px-6 py-4 text-gray-700 text-sm border-b border-gray-100\">Fulfillment, inventory, staff training</td>\n      <td class=\"px-6 py-4 text-gray-700 text-sm border-b border-gray-100\">Must slot cleanly into existing clinical documentation and routing</td>\n    </tr>\n  </tbody>\n</table>\n\n**What Not to Do:**\n\n• Don’t oversell platform ambition. Operators pay to fix urgent problems—not to adopt “solutions.”\n• Don’t treat ops teams like software admins. They want fewer calls, fewer citations, and fewer surprises.\n• Don’t assume integration is a selling point. Many prefer standalone tools that work from day one.\n• Don’t confuse emotional value with ROI. Products must save time, reduce errors, or ensure compliance—or they won’t get used.\n\n"
+      },
+      "section-h1jximhnn": {
+        "title": "VII. Segment Strategy and Targeting Framework",
+        "content": "Even great products stall when pointed at the wrong market. Here’s how the segments differ—and what that means for strategy:\n\n•\t**Enterprise (SNFs, larger ALFs):** Real budget and structure. Tooling must layer well with legacy systems and deliver ops ROI. Prioritize once you have references and a working wedge. Expect long cycles.\n•\t**Mid-Market (50–100 bed ALFs**, regional home health/hospice groups): Underserved but with identifiable pain. Likely best fit for wedge products that scale. Best launchpad: balance of pain, budget, and responsiveness.\n•\t**Long Tail (Board & Care, single-site ALFs): **Deepest whitespace but lowest monetization. Useful for testing, less viable for scaling. Avoid unless GTM is automated.\n•\t**Home Health & Hospice:** High workflow complexity, reimbursement constraints. Require integrated, lightweight solutions for meds, compliance, and staff. Requires deep domain empathy and trust-building.\n"
+      },
+      "section-2w2ii6smz": {
+        "title": "VIII. Sales Realities and GTM Implications",
+        "content": "LTC operators—particularly mid-market and enterprise—often have slow and relationship-driven sales cycles. Purchase decisions are commonly made by a small group of operational leaders, not centralized IT teams. This means:\n•\tBuyers need to see impact quickly, often within 30–60 days of use.\n•\tReferenceability and word-of-mouth matter more than scaled outbound.\n•\tPilots should demonstrate real-world workflow improvements, not just feature sets.\nSales timelines vary by segment:\n•\tBoard & Care and small ALFs can make purchasing decisions in 1–3 weeks, but often lack budget or formal processes.\n•\tMid-size ALFs and regional home health groups tend to move in 1–2 months if the ROI case is clear and champions are engaged.\n•\tEnterprise SNFs or multi-site ALF chains often take 3–6 months or more, with layered approvals, procurement, and legal review.\nTiming depends on who’s involved and what they care about.\n"
+      },
+      "section-yri8olysp": {
+        "title": "IX. Key buyer personas across segments:",
+        "content": "•\t**Executive Director (ED):** Often the final decision-maker in ALFs and SNFs; highly motivated by audit success, staffing stability, and family satisfaction.\n•\t**Director of Nursing (DON): **Workflow owner for staff scheduling, compliance, training. Pain is acute, but authority varies by org.\n•\t**Regional Operations Lead:** Especially influential in chains; cares about repeatability, visibility, and roll-out simplicity across facilities.\n•\t**Administrator / Office Manager:** Manages day-to-day coordination, staffing gaps, family touchpoints—often a key internal advocate for wedge tools.\n•\t**IT / Compliance Lead (if any):** Usually passive in purchase but active in approvals for enterprise deals. Wants low-risk, minimal integration solutions.\n\nThis landscape favors vendors who start narrow and operational, then expand horizontally. Speed to trust—not breadth of functionality—is what moves deals forward.\n"
+      },
+      "conclusion": {
+        "title": "X. Conclusion: LTC as an Infrastructure Opportunity",
+        "content": "This market is not just large — it is unprotected. The need is not for another EHR, but for infrastructure: the quiet, operational layer that keeps staff on shift, families informed, meds delivered, and regulators satisfied.\nThat infrastructure will not look like traditional software. It will be workflow-native, mobile-aligned, built to disappear into operations. And it will win not by selling dashboards, but by earning trust through daily use.\nWe aren’t betting on digitizing LTC. We’re betting on operators who desperately want to run smoother—and the tools that will let them.\n"
+      },
+      "contact": {
+        "title": "XI. Contact",
+        "content": "For inquiries, detailed materials, or follow-up discussions, please contact:\n**Jonathan Schroeder**\nDirector of Investments\nInVitro Capital\njonathan.schroeder@invitrocapital.com"
+      },
+      "sources": {
+        "title": "XII. Sources",
+        "content": [
+          "1. U.S. Census Bureau. National Population Projections Tables. U.S. Census Bureau Data, 2023",
+          "2. Betakit. PointClickCare reportedly valued at $4 billion USD following new minority investment. Betakit, 2021.",
+          "3. PitchBook. LLR Partners to Sell Relias Learning to Bertelsmann. PitchBook Newsletter, Inc., 2014.",
+          "4. Pitchbook. Companies Profiles. Pitchbook, 2025.",
+          "5. Crunchbase. Organizations Financial Details. Crunchbase, 2025."
+        ]
+      }
+    },
+    "contact": "For inquiries, detailed materials, or follow-up discussions, please contact:\n**Jonathan Schroeder**\nDirector of Investments\nInVitro Capital\njonathan.schroeder@invitrocapital.com",
+    "sources": [
+      "1. U.S. Census Bureau. National Population Projections Tables. U.S. Census Bureau Data, 2023",
+      "2. Betakit. PointClickCare reportedly valued at $4 billion USD following new minority investment. Betakit, 2021.",
+      "3. PitchBook. LLR Partners to Sell Relias Learning to Bertelsmann. PitchBook Newsletter, Inc., 2014.",
+      "4. Pitchbook. Companies Profiles. Pitchbook, 2025.",
+      "5. Crunchbase. Organizations Financial Details. Crunchbase, 2025."
+    ]
+  }
+}

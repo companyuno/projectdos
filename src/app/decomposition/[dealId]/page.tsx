@@ -576,8 +576,19 @@ export default function IndustryDecomposition() {
           size="icon"
           className="rounded-full p-3 text-[hsl(212,74%,15%)] hover:bg-[hsl(212,74%,97%)]"
           onClick={() => {
-            // You can customize the PDF link per dealId if needed
-            window.open('/IVC -- Investment & Build Thesis.pdf', '_blank');
+            // PDF mapping for decomposition pages
+            const pdfMap: { [key: string]: string } = {
+              "curenta": "/Industry Decomposition - Long Term Care (LTC).pdf",
+              "construction-tech": "/Industry Decomposition Construction Tech.pdf",
+              "dtc-healthcare": "/Industry Decomposition- DTC Healthcare.pdf",
+              "accounting-services": "/Industry Decomposition - Accounting Services.pdf",
+              "b2b-sales-marketing-software": "/Industry Decomposition- B2B Sales & Marketing Technology.pdf",
+              "healthcare-e-learning": "/Industry Decomposition - Healthcare E-Learning.pdf"
+            }
+            const pdfLink = pdfMap[dealId] || "#"
+            if (pdfLink !== "#") {
+              window.open(pdfLink, '_blank');
+            }
           }}
           aria-label="Download PDF"
         >

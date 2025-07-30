@@ -51,3 +51,108 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Markdown body wrapper styles */
+.markdown-body ul,
+.markdown-body ol {
+  list-style-position: outside !important;
+  padding-left: 1.5rem !important;
+}
+
+.markdown-body ul li,
+.markdown-body ol li {
+  padding-left: 0.5rem !important;
+  text-indent: -1rem !important;
+  margin-bottom: 0.5rem !important;
+  line-height: 1.6 !important;
+}
+
+.markdown-body ul li::marker,
+.markdown-body ol li::marker {
+  margin-right: 0.5rem !important;
+}
+
+/* Editor content wrapper styles */
+.editor-content ul,
+.editor-content ol {
+  list-style-position: outside !important;
+  padding-left: 4rem !important;
+}
+
+.editor-content ul li,
+.editor-content ol li {
+  padding-left: 0.5rem !important;
+  text-indent: -3.5rem !important;
+  margin-bottom: 0.5rem !important;
+  line-height: 1.6 !important;
+}
+
+.editor-content ul li::marker,
+.editor-content ol li::marker {
+  margin-right: 0.5rem !important;
+  font-weight: 900 !important;
+}
+
+/* Conclusion block styles */
+.conclusion-block {
+  background-color: #FFF8E1;
+  border-left: 4px solid #C6A700;
+  padding: 1.5em;
+  margin: 1em 0;
+  font-weight: 500;
+}
+
+/* Contact block styles */
+.contact-block {
+  background-color: #F8F9FA;
+  border-left: 4px solid #6B7280;
+  padding: 1.5em;
+  margin: 1em 0;
+  font-weight: 500;
+}
+
+/* Callout block styles */
+.callout-block {
+  background-color: #F7F8FA;
+  border-left: 3px solid #CCC;
+  padding: 1.25em;
+  margin: 1.5em 0;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+.callout-block * {
+  font-weight: 500 !important;
+}
+
+/* Thesis editor header styles */
+.editor-content h1 {
+  font-size: 1.4em;
+  font-weight: 700;
+  margin-bottom: 1em;
+  border-bottom: 2px solid #C6A700;
+  padding-bottom: 0.25em;
+}
+
+.editor-content h2 {
+  font-size: 1.2em;
+  font-weight: 600;
+  margin-top: 1em;
+  margin-bottom: 0.5em;
+}
+
+/* Thesis page header styles */
+.font-inter.text-3xl {
+  font-size: 1.8em !important;
+  font-weight: 700;
+  margin-bottom: 1.5em;
+}
+
+.text-2xl.font-semibold {
+  font-size: 1.4em !important;
+  font-weight: 600;
+  margin-top: 1em;
+  margin-bottom: 1.25em;
+  border-bottom: 1.5px solid #CCCCCC;
+  padding-bottom: 0.25em;
+} 

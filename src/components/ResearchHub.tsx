@@ -23,59 +23,8 @@ interface ResearchPaper {
   featured?: boolean
 }
 
-const researchPapers: ResearchPaper[] = [
-  // InVitro Build Process
-  {
-    id: "invitro-investment-build-process",
-    title: "InVitro Capital Investment & Build Process",
-    description: "Our comprehensive methodology for identifying, building, and scaling high-growth companies from ideation to exit",
-    category: "build-process",
-    publishDate: "2025-05-30",
-    readTime: "15 min read",
-    tags: ["Investment Process", "Venture Studio", "Company Building"],
-    featured: true,
-  },
-  // WhitePapers
-  {
-    id: "invitro-private-markets-whitepaper",
-    title: "InVitro Capital Private Markets White Paper",
-    description: "A comparative analysis of private company ownership models: private equity, venture capital & venture builders",
-    category: "whitepapers",
-    publishDate: "2025-07-10",
-    readTime: "20 min read",
-    tags: ["Private Markets", "Investment Strategy", "Market Analysis"],
-    featured: true,
-  },
-  // Industry Theses
-  {
-    id: "healthcare-elearning-thesis",
-    title: "Healthcare E-Learning",
-    description: "",
-    category: "industry-theses",
-    publishDate: "2024-01-01",
-    readTime: "10 min read",
-    tags: ["Healthcare", "E-Learning", "Digital Education"],
-  },
-  {
-    id: "healthcare-prescription-dtc-thesis",
-    title: "Healthcare Prescription DTC",
-    description: "",
-    category: "industry-theses",
-    publishDate: "2023-11-01",
-    readTime: "12 min read",
-    tags: ["Healthcare", "DTC", "Telehealth", "Prescription"],
-  },
-  {
-    id: "long-term-care",
-    title: "Long Term Care",
-    description: "Capitalizing on the Demographic Shift and Operational Gaps in Long-Term Care",
-    category: "industry-theses",
-    publishDate: "2025-07-22",
-    readTime: "16 min read",
-    tags: ["Long Term Care", "Healthcare", "Assisted Living"],
-    featured: true,
-  },
-]
+// All papers are now fetched dynamically from the API
+const researchPapers: ResearchPaper[] = []
 
 const categoryConfig: Record<string, {
   title: string
@@ -89,8 +38,8 @@ const categoryConfig: Record<string, {
     color: "bg-blue-50 border-blue-200",
     iconColor: "text-blue-600",
   },
-  whitepapers: {
-    title: "WhitePapers",
+      whitepapers: {
+      title: "White Papers",
     icon: FileText,
     color: "bg-green-50 border-green-200",
     iconColor: "text-green-600",
@@ -184,6 +133,8 @@ export default function ResearchHub() {
   const [showAccreditedModal, setShowAccreditedModal] = useState(false)
   const [accreditedSelections, setAccreditedSelections] = useState<string[]>([])
   const [isAccredited, setIsAccredited] = useState(false)
+  const [dynamicTheses, setDynamicTheses] = useState<ResearchPaper[]>([])
+  const [loadingTheses, setLoadingTheses] = useState(true)
   const router = useRouter()
 
   useEffect(() => {
@@ -200,6 +151,36 @@ export default function ResearchHub() {
     }
   }, [])
 
+  // Fetch dynamic theses from API
+  useEffect(() => {
+    const fetchTheses = async () => {
+      try {
+        const response = await fetch('/api/thesis')
+        if (response.ok) {
+          const thesisData = await response.json()
+          const allTheses = Object.entries(thesisData)
+            .map(([id, thesis]: [string, any]) => ({
+              id,
+              title: thesis.title,
+              description: thesis.subtitle || thesis.content?.executiveSummary?.content?.substring(0, 100) + "..." || "",
+              category: thesis.category,
+              publishDate: thesis.publishDate || "2025-01-01",
+              readTime: thesis.readTime || "10 min read",
+              tags: thesis.tags || [],
+              featured: thesis.featured || false
+            }))
+          setDynamicTheses(allTheses)
+        }
+      } catch (error) {
+        console.error('Failed to fetch theses:', error)
+      } finally {
+        setLoadingTheses(false)
+      }
+    }
+
+    fetchTheses()
+  }, [])
+
   const handlePaperClick = (paperId: string) => {
     localStorage.setItem("invitro-doc-source", "research");
     setPendingNavigation(paperId)
@@ -210,10 +191,12 @@ export default function ResearchHub() {
       setShowAccreditedModal(true)
     } else {
       // Already accredited, go straight to research or thesis
-      if (paperId === "long-term-care") {
-        router.push(`/thesis/long-term-care`)
-      } else {
+      if (paperId === "invitro-investment-build-process" || paperId === "invitro-private-markets-whitepaper" || paperId === "healthcare-elearning-thesis" || paperId === "healthcare-prescription-dtc-thesis") {
+        // These have dedicated research pages
         router.push(`/research/${paperId}`)
+      } else {
+        // All others go to thesis pages
+        router.push(`/thesis/${paperId}`)
       }
       setPendingNavigation(null)
     }
@@ -290,19 +273,22 @@ export default function ResearchHub() {
     }))
   }
 
-  // Sort research papers within each category alphabetically by title
-  const sortedResearchPapers = researchPapers.reduce((acc, paper) => {
+  // Organize all papers by category
+  const sortedPapers = dynamicTheses.reduce((acc, paper) => {
     if (!acc[paper.category]) acc[paper.category] = [];
     acc[paper.category].push(paper);
     return acc;
   }, {} as Record<string, ResearchPaper[]>);
-  Object.keys(sortedResearchPapers).forEach(cat => {
-    sortedResearchPapers[cat].sort((a, b) => a.title.localeCompare(b.title));
+  Object.keys(sortedPapers).forEach(cat => {
+    sortedPapers[cat].sort((a, b) => a.title.localeCompare(b.title));
   });
 
-  const buildProcessPapers = sortedResearchPapers["build-process"] || []
-  const whitepapers = sortedResearchPapers["whitepapers"] || []
-  const industryTheses = sortedResearchPapers["industry-theses"] || []
+  const buildProcessPapers = sortedPapers["build-process"] || []
+  const whitepapers = sortedPapers["whitepapers"] || []
+  const industryTheses = sortedPapers["industry-theses"] || []
+  
+  // Featured research from dynamic sources
+  const featuredResearch = dynamicTheses.filter((thesis: ResearchPaper) => thesis.featured);
 
   // Add Curenta industry decomposition as a research paper
   const industryDecompositions: ResearchPaper[] = [
@@ -439,7 +425,7 @@ export default function ResearchHub() {
       <div className="bg-white border border-gray-200 rounded-lg px-4 sm:px-6 py-6 sm:py-8 md:py-12 shadow-lg w-full text-left mt-1 mb-6 sm:mb-8">
         <div className="flex items-center gap-2 mb-3 sm:mb-4">
           <Lightbulb className="w-5 h-5 sm:w-6 sm:h-6 text-yellow-400 flex-shrink-0" />
-          <h2 className="text-2xl font-semibold text-gray-900">InVitro&apos;s Research Philosophy</h2>
+          <h2 className="font-bold text-xl sm:text-2xl text-[#0a2e4e]">InVitro&apos;s Research Philosophy</h2>
         </div>
         <div className="text-sm sm:text-base font-semibold mb-4 sm:mb-6 text-left" style={{color: '#0a2e4e'}}>
           Demand-First • Workflow-Deep • Segment-Precise
@@ -482,7 +468,7 @@ export default function ResearchHub() {
 
         <Separator />
 
-        {/* WhitePapers Folder */}
+        {/* White Papers Folder */}
         <FolderSection
           category="whitepapers"
           papers={whitepapers}

@@ -99,14 +99,14 @@ const researchContent: Record<string, ResearchPaperData> = {
   },
   "ai-healthcare-transformation": {
     title: "AI-Driven Healthcare Transformation: Opportunities and Challenges",
-    category: "WhitePapers",
+            category: "White Papers",
     publishDate: "2024-02-01",
     readTime: "20 min read",
     tags: ["AI", "Healthcare", "Digital Health"],
     summary: "Comprehensive analysis of artificial intelligence applications in healthcare and their market impact.",
     content: {
       introduction:
-        "Artificial intelligence is fundamentally transforming healthcare delivery, from diagnostic accuracy to personalized treatment plans. This whitepaper examines the current landscape and future opportunities.",
+        "Artificial intelligence is fundamentally transforming healthcare delivery, from diagnostic accuracy to personalized treatment plans. This white paper examines the current landscape and future opportunities.",
       keyPoints: [
         "AI diagnostic tools achieving 95%+ accuracy rates",
         "Personalized medicine through machine learning algorithms",
