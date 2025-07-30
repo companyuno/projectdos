@@ -20,9 +20,9 @@ interface ThesisData {
     tags?: string[];
     category?: string;
     featured?: boolean;
-    content?: any;
-    contact?: any;
-    sources?: any;
+    content?: unknown;
+    contact?: unknown;
+    sources?: string[];
   };
 }
 
