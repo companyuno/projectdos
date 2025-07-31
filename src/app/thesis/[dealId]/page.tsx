@@ -866,7 +866,7 @@ export default function IndustryThesis() {
                               </tr>
                             </thead>
                             <tbody>
-                              {((sectionData as Record<string, unknown>).table as Record<string, unknown>[])?.map((row: { startingPoint: string; expansionPath: string; conditions: string }, index: number) => (
+                              {(sectionData as any).table?.map((row: { startingPoint: string; expansionPath: string; conditions: string }, index: number) => (
                                 <tr key={index} className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}>
                                   <td className="border border-border px-4 py-3 font-medium text-foreground text-base">
                                     {row.startingPoint}
@@ -882,7 +882,7 @@ export default function IndustryThesis() {
                         <div>
                           <h3 className="text-lg font-semibold text-red-700 mb-4">What Not to Do:</h3>
                           <ul className="space-y-3">
-                            {sectionData.whatNotToDo?.map((item: string, index: number) => (
+                            {(sectionData as any).whatNotToDo?.map((item: string, index: number) => (
                               <li key={index} className="flex items-start">
                                 <div className="w-2 h-2 bg-red-600 rounded-full mt-2 mr-4 flex-shrink-0"></div>
                                 <span className="text-muted-foreground text-base">{item}</span>
@@ -896,12 +896,12 @@ export default function IndustryThesis() {
                     return (
                       <section key={sectionKey}>
                         <h2 className="text-2xl font-semibold text-muted-foreground mb-6 border-b-2 border-accent pb-2">
-                          {sectionData.title}
+                          {(sectionData as any).title}
                         </h2>
-                        <p className="text-muted-foreground leading-relaxed text-base mb-6">{sectionData.intro}</p>
+                        <p className="text-muted-foreground leading-relaxed text-base mb-6">{(sectionData as any).intro}</p>
 
                         <div className="space-y-2">
-                          {sectionData.segments?.map((segment: { name: string; description: string }, index: number) => (
+                          {(sectionData as any).segments?.map((segment: { name: string; description: string }, index: number) => (
                             <div key={index} className="bg-gray-50 border border-accent/20 rounded-lg px-4 py-2">
                               <h3 className="text-base font-semibold text-foreground mb-1">{segment.name}</h3>
                               <p className="text-muted-foreground text-base leading-relaxed mb-0">{segment.description}</p>
