@@ -736,7 +736,7 @@ export default function ThesisAdmin() {
     }
     
     // Handle complex sections that have nested structures
-    const sectionData = currentThesis.content?.[selectedSection]
+    const sectionData = (currentThesis.content as Record<string, unknown>)?.[selectedSection]
     if (!sectionData) return ""
     
     // For Contact section in content object
