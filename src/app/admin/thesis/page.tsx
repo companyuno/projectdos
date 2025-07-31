@@ -900,22 +900,22 @@ export default function ThesisAdmin() {
       
       // Create new content object with proper ordering and updated Roman numerals
       const existingSections = Object.entries(existingContent)
-      const newContent: any = {}
+      const newContent: Record<string, unknown> = {}
       
       // Insert the new section at the correct position and update numbering
       let inserted = false
-      let currentRomanNum = 1
+      const currentRomanNum = 1
       
       // Convert existing sections to array with their positions (only numbered content sections)
       const sectionsWithPositions = existingSections
         .filter(([key, section]) => {
-          const sectionData = section as any
+          const sectionData = section as Record<string, unknown>
           const existingSectionTitle = sectionData.title || key
           // Only include sections that have Roman numerals (numbered sections)
           return existingSectionTitle.match(/^[IVX]+\./)
         })
         .map(([key, section]) => {
-          const sectionData = section as any
+          const sectionData = section as Record<string, unknown>
           const existingSectionTitle = sectionData.title || key
           // Extract the Roman numeral position (I=1, II=2, III=3, etc.)
           const romanMatch = existingSectionTitle.match(/^([IVX]+)\./)
@@ -953,7 +953,7 @@ export default function ThesisAdmin() {
       
       // First, add all existing sections that don't have Roman numerals (top-level fields)
       for (const [key, section] of existingSections) {
-        const sectionData = section as any
+        const sectionData = section as Record<string, unknown>
         const existingSectionTitle = sectionData.title || key
         if (!existingSectionTitle.match(/^[IVX]+\./)) {
           // This is a top-level field, keep it as is
@@ -1042,13 +1042,13 @@ export default function ThesisAdmin() {
     try {
       const currentThesisData = thesisData[selectedThesis]
       const existingContent = currentThesisData.content || {}
-      const newContent: any = {}
+      const newContent: Record<string, unknown> = {}
       
       // Remove the selected section and renumber the rest
       let currentRomanNum = 1
       for (const [key, section] of Object.entries(existingContent)) {
         if (key !== selectedSection) {
-          const sectionData = section as any
+          const sectionData = section as Record<string, unknown>
           const existingSectionTitle = sectionData.title || key
           const cleanTitle = existingSectionTitle.replace(/^[IVX]+\.\s*/, '')
           
@@ -1500,7 +1500,7 @@ export default function ThesisAdmin() {
                             } else {
                               // Use the same logic as getCurrentContent for complex sections
                               if (value === 'structuralObservations' && sectionData.observations) {
-                                content = sectionData.observations.map((obs: any) => 
+                                content = sectionData.observations.map((obs: Record<string, unknown>) => 
                                   `${obs.title}\n\n${obs.content}`
                                 ).join('\n\n')
                               } else if (value === 'fundingSignals' && sectionData.intro) {
@@ -1518,7 +1518,7 @@ export default function ThesisAdmin() {
                               } else if (value === 'workflowFit' && sectionData.intro) {
                                 let formattedContent = sectionData.intro + '\n\n'
                                 if (sectionData.table) {
-                                  formattedContent += 'Table:\n' + sectionData.table.map((row: any) => 
+                                  formattedContent += 'Table:\n' + sectionData.table.map((row: Record<string, unknown>) => 
                                     `${row.workflow} | ${row.segmentFit} | ${row.productFit} | ${row.reason}`
                                   ).join('\n') + '\n\n'
                                 }
@@ -1529,7 +1529,7 @@ export default function ThesisAdmin() {
                               } else if (value === 'productStrategy' && sectionData.intro) {
                                 let formattedContent = sectionData.intro + '\n\n'
                                 if (sectionData.table) {
-                                  formattedContent += 'Table:\n' + sectionData.table.map((row: any) => 
+                                  formattedContent += 'Table:\n' + sectionData.table.map((row: Record<string, unknown>) => 
                                     `${row.startingPoint} | ${row.expansionPath} | ${row.conditions}`
                                   ).join('\n') + '\n\n'
                                 }
@@ -1540,7 +1540,7 @@ export default function ThesisAdmin() {
                               } else if (value === 'segmentStrategy' && sectionData.intro) {
                                 let formattedContent = sectionData.intro + '\n\n'
                                 if (sectionData.segments) {
-                                  formattedContent += 'Segments:\n' + sectionData.segments.map((segment: any) => 
+                                  formattedContent += 'Segments:\n' + sectionData.segments.map((segment: Record<string, unknown>) => 
                                     `${segment.name}: ${segment.description}`
                                   ).join('\n\n') + '\n\n'
                                 }
@@ -1551,12 +1551,12 @@ export default function ThesisAdmin() {
                                   formattedContent += 'Key Points:\n' + sectionData.keyPoints.map((point: string) => `• ${point}`).join('\n') + '\n\n'
                                 }
                                 if (sectionData.timelines) {
-                                  formattedContent += 'Timelines:\n' + sectionData.timelines.map((timeline: any) => 
+                                  formattedContent += 'Timelines:\n' + sectionData.timelines.map((timeline: Record<string, unknown>) => 
                                     `${timeline.segment}: ${timeline.timeline} - ${timeline.note}`
                                   ).join('\n') + '\n\n'
                                 }
                                 if (sectionData.buyerPersonas) {
-                                  formattedContent += 'Buyer Personas:\n' + sectionData.buyerPersonas.map((persona: any) => 
+                                  formattedContent += 'Buyer Personas:\n' + sectionData.buyerPersonas.map((persona: Record<string, unknown>) => 
                                     `${persona.title}: ${persona.description}`
                                   ).join('\n\n') + '\n\n'
                                 }
