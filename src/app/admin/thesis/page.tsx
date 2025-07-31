@@ -973,7 +973,7 @@ export default function ThesisAdmin() {
       
       // Then handle numbered sections (including Contact and Sources)
       for (const { key, section: sectionData, position } of allSectionsWithPositions) {
-        const existingSectionTitle = sectionData.title || key
+        const existingSectionTitle = (sectionData.title as string) || key
         
         if (!inserted && actualInsertPosition <= position) {
           // Insert new section with Roman numeral (simple form like Executive Summary)
@@ -1059,7 +1059,7 @@ export default function ThesisAdmin() {
       for (const [key, section] of Object.entries(existingContent)) {
         if (key !== selectedSection) {
           const sectionData = section as Record<string, unknown>
-          const existingSectionTitle = sectionData.title || key
+          const existingSectionTitle = (sectionData.title as string) || key
           const cleanTitle = existingSectionTitle.replace(/^[IVX]+\.\s*/, '')
           
           newContent[key] = {
