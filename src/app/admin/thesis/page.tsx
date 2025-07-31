@@ -724,7 +724,7 @@ export default function ThesisAdmin() {
       if (typeof contact === 'string') {
         return contact
       }
-      return `${contact.name}\n${contact.title}\n${contact.company}\n${contact.email}`
+      return `${(contact as Record<string, unknown>).name}\n${(contact as Record<string, unknown>).title}\n${(contact as Record<string, unknown>).company}\n${(contact as Record<string, unknown>).email}`
     }
     if (selectedSection === 'sources') {
       const sources = currentThesis.sources
@@ -745,7 +745,7 @@ export default function ThesisAdmin() {
       if (typeof contact === 'string') {
         return contact
       }
-      return `${contact.name}\n${contact.title}\n${contact.company}\n${contact.email}`
+      return `${(contact as Record<string, unknown>).name}\n${(contact as Record<string, unknown>).title}\n${(contact as Record<string, unknown>).company}\n${(contact as Record<string, unknown>).email}`
     }
     
     // For Sources section in content object
