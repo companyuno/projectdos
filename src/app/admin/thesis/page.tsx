@@ -920,13 +920,13 @@ export default function ThesisAdmin() {
       const sectionsWithPositions = existingSections
         .filter(([key, section]) => {
           const sectionData = section as Record<string, unknown>
-          const existingSectionTitle = sectionData.title || key
+          const existingSectionTitle = (sectionData.title as string) || key
           // Only include sections that have Roman numerals (numbered sections)
           return existingSectionTitle.match(/^[IVX]+\./)
         })
         .map(([key, section]) => {
           const sectionData = section as Record<string, unknown>
-          const existingSectionTitle = sectionData.title || key
+          const existingSectionTitle = (sectionData.title as string) || key
           // Extract the Roman numeral position (I=1, II=2, III=3, etc.)
           const romanMatch = existingSectionTitle.match(/^([IVX]+)\./)
           const position = romanMatch ? 
@@ -964,7 +964,7 @@ export default function ThesisAdmin() {
       // First, add all existing sections that don't have Roman numerals (top-level fields)
       for (const [key, section] of existingSections) {
         const sectionData = section as Record<string, unknown>
-        const existingSectionTitle = sectionData.title || key
+        const existingSectionTitle = (sectionData.title as string) || key
         if (!existingSectionTitle.match(/^[IVX]+\./)) {
           // This is a top-level field, keep it as is
           newContent[key] = sectionData
