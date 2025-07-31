@@ -1493,60 +1493,60 @@ export default function ThesisAdmin() {
                               content = ""
                             } else if (typeof sectionData === 'string') {
                               content = sectionData
-                            } else if (sectionData.content) {
-                              content = sectionData.content
+                            } else if ((sectionData as any).content) {
+                              content = (sectionData as any).content
                               // Set the section title for editing if it exists
-                              if (sectionData.title) {
-                                setEditSectionTitle(sectionData.title)
+                              if ((sectionData as any).title) {
+                                setEditSectionTitle((sectionData as any).title)
                               }
-                            } else if (sectionData.title && sectionData.content) {
-                              content = sectionData.content
+                            } else if ((sectionData as any).title && (sectionData as any).content) {
+                              content = (sectionData as any).content
                               // Set the section title for editing
-                              setEditSectionTitle(sectionData.title)
-                            } else if (sectionData.title) {
+                              setEditSectionTitle((sectionData as any).title)
+                            } else if ((sectionData as any).title) {
                               // Section has a title but no content yet
                               content = ""
-                              setEditSectionTitle(sectionData.title)
-                            } else {
-                              // Use the same logic as getCurrentContent for complex sections
-                              if (value === 'structuralObservations' && sectionData.observations) {
-                                content = sectionData.observations.map((obs: Record<string, unknown>) => 
-                                  `${obs.title}\n\n${obs.content}`
-                                ).join('\n\n')
-                              } else if (value === 'fundingSignals' && sectionData.intro) {
-                                let formattedContent = sectionData.intro + '\n\n'
-                                if (sectionData.wins) {
-                                  formattedContent += 'Wins:\n' + sectionData.wins.map((win: string) => `• ${win}`).join('\n') + '\n\n'
-                                }
-                                if (sectionData.failures) {
-                                  formattedContent += 'Failures:\n' + sectionData.failures.map((failure: string) => `• ${failure}`).join('\n') + '\n\n'
-                                }
-                                if (sectionData.conclusion) {
-                                  formattedContent += 'Conclusion:\n' + sectionData.conclusion
-                                }
-                                content = formattedContent
-                              } else if (value === 'workflowFit' && sectionData.intro) {
-                                let formattedContent = sectionData.intro + '\n\n'
-                                if (sectionData.table) {
-                                  formattedContent += 'Table:\n' + sectionData.table.map((row: Record<string, unknown>) => 
-                                    `${row.workflow} | ${row.segmentFit} | ${row.productFit} | ${row.reason}`
-                                  ).join('\n') + '\n\n'
-                                }
-                                if (sectionData.conclusion) {
-                                  formattedContent += 'Conclusion:\n' + sectionData.conclusion
-                                }
-                                content = formattedContent
-                              } else if (value === 'productStrategy' && sectionData.intro) {
-                                let formattedContent = sectionData.intro + '\n\n'
-                                if (sectionData.table) {
-                                  formattedContent += 'Table:\n' + sectionData.table.map((row: Record<string, unknown>) => 
-                                    `${row.startingPoint} | ${row.expansionPath} | ${row.conditions}`
-                                  ).join('\n') + '\n\n'
-                                }
-                                if (sectionData.whatNotToDo) {
-                                  formattedContent += 'What Not To Do:\n' + sectionData.whatNotToDo.map((item: string) => `• ${item}`).join('\n') + '\n\n'
-                                }
-                                content = formattedContent
+                              setEditSectionTitle((sectionData as any).title)
+                                                          } else {
+                                // Use the same logic as getCurrentContent for complex sections
+                                if (value === 'structuralObservations' && (sectionData as any).observations) {
+                                  content = (sectionData as any).observations.map((obs: Record<string, unknown>) => 
+                                    `${obs.title}\n\n${obs.content}`
+                                  ).join('\n\n')
+                                } else if (value === 'fundingSignals' && (sectionData as any).intro) {
+                                  let formattedContent = (sectionData as any).intro + '\n\n'
+                                  if ((sectionData as any).wins) {
+                                    formattedContent += 'Wins:\n' + (sectionData as any).wins.map((win: string) => `• ${win}`).join('\n') + '\n\n'
+                                  }
+                                  if ((sectionData as any).failures) {
+                                    formattedContent += 'Failures:\n' + (sectionData as any).failures.map((failure: string) => `• ${failure}`).join('\n') + '\n\n'
+                                  }
+                                  if ((sectionData as any).conclusion) {
+                                    formattedContent += 'Conclusion:\n' + (sectionData as any).conclusion
+                                  }
+                                  content = formattedContent
+                                                              } else if (value === 'workflowFit' && (sectionData as any).intro) {
+                                  let formattedContent = (sectionData as any).intro + '\n\n'
+                                  if ((sectionData as any).table) {
+                                    formattedContent += 'Table:\n' + (sectionData as any).table.map((row: Record<string, unknown>) => 
+                                      `${row.workflow} | ${row.segmentFit} | ${row.productFit} | ${row.reason}`
+                                    ).join('\n') + '\n\n'
+                                  }
+                                  if ((sectionData as any).conclusion) {
+                                    formattedContent += 'Conclusion:\n' + (sectionData as any).conclusion
+                                  }
+                                  content = formattedContent
+                                } else if (value === 'productStrategy' && (sectionData as any).intro) {
+                                  let formattedContent = (sectionData as any).intro + '\n\n'
+                                  if ((sectionData as any).table) {
+                                    formattedContent += 'Table:\n' + (sectionData as any).table.map((row: Record<string, unknown>) => 
+                                      `${row.startingPoint} | ${row.expansionPath} | ${row.conditions}`
+                                    ).join('\n') + '\n\n'
+                                  }
+                                  if ((sectionData as any).whatNotToDo) {
+                                    formattedContent += 'What Not To Do:\n' + (sectionData as any).whatNotToDo.map((item: string) => `• ${item}`).join('\n') + '\n\n'
+                                  }
+                                  content = formattedContent
                               } else if (value === 'segmentStrategy' && sectionData.intro) {
                                 let formattedContent = sectionData.intro + '\n\n'
                                 if (sectionData.segments) {
