@@ -914,12 +914,12 @@ export default function IndustryThesis() {
                     return (
                       <section key={sectionKey}>
                         <h2 className="text-2xl font-semibold text-muted-foreground mb-6 border-b-2 border-accent pb-2">
-                          {sectionData.title}
+                          {(sectionData as any).title}
                         </h2>
-                        <p className="text-muted-foreground leading-relaxed text-base mb-6">{sectionData.intro}</p>
+                        <p className="text-muted-foreground leading-relaxed text-base mb-6">{(sectionData as any).intro}</p>
 
                         <ul className="list-disc pl-6 space-y-2 mb-8">
-                          {sectionData.keyPoints?.map((point: string, index: number) => (
+                          {(sectionData as any).keyPoints?.map((point: string, index: number) => (
                             <li key={index} className="text-muted-foreground text-base leading-relaxed">
                               {point}
                             </li>
@@ -929,7 +929,7 @@ export default function IndustryThesis() {
                         <div className="mb-8">
                           <h3 className="text-lg font-semibold text-foreground mb-4">Sales timelines vary by segment:</h3>
                           <div className="space-y-2">
-                            {sectionData.timelines?.map((timeline: { segment: string; timeline: string; note: string }, index: number) => (
+                            {(sectionData as any).timelines?.map((timeline: { segment: string; timeline: string; note: string }, index: number) => (
                               <div key={index} className="flex items-start bg-gray-50 border border-accent/20 rounded-lg px-4 py-2">
                                 <div className="flex-1 font-medium text-foreground text-base">
                                   {timeline.segment}
@@ -944,7 +944,7 @@ export default function IndustryThesis() {
                         <div className="mb-8">
                           <h3 className="text-lg font-semibold text-foreground mb-4">Key buyer personas across segments:</h3>
                           <div className="space-y-2">
-                            {sectionData.buyerPersonas?.map((persona: { title: string; description: string }, index: number) => (
+                            {(sectionData as any).buyerPersonas?.map((persona: { title: string; description: string }, index: number) => (
                               <div key={index} className="bg-gray-50 border border-accent/20 rounded-lg px-4 py-2">
                                 <div className="font-semibold text-foreground text-base">{persona.title}</div>
                                 <div className="text-sm text-muted-foreground mb-1">{persona.description}</div>
