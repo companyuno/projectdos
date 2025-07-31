@@ -159,7 +159,7 @@ export default function ResearchHub() {
         if (response.ok) {
           const thesisData = await response.json()
           const allTheses = Object.entries(thesisData)
-            .map(([id, thesis]: [string, Record<string, unknown>]) => ({
+            .map(([id, thesis]: [string, any]) => ({
               id,
               title: thesis.title,
               description: thesis.subtitle || thesis.content?.executiveSummary?.content?.substring(0, 100) + "..." || "",
