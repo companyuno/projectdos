@@ -790,24 +790,24 @@ export default function ThesisAdmin() {
     }
     
     // For sections with intro and table structure
-    if (selectedSection === 'workflowFit' && sectionData.intro) {
-      let content = sectionData.intro + '\n\n'
-      if (sectionData.table) {
-        content += 'Table:\n' + sectionData.table.map((row: Record<string, unknown>) => 
+    if (selectedSection === 'workflowFit' && (sectionData as any).intro) {
+      let content = (sectionData as any).intro + '\n\n'
+      if ((sectionData as any).table) {
+        content += 'Table:\n' + (sectionData as any).table.map((row: Record<string, unknown>) => 
           `${row.workflow} | ${row.segmentFit} | ${row.productFit} | ${row.reason}`
         ).join('\n') + '\n\n'
       }
-      if (sectionData.conclusion) {
-        content += 'Conclusion:\n' + sectionData.conclusion
+      if ((sectionData as any).conclusion) {
+        content += 'Conclusion:\n' + (sectionData as any).conclusion
       }
       return content
     }
     
     // For sections with intro and segments structure
-    if (selectedSection === 'segmentStrategy' && sectionData.intro) {
-      let content = sectionData.intro + '\n\n'
-      if (sectionData.segments) {
-        content += 'Segments:\n' + sectionData.segments.map((segment: Record<string, unknown>) => 
+    if (selectedSection === 'segmentStrategy' && (sectionData as any).intro) {
+      let content = (sectionData as any).intro + '\n\n'
+      if ((sectionData as any).segments) {
+        content += 'Segments:\n' + (sectionData as any).segments.map((segment: Record<string, unknown>) => 
           `${segment.name}: ${segment.description}`
         ).join('\n\n') + '\n\n'
       }
@@ -815,37 +815,37 @@ export default function ThesisAdmin() {
     }
     
     // For sections with intro and keyPoints structure
-    if (selectedSection === 'salesRealities' && sectionData.intro) {
-      let content = sectionData.intro + '\n\n'
-      if (sectionData.keyPoints) {
-        content += 'Key Points:\n' + sectionData.keyPoints.map((point: string) => `• ${point}`).join('\n') + '\n\n'
+    if (selectedSection === 'salesRealities' && (sectionData as any).intro) {
+      let content = (sectionData as any).intro + '\n\n'
+      if ((sectionData as any).keyPoints) {
+        content += 'Key Points:\n' + (sectionData as any).keyPoints.map((point: string) => `• ${point}`).join('\n') + '\n\n'
       }
-      if (sectionData.timelines) {
-        content += 'Timelines:\n' + sectionData.timelines.map((timeline: Record<string, unknown>) => 
+      if ((sectionData as any).timelines) {
+        content += 'Timelines:\n' + (sectionData as any).timelines.map((timeline: Record<string, unknown>) => 
           `${timeline.segment}: ${timeline.timeline} - ${timeline.note}`
         ).join('\n') + '\n\n'
       }
-      if (sectionData.buyerPersonas) {
-        content += 'Buyer Personas:\n' + sectionData.buyerPersonas.map((persona: Record<string, unknown>) => 
+      if ((sectionData as any).buyerPersonas) {
+        content += 'Buyer Personas:\n' + (sectionData as any).buyerPersonas.map((persona: Record<string, unknown>) => 
           `${persona.title}: ${persona.description}`
         ).join('\n\n') + '\n\n'
       }
-      if (sectionData.conclusion) {
-        content += 'Conclusion:\n' + sectionData.conclusion
+      if ((sectionData as any).conclusion) {
+        content += 'Conclusion:\n' + (sectionData as any).conclusion
       }
       return content
     }
     
     // For sections with intro and table structure (product strategy)
-    if (selectedSection === 'productStrategy' && sectionData.intro) {
-      let content = sectionData.intro + '\n\n'
-      if (sectionData.table) {
-        content += 'Table:\n' + sectionData.table.map((row: Record<string, unknown>) => 
+    if (selectedSection === 'productStrategy' && (sectionData as any).intro) {
+      let content = (sectionData as any).intro + '\n\n'
+      if ((sectionData as any).table) {
+        content += 'Table:\n' + (sectionData as any).table.map((row: Record<string, unknown>) => 
           `${row.startingPoint} | ${row.expansionPath} | ${row.conditions}`
         ).join('\n') + '\n\n'
       }
-      if (sectionData.whatNotToDo) {
-        content += 'What Not To Do:\n' + sectionData.whatNotToDo.map((item: string) => `• ${item}`).join('\n') + '\n\n'
+      if ((sectionData as any).whatNotToDo) {
+        content += 'What Not To Do:\n' + (sectionData as any).whatNotToDo.map((item: string) => `• ${item}`).join('\n') + '\n\n'
       }
       return content
     }
@@ -853,11 +853,11 @@ export default function ThesisAdmin() {
     // Default fallback for simple content
     if (typeof sectionData === 'string') {
       return sectionData
-    } else if (sectionData.content) {
-      return sectionData.content
-    } else if (sectionData.title) {
+    } else if ((sectionData as any).content) {
+      return (sectionData as any).content
+    } else if ((sectionData as any).title) {
       // For sections with title, always return the content (empty string for new sections)
-      return sectionData.content || ""
+      return (sectionData as any).content || ""
     } else {
       // If we can't parse it, return empty string for new sections
       return ""
