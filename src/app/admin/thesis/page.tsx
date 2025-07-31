@@ -1612,8 +1612,8 @@ export default function ThesisAdmin() {
                         {/* Content sections from current thesis - sorted by Roman numeral */}
                         {currentThesis?.content && Object.keys(currentThesis.content)
                           .map((sectionKey) => {
-                            const sectionData = currentThesis.content[sectionKey]
-                            const sectionTitle = typeof sectionData === 'object' && sectionData.title ? sectionData.title : sectionKey
+                            const sectionData = (currentThesis.content as Record<string, unknown>)[sectionKey]
+                            const sectionTitle = typeof sectionData === 'object' && (sectionData as any).title ? (sectionData as any).title : sectionKey
                             // Extract Roman numeral position for sorting
                             const romanMatch = sectionTitle.match(/^([IVX]+)\./)
                             const position = romanMatch ? 
