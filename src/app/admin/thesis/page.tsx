@@ -1547,39 +1547,39 @@ export default function ThesisAdmin() {
                                     formattedContent += 'What Not To Do:\n' + (sectionData as any).whatNotToDo.map((item: string) => `• ${item}`).join('\n') + '\n\n'
                                   }
                                   content = formattedContent
-                              } else if (value === 'segmentStrategy' && sectionData.intro) {
-                                let formattedContent = sectionData.intro + '\n\n'
-                                if (sectionData.segments) {
-                                  formattedContent += 'Segments:\n' + sectionData.segments.map((segment: Record<string, unknown>) => 
-                                    `${segment.name}: ${segment.description}`
-                                  ).join('\n\n') + '\n\n'
-                                }
-                                content = formattedContent
-                              } else if (value === 'salesRealities' && sectionData.intro) {
-                                let formattedContent = sectionData.intro + '\n\n'
-                                if (sectionData.keyPoints) {
-                                  formattedContent += 'Key Points:\n' + sectionData.keyPoints.map((point: string) => `• ${point}`).join('\n') + '\n\n'
-                                }
-                                if (sectionData.timelines) {
-                                  formattedContent += 'Timelines:\n' + sectionData.timelines.map((timeline: Record<string, unknown>) => 
-                                    `${timeline.segment}: ${timeline.timeline} - ${timeline.note}`
-                                  ).join('\n') + '\n\n'
-                                }
-                                if (sectionData.buyerPersonas) {
-                                  formattedContent += 'Buyer Personas:\n' + sectionData.buyerPersonas.map((persona: Record<string, unknown>) => 
-                                    `${persona.title}: ${persona.description}`
-                                  ).join('\n\n') + '\n\n'
-                                }
-                                if (sectionData.conclusion) {
-                                  formattedContent += 'Conclusion:\n' + sectionData.conclusion
-                                }
-                                content = formattedContent
+                                                              } else if (value === 'segmentStrategy' && (sectionData as any).intro) {
+                                  let formattedContent = (sectionData as any).intro + '\n\n'
+                                  if ((sectionData as any).segments) {
+                                    formattedContent += 'Segments:\n' + (sectionData as any).segments.map((segment: Record<string, unknown>) => 
+                                      `${segment.name}: ${segment.description}`
+                                    ).join('\n\n') + '\n\n'
+                                  }
+                                  content = formattedContent
+                                } else if (value === 'salesRealities' && (sectionData as any).intro) {
+                                  let formattedContent = (sectionData as any).intro + '\n\n'
+                                  if ((sectionData as any).keyPoints) {
+                                    formattedContent += 'Key Points:\n' + (sectionData as any).keyPoints.map((point: string) => `• ${point}`).join('\n') + '\n\n'
+                                  }
+                                  if ((sectionData as any).timelines) {
+                                    formattedContent += 'Timelines:\n' + (sectionData as any).timelines.map((timeline: Record<string, unknown>) => 
+                                      `${timeline.segment}: ${timeline.timeline} - ${timeline.note}`
+                                    ).join('\n') + '\n\n'
+                                  }
+                                  if ((sectionData as any).buyerPersonas) {
+                                    formattedContent += 'Buyer Personas:\n' + (sectionData as any).buyerPersonas.map((persona: Record<string, unknown>) => 
+                                      `${persona.title}: ${persona.description}`
+                                    ).join('\n\n') + '\n\n'
+                                  }
+                                  if ((sectionData as any).conclusion) {
+                                    formattedContent += 'Conclusion:\n' + (sectionData as any).conclusion
+                                  }
+                                  content = formattedContent
                               } else {
                                 // For new sections or unknown structures, handle simple content structure
                                 if (sectionData && typeof sectionData === 'object') {
-                                  if (sectionData.content !== undefined) {
-                                    content = sectionData.content
-                                  } else if (sectionData.title) {
+                                  if ((sectionData as any).content !== undefined) {
+                                    content = (sectionData as any).content
+                                  } else if ((sectionData as any).title) {
                                     // New sections might have title but no content yet
                                     content = ""
                                   } else {
