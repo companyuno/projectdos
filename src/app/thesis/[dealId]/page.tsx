@@ -1008,7 +1008,7 @@ export default function IndustryThesis() {
                     return (
                       <section key={sectionKey}>
                         <h2 className="text-2xl font-semibold text-muted-foreground mb-6 border-b-2 border-accent pb-2">
-                          {sectionData.title || 'Sources'}
+                          {(sectionData as any).title || 'Sources'}
                         </h2>
                         {Array.isArray(thesis.sources) ? (
                           <div className="space-y-2">
@@ -1027,15 +1027,15 @@ export default function IndustryThesis() {
                     )
                   } else if (sectionKey.startsWith('section-') || sectionKey.includes('--')) {
                     // Handle new sections (created via admin panel)
-                    if (typeof sectionData.content === 'string') {
+                    if (typeof (sectionData as any).content === 'string') {
                       return (
                         <section key={sectionKey}>
-                          <h2 className="text-2xl font-semibold text-muted-foreground mb-6 border-b-2 border-accent pb-2">
-                            {sectionData.title}
-                          </h2>
-                          <div className="text-muted-foreground leading-relaxed text-base">
-                            {renderContent(sectionData.content)}
-                          </div>
+                                                  <h2 className="text-2xl font-semibold text-muted-foreground mb-6 border-b-2 border-accent pb-2">
+                          {(sectionData as any).title}
+                        </h2>
+                        <div className="text-muted-foreground leading-relaxed text-base">
+                          {renderContent((sectionData as any).content)}
+                        </div>
                         </section>
                       )
                     }
