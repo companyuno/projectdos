@@ -767,23 +767,23 @@ export default function ThesisAdmin() {
     
     // For sections with intro, wins, failures, conclusion structure
     // @ts-ignore
-    if (selectedSection === 'fundingSignals' && sectionData.intro) {
+    if (selectedSection === 'fundingSignals' && (sectionData as any).intro) {
       // @ts-ignore
-      let content = sectionData.intro + '\n\n'
+      let content = (sectionData as any).intro + '\n\n'
       // @ts-ignore
-      if (sectionData.wins) {
+      if ((sectionData as any).wins) {
         // @ts-ignore
-        content += 'Wins:\n' + sectionData.wins.map((win: string) => `• ${win}`).join('\n') + '\n\n'
+        content += 'Wins:\n' + (sectionData as any).wins.map((win: string) => `• ${win}`).join('\n') + '\n\n'
       }
       // @ts-ignore
-      if (sectionData.failures) {
+      if ((sectionData as any).failures) {
         // @ts-ignore
-        content += 'Failures:\n' + sectionData.failures.map((failure: string) => `• ${failure}`).join('\n') + '\n\n'
+        content += 'Failures:\n' + (sectionData as any).failures.map((failure: string) => `• ${failure}`).join('\n') + '\n\n'
       }
       // @ts-ignore
-      if (sectionData.conclusion) {
+      if ((sectionData as any).conclusion) {
         // @ts-ignore
-        content += 'Conclusion:\n' + sectionData.conclusion
+        content += 'Conclusion:\n' + (sectionData as any).conclusion
       }
       return content
     }
