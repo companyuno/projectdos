@@ -672,7 +672,7 @@ export default function IndustryThesis() {
               const allSections = thesis.content && Object.keys(thesis.content)
                 .map((sectionKey) => {
                   const sectionData = (thesis.content as Record<string, unknown>)[sectionKey]
-                  const sectionTitle = typeof sectionData === 'object' && sectionData.title ? sectionData.title : sectionKey
+                  const sectionTitle = typeof sectionData === 'object' && sectionData && (sectionData as any).title ? (sectionData as any).title : sectionKey
                   
                   // Extract Roman numeral position for sorting
                   const romanMatch = sectionTitle.match(/^([IVX]+)\./)
@@ -704,10 +704,10 @@ export default function IndustryThesis() {
                     return (
                       <section key={sectionKey}>
                         <h2 className="text-2xl font-semibold text-muted-foreground mb-6 border-b-2 border-accent pb-2">
-                          {sectionData.title}
+                          {(sectionData as any).title}
                         </h2>
                         <div className="text-muted-foreground leading-relaxed text-base">
-                          {renderContent(sectionData.content || '')}
+                          {renderContent((sectionData as any).content || '')}
                         </div>
                       </section>
                     )
@@ -715,10 +715,10 @@ export default function IndustryThesis() {
                     return (
                       <section key={sectionKey}>
                         <h2 className="text-2xl font-semibold text-muted-foreground mb-6 border-b-2 border-accent pb-2">
-                          {sectionData.title}
+                          {(sectionData as any).title}
                         </h2>
                         <div className="text-muted-foreground leading-relaxed text-base">
-                          {renderContent(sectionData.content)}
+                          {renderContent((sectionData as any).content)}
                         </div>
                       </section>
                     )
@@ -726,10 +726,10 @@ export default function IndustryThesis() {
                     return (
                       <section key={sectionKey}>
                         <h2 className="text-2xl font-semibold text-muted-foreground mb-6 border-b-2 border-accent pb-2">
-                          {sectionData.title}
+                          {(sectionData as any).title}
                         </h2>
                         <div className="space-y-4">
-                          {sectionData.observations?.map((obs: { title: string; content: string }, index: number) => (
+                          {(sectionData as any).observations?.map((obs: { title: string; content: string }, index: number) => (
                             <div
                               key={index}
                               className={`p-6 rounded-lg border-l-4 ${
@@ -749,14 +749,14 @@ export default function IndustryThesis() {
                     return (
                       <section key={sectionKey}>
                         <h2 className="text-2xl font-semibold text-muted-foreground mb-6 border-b-2 border-accent pb-2">
-                          {sectionData.title}
+                          {(sectionData as any).title}
                         </h2>
-                        <p className="text-muted-foreground leading-relaxed text-base mb-8">{sectionData.intro}</p>
+                        <p className="text-muted-foreground leading-relaxed text-base mb-8">{(sectionData as any).intro}</p>
 
                         <div className="mb-8">
                           <h3 className="text-lg font-semibold text-green-700 mb-4">The wins are clear:</h3>
                           <ul className="space-y-3">
-                            {sectionData.wins?.map((win: string, index: number) => (
+                            {(sectionData as any).wins?.map((win: string, index: number) => (
                               <li key={index} className="flex items-start">
                                 <div className="w-2 h-2 bg-green-600 rounded-full mt-2 mr-4 flex-shrink-0"></div>
                                 <span className="text-muted-foreground text-base">{win}</span>
@@ -768,7 +768,7 @@ export default function IndustryThesis() {
                         <div className="mb-8">
                           <h3 className="text-lg font-semibold text-red-700 mb-4">Others didn&apos;t convert:</h3>
                           <ul className="space-y-3">
-                            {sectionData.failures?.map((failure: string, index: number) => (
+                            {(sectionData as any).failures?.map((failure: string, index: number) => (
                               <li key={index} className="flex items-start">
                                 <div className="w-2 h-2 bg-red-600 rounded-full mt-2 mr-4 flex-shrink-0"></div>
                                 <span className="text-muted-foreground text-base">{failure}</span>
@@ -778,7 +778,7 @@ export default function IndustryThesis() {
                         </div>
 
                         <div className="bg-gray-100 p-6 rounded-lg">
-                          <p className="text-accent-foreground leading-relaxed text-base">{sectionData.conclusion}</p>
+                          <p className="text-accent-foreground leading-relaxed text-base">{(sectionData as any).conclusion}</p>
                         </div>
                       </section>
                     )
@@ -786,9 +786,9 @@ export default function IndustryThesis() {
                     return (
                       <section key={sectionKey}>
                         <h2 className="text-2xl font-semibold text-muted-foreground mb-6 border-b-2 border-accent pb-2">
-                          {sectionData.title}
+                          {(sectionData as any).title}
                         </h2>
-                        <p className="text-muted-foreground leading-relaxed text-base mb-8">{sectionData.intro}</p>
+                        <p className="text-muted-foreground leading-relaxed text-base mb-8">{(sectionData as any).intro}</p>
 
                         <div className="overflow-x-auto mb-8">
                           <table className="w-full border-collapse border border-border">
@@ -809,7 +809,7 @@ export default function IndustryThesis() {
                               </tr>
                             </thead>
                             <tbody>
-                              {sectionData.table?.map((row: { workflow: string; segmentFit: string; productFit: string; reason: string }, index: number) => (
+                              {(sectionData as any).table?.map((row: { workflow: string; segmentFit: string; productFit: string; reason: string }, index: number) => (
                                 <tr key={index} className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}>
                                   <td className="border border-border px-4 py-3 font-medium text-foreground text-base">{row.workflow}</td>
                                   <td className="border border-border px-4 py-3 text-muted-foreground text-base">{row.segmentFit}</td>
@@ -836,7 +836,7 @@ export default function IndustryThesis() {
                         </div>
 
                         <div className="bg-gray-100 p-6 rounded-lg">
-                          <p className="text-accent-foreground leading-relaxed text-base">{sectionData.conclusion}</p>
+                          <p className="text-accent-foreground leading-relaxed text-base">{(sectionData as any).conclusion}</p>
                         </div>
                       </section>
                     )
