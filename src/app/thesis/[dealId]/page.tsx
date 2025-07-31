@@ -954,7 +954,7 @@ export default function IndustryThesis() {
                         </div>
 
                         <div className="bg-gray-100 p-6 rounded-lg">
-                          <p className="text-accent-foreground leading-relaxed text-base">{sectionData.conclusion}</p>
+                          <p className="text-accent-foreground leading-relaxed text-base">{(sectionData as any).conclusion}</p>
                         </div>
                       </section>
                     )
@@ -962,11 +962,11 @@ export default function IndustryThesis() {
                     return (
                       <section key={sectionKey}>
                         <h2 className="text-2xl font-semibold text-muted-foreground mb-6 border-b-2 border-accent pb-2">
-                          {sectionData.title}
+                          {(sectionData as any).title}
                         </h2>
                         <div className="conclusion-block">
                           <div className="text-muted-foreground leading-relaxed text-base">
-                            {renderContent(sectionData.content)}
+                            {renderContent((sectionData as any).content)}
                           </div>
                         </div>
                       </section>
@@ -975,7 +975,7 @@ export default function IndustryThesis() {
                     return (
                       <section key={sectionKey}>
                         <h2 className="text-2xl font-semibold text-muted-foreground mb-6 border-b-2 border-accent pb-2">
-                          {sectionData.title || 'Contact'}
+                          {(sectionData as any).title || 'Contact'}
                         </h2>
                         <div className="contact-block">
                           {typeof thesis.contact === 'object' ? (
