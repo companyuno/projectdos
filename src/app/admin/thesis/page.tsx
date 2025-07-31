@@ -426,10 +426,10 @@ export default function ThesisAdmin() {
         contentToSave = sourcesData
       } else {
         // For content sections, maintain the structure
-        const sectionData = currentThesis?.content?.[selectedSection]
-        if (sectionData && typeof sectionData === 'object' && sectionData.title) {
+        const sectionData = (currentThesis?.content as Record<string, unknown>)?.[selectedSection]
+        if (sectionData && typeof sectionData === 'object' && (sectionData as Record<string, unknown>).title) {
           // Update title if editSectionTitle is provided, otherwise preserve existing title
-          const newTitle = editSectionTitle.trim() || sectionData.title
+          const newTitle = editSectionTitle.trim() || (sectionData as Record<string, unknown>).title as string
           contentToSave = {
             ...sectionData,
             title: newTitle,
