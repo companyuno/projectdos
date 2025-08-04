@@ -1474,23 +1474,59 @@ export default function ThesisAdmin() {
                             content = currentThesis.readTime || ""
                           } else if (value === 'tags') {
                             content = currentThesis.tags?.join(', ') || ""
+                          } else if (value === 'executiveSummary') {
+                            const sectionData = currentThesis.content?.executiveSummary
+                            if (!sectionData) {
+                              content = ""
+                              setEditSectionTitle("I. Executive Summary")
+                            } else if (typeof sectionData === 'string') {
+                              content = sectionData
+                              setEditSectionTitle("I. Executive Summary")
+                            } else if ((sectionData as any).content) {
+                              content = (sectionData as any).content
+                              setEditSectionTitle((sectionData as any).title || "I. Executive Summary")
+                            } else {
+                              content = ""
+                              setEditSectionTitle("I. Executive Summary")
+                            }
+                          } else if (value === 'conclusion') {
+                            const sectionData = currentThesis.content?.conclusion
+                            if (!sectionData) {
+                              content = ""
+                              setEditSectionTitle("IX. Conclusion")
+                            } else if (typeof sectionData === 'string') {
+                              content = sectionData
+                              setEditSectionTitle("IX. Conclusion")
+                            } else if ((sectionData as any).content) {
+                              content = (sectionData as any).content
+                              setEditSectionTitle((sectionData as any).title || "IX. Conclusion")
+                            } else {
+                              content = ""
+                              setEditSectionTitle("IX. Conclusion")
+                            }
                           } else if (value === 'contact') {
                             const contact = currentThesis.contact
                             if (!contact) {
                               content = ""
+                              setEditSectionTitle("III. Contact")
                             } else if (typeof contact === 'string') {
                               content = contact
+                              setEditSectionTitle("III. Contact")
                             } else {
                               content = `${contact.name}\n${contact.title}\n${contact.company}\n${contact.email}`
+                              setEditSectionTitle("III. Contact")
                             }
                           } else if (value === 'sources') {
                             const sources = currentThesis.sources
                             if (!sources) {
                               content = ""
+                              setEditSectionTitle("IV. Sources")
                             } else if (Array.isArray(sources)) {
                               content = sources.join('\n')
+                              setEditSectionTitle("IV. Sources")
                             } else {
                               content = JSON.stringify(sources, null, 2)
+                              setEditSectionTitle("IV. Sources")
                             }
                           } else {
                             const sectionData = currentThesis.content?.[value]
