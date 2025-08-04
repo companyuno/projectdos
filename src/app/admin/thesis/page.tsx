@@ -439,20 +439,24 @@ export default function ThesisAdmin() {
           }
                   } else {
             // Create new structure with title and content
-            const sectionTitles: { [key: string]: string } = {
-              executiveSummary: "I. Executive Summary",
-              narrative: "II. Narrative", 
-              structuralObservations: "III. Structural Observations",
-              fundingSignals: "IV. Funding Signals",
-              workflowFit: "V. Workflow Fit",
-              productStrategy: "VI. Product Strategy",
-              segmentStrategy: "VII. Segment Strategy",
-              salesRealities: "VIII. Sales Realities",
-              conclusion: "IX. Conclusion"
-            }
+            // For pre-filled sections, use the editSectionTitle if provided, otherwise use default
+            let newTitle = editSectionTitle.trim()
             
-            // Update title if editSectionTitle is provided
-            const newTitle = editSectionTitle.trim() || sectionTitles[selectedSection] || selectedSection
+            if (!newTitle) {
+              // Default titles for pre-filled sections
+              const sectionTitles: { [key: string]: string } = {
+                executiveSummary: "I. Executive Summary",
+                narrative: "II. Narrative", 
+                structuralObservations: "III. Structural Observations",
+                fundingSignals: "IV. Funding Signals",
+                workflowFit: "V. Workflow Fit",
+                productStrategy: "VI. Product Strategy",
+                segmentStrategy: "VII. Segment Strategy",
+                salesRealities: "VIII. Sales Realities",
+                conclusion: "IX. Conclusion"
+              }
+              newTitle = sectionTitles[selectedSection] || selectedSection
+            }
             
             // Special handling for complex sections
             if (selectedSection === 'structuralObservations') {

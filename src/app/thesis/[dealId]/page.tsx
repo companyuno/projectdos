@@ -620,7 +620,7 @@ export default function IndustryThesis() {
                     return (
                       <section key={sectionKey}>
                         <h2 className="text-2xl font-semibold text-muted-foreground mb-6 border-b-2 border-accent pb-2">
-                          {(sectionData as Record<string, unknown>).title as string}
+                          {(sectionData as Record<string, unknown>).title as string || 'I. Executive Summary'}
                         </h2>
                         <div className="text-muted-foreground leading-relaxed text-base">
                           {renderContent(((sectionData as Record<string, unknown>).content as string) || '')}
@@ -876,7 +876,7 @@ export default function IndustryThesis() {
                     return (
                       <section key={sectionKey}>
                         <h2 className="text-2xl font-semibold text-muted-foreground mb-6 border-b-2 border-accent pb-2">
-                          {(sectionData as any).title}
+                          {(sectionData as any).title || 'IX. Conclusion'}
                         </h2>
                         <div className="conclusion-block">
                           <div className="text-muted-foreground leading-relaxed text-base">
@@ -889,7 +889,7 @@ export default function IndustryThesis() {
                     return (
                       <section key={sectionKey}>
                         <h2 className="text-2xl font-semibold text-muted-foreground mb-6 border-b-2 border-accent pb-2">
-                          {(sectionData as any).title || 'Contact'}
+                          {(sectionData as any).title || 'III. Contact'}
                         </h2>
                         <div className="contact-block">
                           {typeof thesis.contact === 'object' ? (
@@ -922,7 +922,7 @@ export default function IndustryThesis() {
                     return (
                       <section key={sectionKey}>
                         <h2 className="text-2xl font-semibold text-muted-foreground mb-6 border-b-2 border-accent pb-2">
-                          {(sectionData as any).title || 'Sources'}
+                          {(sectionData as any).title || 'IV. Sources'}
                         </h2>
                         {Array.isArray(thesis.sources) ? (
                           <div className="space-y-2">
