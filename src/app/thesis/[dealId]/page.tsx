@@ -1026,22 +1026,20 @@ export default function IndustryThesis() {
                         )}
                       </section>
                     )
-                  } else if (sectionKey.startsWith('section-') || sectionKey.includes('--')) {
-                    // Handle new sections (created via admin panel)
-                    console.log('Rendering section:', sectionKey, sectionData)
-                    if (typeof (sectionData as any).content === 'string') {
+                  } else {
+                    // Handle any other sections (including new ones created via admin panel)
+                    // This is a catch-all for sections that don't match specific patterns
+                    if (sectionData && typeof sectionData === 'object' && (sectionData as any).content) {
                       return (
                         <section key={sectionKey}>
                           <h2 className="text-2xl font-semibold text-muted-foreground mb-6 border-b-2 border-accent pb-2">
-                            {(sectionData as any).title}
+                            {(sectionData as any).title || sectionKey}
                           </h2>
                           <div className="text-muted-foreground leading-relaxed text-base">
                             {renderContent((sectionData as any).content)}
                           </div>
                         </section>
                       )
-                    } else {
-                      console.log('Section content is not a string:', typeof (sectionData as any).content)
                     }
                   }
                   

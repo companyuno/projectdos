@@ -168,7 +168,7 @@ export default function ResearchHub() {
               publishDate: thesis.publishDate || "2025-01-01",
               readTime: thesis.readTime || "10 min read",
               tags: thesis.tags || [],
-              featured: thesis.featured || false
+              featured: thesis.featured || thesis.content?.featured || false
             }))
           setDynamicTheses(allTheses)
         }
