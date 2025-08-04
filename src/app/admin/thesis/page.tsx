@@ -1024,10 +1024,9 @@ export default function ThesisAdmin() {
         setSelectedThesis(currentThesis)
         setSelectedSection(newSectionId)
         
-        // Wait a moment for the state to update, then load the new section content
+        // Clear content for the new section (it should be empty)
         setTimeout(() => {
-          const content = getCurrentContent()
-          setEditContent(content)
+          setEditContent("")
           setEditSectionTitle("")
         }, 100)
         
@@ -1614,6 +1613,12 @@ export default function ThesisAdmin() {
                         <SelectItem value="publishDate">Publish Date</SelectItem>
                         <SelectItem value="readTime">Read Time</SelectItem>
                         <SelectItem value="tags">Tags</SelectItem>
+                        
+                        {/* Pre-filled section templates */}
+                        <SelectItem value="executiveSummary">Executive Summary</SelectItem>
+                        <SelectItem value="conclusion">Conclusion</SelectItem>
+                        <SelectItem value="contact">Contact</SelectItem>
+                        <SelectItem value="sources">Sources</SelectItem>
                         
                         {/* Content sections from current thesis - sorted by Roman numeral */}
                         {currentThesis?.content && Object.keys(currentThesis.content)

@@ -125,6 +125,10 @@ body {
   font-weight: 500 !important;
 }
 
+.callout-block strong {
+  font-weight: 700 !important;
+}
+
 /* Thesis editor header styles */
 .editor-content h1 {
   font-size: 1.4em;
