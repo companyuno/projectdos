@@ -37,10 +37,11 @@ export async function POST(request: NextRequest) {
 
     const supabase = createClient(supabaseUrl, supabaseKey)
 
-    // Generate unique filename
+    // Generate unique filename with timestamp and random component
     const timestamp = Date.now()
+    const randomId = Math.random().toString(36).substring(2, 15)
     const fileExtension = file.name.split('.').pop()
-    const fileName = `${timestamp}.${fileExtension}`
+    const fileName = `${timestamp}-${randomId}.${fileExtension}`
     const filePath = `${thesisId}/${fileName}`
 
     // Convert file to buffer
