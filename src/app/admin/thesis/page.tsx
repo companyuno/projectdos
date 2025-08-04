@@ -1023,9 +1023,15 @@ export default function ThesisAdmin() {
         // Restore selections and select the new section
         setSelectedThesis(currentThesis)
         setSelectedSection(newSectionId)
-        // Clear content for the new section
-        setEditContent("")
-        alert('Section added successfully! You can now select it from the dropdown to edit.')
+        
+        // Wait a moment for the state to update, then load the new section content
+        setTimeout(() => {
+          const content = getCurrentContent()
+          setEditContent(content)
+          setEditSectionTitle("")
+        }, 100)
+        
+        alert('Section added successfully! You can now edit the new section.')
       } else {
         const errorData = await response.json()
         alert(`Failed to add section: ${errorData.error || 'Unknown error'}`)
@@ -1611,6 +1617,11 @@ export default function ThesisAdmin() {
                         
                         {/* Content sections from current thesis - sorted by Roman numeral */}
                         {currentThesis?.content && Object.keys(currentThesis.content)
+                          .filter((sectionKey) => {
+                            // Filter out metadata properties that shouldn't be editable sections
+                            const metadataKeys = ['featured', 'category']
+                            return !metadataKeys.includes(sectionKey)
+                          })
                           .map((sectionKey) => {
                             const sectionData = (currentThesis.content as Record<string, unknown>)[sectionKey]
                             const sectionTitle = typeof sectionData === 'object' && (sectionData as any).title ? (sectionData as any).title : sectionKey

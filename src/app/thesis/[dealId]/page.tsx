@@ -349,7 +349,7 @@ export default function IndustryThesis() {
       if (imageMatch) {
         const [, alt, url] = imageMatch
         return (
-          <div key={index} className="my-4">
+          <div key={index} className="my-4 flex justify-center">
             <img 
               src={url} 
               alt={alt || 'Image'} 
