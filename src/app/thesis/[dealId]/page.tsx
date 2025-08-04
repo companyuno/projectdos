@@ -219,65 +219,36 @@ export default function IndustryThesis() {
     // Split content by lines to process each line
     const lines = content.split('\n')
     const renderedLines = lines.map((line, index) => {
-            // Simple approach: Just check if line contains alignment div and apply CSS
-      if (line.includes('<div class="text-center">') || line.includes('<div class="text-right">') || line.includes('<div class="flex justify-center">') || line.includes('<div class="flex justify-end">')) {
-        // Extract the content between the div tags
-        const contentMatch = line.match(/<div class="[^"]*">(.*?)<\/div>/)
-        if (contentMatch) {
-          const content = contentMatch[1]
-          
-          // Determine alignment and CSS class
-          let cssClass = 'my-4'
-          if (line.includes('text-center')) {
-            // Use flex justify-center for images, text-center for text
-            cssClass += ' flex justify-center'
-          } else if (line.includes('text-right')) {
-            cssClass += ' flex justify-end'
-          } else if (line.includes('flex justify-center')) {
-            cssClass += ' flex justify-center'
-          } else if (line.includes('flex justify-end')) {
-            cssClass += ' flex justify-end'
-          }
-          
-          // Check for image markdown: ![alt](url)
-          const imageMatch = content.match(/!\[([^\]]*)\]\(([^)]+)\)/)
-          if (imageMatch) {
-            const [, alt, url] = imageMatch
-            return (
-              <div key={index} className={cssClass}>
-                <img 
-                  src={url} 
-                  alt={alt || 'Image'} 
-                  className="max-w-full h-auto rounded-lg shadow-md"
-                  onError={(e) => {
-                    e.currentTarget.style.display = 'none'
-                  }}
-                />
-              </div>
-            )
-          }
-          
-          // Check for video HTML
-          const videoMatch = content.match(/<video[^>]*>.*?<source[^>]*src="([^"]+)"[^>]*>.*?<\/video>/)
-          if (videoMatch) {
-            const [, src] = videoMatch
-            return (
-              <div key={index} className={cssClass}>
-                <video controls className="max-w-full h-auto rounded-lg shadow-md">
-                  <source src={src} />
-                  Your browser does not support the video tag.
-                </video>
-              </div>
-            )
-          }
-          
-          // If no media found, render as text with alignment
-          return (
-            <div key={index} className={cssClass}>
-              <span dangerouslySetInnerHTML={{ __html: content }} />
-            </div>
-          )
-        }
+      // Check for image markdown: ![alt](url) - handle this FIRST
+      const imageMatch = line.match(/!\[([^\]]*)\]\(([^)]+)\)/)
+      if (imageMatch) {
+        const [, alt, url] = imageMatch
+        return (
+          <div key={index} className="my-4 flex justify-center">
+            <img 
+              src={url} 
+              alt={alt || 'Image'} 
+              className="max-w-full h-auto rounded-lg shadow-md"
+              onError={(e) => {
+                e.currentTarget.style.display = 'none'
+              }}
+            />
+          </div>
+        )
+      }
+
+      // Check for video HTML: <video controls><source src="url" type="type"></video>
+      const videoMatch = line.match(/<video[^>]*>.*?<source[^>]*src="([^"]+)"[^>]*>.*?<\/video>/)
+      if (videoMatch) {
+        const [, src] = videoMatch
+        return (
+          <div key={index} className="my-4">
+            <video controls className="max-w-full h-auto rounded-lg shadow-md">
+              <source src={src} />
+              Your browser does not support the video tag.
+            </video>
+          </div>
+        )
       }
 
       // Check for alignment divs (both flex and text alignment) - multi-line format
@@ -344,43 +315,6 @@ export default function IndustryThesis() {
         }
       }
 
-      // Check for image markdown: ![alt](url) (outside alignment divs)
-      const imageMatch = line.match(/!\[([^\]]*)\]\(([^)]+)\)/)
-      if (imageMatch) {
-        const [, alt, url] = imageMatch
-        return (
-          <div key={index} className="my-4 flex justify-center">
-            <img 
-              src={url} 
-              alt={alt || 'Image'} 
-              className="max-w-full h-auto rounded-lg shadow-md"
-              onError={(e) => {
-                e.currentTarget.style.display = 'none'
-              }}
-            />
-          </div>
-        )
-      }
-
-      // Check for video HTML: <video controls><source src="url" type="type"></video> (outside alignment divs)
-      const videoMatch = line.match(/<video[^>]*>.*?<source[^>]*src="([^"]+)"[^>]*>.*?<\/video>/)
-      if (videoMatch) {
-        const [, src] = videoMatch
-        return (
-          <div key={index} className="my-4">
-            <video controls className="max-w-full h-auto rounded-lg shadow-md">
-              <source src={src} />
-              Your browser does not support the video tag.
-            </video>
-          </div>
-        )
-      }
-
-      // Skip alignment div closing tags
-      if (line.trim() === '</div>') {
-        return null
-      }
-
       // Check for callout block opening
       if (line.includes('<div class="callout-block">')) {
         // Find the closing div and extract content
@@ -420,32 +354,6 @@ export default function IndustryThesis() {
                   </video>
                 </div>
               )
-            }
-
-            // Check for alignment divs within callout
-            if (contentLine.includes('<div class="text-center">') || contentLine.includes('<div class="text-right">') || contentLine.includes('<div class="flex justify-center">') || contentLine.includes('<div class="flex justify-end">')) {
-              const contentMatch = contentLine.match(/<div class="[^"]*">(.*?)<\/div>/)
-              if (contentMatch) {
-                const content = contentMatch[1]
-                
-                // Check for image markdown: ![alt](url)
-                const imageMatch = content.match(/!\[([^\]]*)\]\(([^)]+)\)/)
-                if (imageMatch) {
-                  const [, alt, url] = imageMatch
-                  return (
-                    <div key={contentIndex} className="my-4 flex justify-center">
-                      <img 
-                        src={url} 
-                        alt={alt || 'Image'} 
-                        className="max-w-full h-auto rounded-lg shadow-md"
-                        onError={(e) => {
-                          e.currentTarget.style.display = 'none'
-                        }}
-                      />
-                    </div>
-                  )
-                }
-              }
             }
 
             // Regular text with formatting
@@ -513,6 +421,11 @@ export default function IndustryThesis() {
             return null
           }
         }
+      }
+
+      // Skip alignment div closing tags
+      if (line.trim() === '</div>') {
+        return null
       }
 
       // Regular text line with formatting

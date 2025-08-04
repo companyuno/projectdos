@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { ArrowLeft, Save, RefreshCw, Eye, Edit3, Plus, Trash2, Upload, Bold, Italic, Underline, List, Indent, AlignLeft, AlignCenter, AlignRight, Table, MessageSquare } from "lucide-react"
+import { ArrowLeft, Save, RefreshCw, Eye, Edit3, Plus, Trash2, Upload, Bold, Italic, Underline, List, Indent, AlignLeft, AlignCenter, AlignRight, Table, MessageSquare, ChevronUp, ChevronDown } from "lucide-react"
 import { useRouter } from "next/navigation"
 
 interface ThesisData {
@@ -1207,6 +1207,113 @@ export default function ThesisAdmin() {
     }
   }
 
+  const handleMoveSection = async (direction: 'up' | 'down') => {
+    if (!selectedThesis || !selectedSection || !currentThesis?.content) return
+
+    setSaving(true)
+    try {
+      // Get all sections with their positions
+      const sectionsWithPositions = Object.keys(currentThesis.content)
+        .filter((sectionKey) => {
+          const metadataKeys = ['featured', 'category']
+          return !metadataKeys.includes(sectionKey)
+        })
+        .map((sectionKey) => {
+          const sectionData = (currentThesis.content as Record<string, unknown>)[sectionKey]
+          const sectionTitle = typeof sectionData === 'object' && (sectionData as any).title ? (sectionData as any).title : sectionKey
+          const romanMatch = sectionTitle.match(/^([IVX]+)\./)
+          const position = romanMatch ? 
+            (romanMatch[1] === 'I' ? 1 : 
+             romanMatch[1] === 'II' ? 2 : 
+             romanMatch[1] === 'III' ? 3 : 
+             romanMatch[1] === 'IV' ? 4 : 
+             romanMatch[1] === 'V' ? 5 : 
+             romanMatch[1] === 'VI' ? 6 : 
+             romanMatch[1] === 'VII' ? 7 : 
+             romanMatch[1] === 'VIII' ? 8 : 
+             romanMatch[1] === 'IX' ? 9 : 
+             romanMatch[1] === 'X' ? 10 : 
+             romanMatch[1] === 'XI' ? 11 : 
+             romanMatch[1] === 'XII' ? 12 : 
+             romanMatch[1] === 'XIII' ? 13 : 
+             romanMatch[1] === 'XIV' ? 14 : 
+             romanMatch[1] === 'XV' ? 15 : 999) : 999
+          return { key: sectionKey, section: sectionData, position }
+        })
+        .sort((a, b) => a.position - b.position)
+
+      // Find current section index
+      const currentIndex = sectionsWithPositions.findIndex(s => s.key === selectedSection)
+      if (currentIndex === -1) return
+
+      // Calculate new position
+      let newIndex = currentIndex
+      if (direction === 'up' && currentIndex > 0) {
+        newIndex = currentIndex - 1
+      } else if (direction === 'down' && currentIndex < sectionsWithPositions.length - 1) {
+        newIndex = currentIndex + 1
+      } else {
+        return // Can't move further
+      }
+
+      // Swap positions
+      const newSectionsWithPositions = [...sectionsWithPositions]
+      const temp = newSectionsWithPositions[currentIndex]
+      newSectionsWithPositions[currentIndex] = newSectionsWithPositions[newIndex]
+      newSectionsWithPositions[newIndex] = temp
+
+      // Create new content object with updated positions
+      const newContent = { ...currentThesis.content }
+      
+      // Update Roman numerals for all sections
+      newSectionsWithPositions.forEach(({ key, section }, index) => {
+        const newPosition = index + 1
+        const romanNumeral = toRomanNumeral(newPosition)
+        
+        if (typeof section === 'object' && (section as any).title) {
+          const titleWithoutRoman = (section as any).title.replace(/^[IVX]+\.\s*/, '')
+          newContent[key] = {
+            ...(section as any),
+            title: `${romanNumeral}. ${titleWithoutRoman}`
+          }
+        } else {
+          // For sections without title, create one
+          newContent[key] = {
+            title: `${romanNumeral}. ${key}`,
+            content: section
+          }
+        }
+      })
+
+      // Update the thesis
+      const response = await fetch('/api/thesis', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          thesisId: selectedThesis,
+          section: 'content',
+          content: newContent
+        }),
+      })
+
+      if (response.ok) {
+        // Refresh the thesis data
+        await fetchThesisData()
+        alert('Section moved successfully!')
+      } else {
+        console.error('Failed to move section')
+        alert('Failed to move section')
+      }
+    } catch (error) {
+      console.error('Error moving section:', error)
+      alert('Error moving section')
+    } finally {
+      setSaving(false)
+    }
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
@@ -1687,11 +1794,46 @@ export default function ThesisAdmin() {
                             return { sectionKey, sectionTitle, position }
                           })
                           .sort((a, b) => a.position - b.position)
-                          .map(({ sectionKey, sectionTitle }) => (
-                            <SelectItem key={sectionKey} value={sectionKey}>
-                              {sectionTitle}
-                        </SelectItem>
-                      ))}
+                          .map(({ sectionKey, sectionTitle }, index, array) => {
+                            const canMoveUp = index > 0
+                            const canMoveDown = index < array.length - 1
+                            
+                            return (
+                              <div key={sectionKey} className="flex items-center justify-between group">
+                                <SelectItem value={sectionKey} className="flex-1">
+                                  {sectionTitle}
+                                </SelectItem>
+                                <div className="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={(e) => {
+                                      e.preventDefault()
+                                      e.stopPropagation()
+                                      handleMoveSection('up')
+                                    }}
+                                    disabled={!canMoveUp || saving}
+                                    className="h-6 w-6 p-0"
+                                  >
+                                    <ChevronUp className="w-3 h-3" />
+                                  </Button>
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={(e) => {
+                                      e.preventDefault()
+                                      e.stopPropagation()
+                                      handleMoveSection('down')
+                                    }}
+                                    disabled={!canMoveDown || saving}
+                                    className="h-6 w-6 p-0"
+                                  >
+                                    <ChevronDown className="w-3 h-3" />
+                                  </Button>
+                                </div>
+                              </div>
+                            )
+                          })}
                         
 
                     </SelectContent>
