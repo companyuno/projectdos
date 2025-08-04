@@ -248,4 +248,77 @@ export async function deleteThesis(thesisId: string) {
     console.error('Error deleting thesis:', error);
     return false;
   }
+}
+
+// Visitor tracking functions
+export async function getAllVisitors() {
+  try {
+    if (!supabase) {
+      console.error('Supabase client not initialized');
+      return [];
+    }
+    
+    const { data, error } = await supabase
+      .from('visitors')
+      .select('*')
+      .order('timestamp', { ascending: false });
+    
+    if (error) throw error;
+    return data || [];
+  } catch (error) {
+    console.error('Error fetching visitors:', error);
+    return [];
+  }
+}
+
+export async function addVisitor(visitorData: {
+  firstName: string;
+  lastName: string;
+  email: string;
+  accredited?: boolean;
+  accreditedSelections?: string[];
+}) {
+  try {
+    if (!supabase) {
+      console.error('Supabase client not initialized');
+      return false;
+    }
+    
+    const { data, error } = await supabase
+      .from('visitors')
+      .insert({
+        first_name: visitorData.firstName,
+        last_name: visitorData.lastName,
+        email: visitorData.email.toLowerCase().trim(),
+        accredited: visitorData.accredited || false,
+        accredited_selections: visitorData.accreditedSelections || null
+      })
+      .select();
+    
+    if (error) throw error;
+    return data && data.length > 0;
+  } catch (error) {
+    console.error('Error adding visitor:', error);
+    return false;
+  }
+}
+
+export async function deleteVisitor(visitorId: number) {
+  try {
+    if (!supabase) {
+      console.error('Supabase client not initialized');
+      return false;
+    }
+    
+    const { error } = await supabase
+      .from('visitors')
+      .delete()
+      .eq('id', visitorId);
+    
+    if (error) throw error;
+    return true;
+  } catch (error) {
+    console.error('Error deleting visitor:', error);
+    return false;
+  }
 } 

@@ -1,8 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { promises as fs } from 'fs';
-import path from 'path';
-
-const DATA_FILE = path.resolve(process.cwd(), 'visitors.json');
+import { addVisitor, getAllVisitors, deleteVisitor } from '@/lib/db';
 
 export async function POST(req: NextRequest) {
   try {
@@ -10,74 +7,61 @@ export async function POST(req: NextRequest) {
     if (!body.firstName || !body.lastName || !body.email) {
       return NextResponse.json({ error: 'Missing fields' }, { status: 400 });
     }
-    const newVisitor = {
+
+    const visitorData = {
       firstName: body.firstName,
       lastName: body.lastName,
       email: body.email,
-      timestamp: new Date().toISOString(),
-      ...(body.accredited !== undefined && { accredited: body.accredited }),
-      ...(body.accreditedSelections && { accreditedSelections: body.accreditedSelections }),
+      accredited: body.accredited,
+      accreditedSelections: body.accreditedSelections
     };
-    let visitors = [];
-    try {
-      const file = await fs.readFile(DATA_FILE, 'utf-8');
-      visitors = JSON.parse(file);
-    } catch {
-      // File does not exist or is empty
-      visitors = [];
+
+    const success = await addVisitor(visitorData);
+    
+    if (success) {
+      return NextResponse.json({ success: true });
+    } else {
+      return NextResponse.json({ error: 'Failed to add visitor' }, { status: 500 });
     }
-    visitors.push(newVisitor);
-    await fs.writeFile(DATA_FILE, JSON.stringify(visitors, null, 2));
-    return NextResponse.json({ success: true });
-  } catch {
+  } catch (error) {
+    console.error('Error adding visitor:', error);
     return NextResponse.json({ error: 'Server error' }, { status: 500 });
   }
 }
 
 export async function GET() {
   try {
-    const file = await fs.readFile(DATA_FILE, 'utf-8');
-    const visitors = JSON.parse(file);
+    const visitors = await getAllVisitors();
     return NextResponse.json(visitors);
-  } catch {
-    return NextResponse.json([]);
+  } catch (error) {
+    console.error('Error fetching visitors:', error);
+    return NextResponse.json({ error: 'Server error' }, { status: 500 });
   }
 }
 
 export async function DELETE(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
-    const index = searchParams.get('index');
+    const visitorId = searchParams.get('id');
     
-    if (!index) {
-      return NextResponse.json({ error: 'Index parameter required' }, { status: 400 });
+    if (!visitorId) {
+      return NextResponse.json({ error: 'Visitor ID required' }, { status: 400 });
     }
     
-    const indexNum = parseInt(index);
-    if (isNaN(indexNum) || indexNum < 0) {
-      return NextResponse.json({ error: 'Invalid index' }, { status: 400 });
+    const id = parseInt(visitorId);
+    if (isNaN(id) || id <= 0) {
+      return NextResponse.json({ error: 'Invalid visitor ID' }, { status: 400 });
     }
     
-    let visitors = [];
-    try {
-      const file = await fs.readFile(DATA_FILE, 'utf-8');
-      visitors = JSON.parse(file);
-    } catch {
-      return NextResponse.json({ error: 'No visitors file found' }, { status: 404 });
+    const success = await deleteVisitor(id);
+    
+    if (success) {
+      return NextResponse.json({ success: true });
+    } else {
+      return NextResponse.json({ error: 'Failed to delete visitor' }, { status: 500 });
     }
-    
-    if (indexNum >= visitors.length) {
-      return NextResponse.json({ error: 'Index out of bounds' }, { status: 400 });
-    }
-    
-    // Remove the visitor at the specified index
-    visitors.splice(indexNum, 1);
-    
-    // Write back to file
-    await fs.writeFile(DATA_FILE, JSON.stringify(visitors, null, 2));
-    
-    return NextResponse.json({ success: true });
-  } catch {
+  } catch (error) {
+    console.error('Error deleting visitor:', error);
     return NextResponse.json({ error: 'Server error' }, { status: 500 });
   }
 } 

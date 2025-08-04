@@ -7,16 +7,14 @@ import { Shield, Trash2, Search } from "lucide-react";
 import Link from "next/link";
 
 interface Visitor {
-  firstName: string;
-  lastName: string;
+  id: number;
+  first_name: string;
+  last_name: string;
   email: string;
   timestamp: string;
-  accredited?: string;
-  accreditedSelections?: string[];
-  accessAttempt?: boolean;
-  hasAccess?: boolean;
-  accessType?: string;
-  requestType?: string;
+  accredited: boolean;
+  accredited_selections?: string[];
+  created_at: string;
 }
 
 export default function AdminVisitorsPage() {
@@ -45,18 +43,16 @@ export default function AdminVisitorsPage() {
     if (searchTerm) {
       filtered = filtered.filter(v => 
         v.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        v.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        v.lastName.toLowerCase().includes(searchTerm.toLowerCase())
+        v.first_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        v.last_name.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
 
     // Apply type filter
     if (filterType !== "all") {
       filtered = filtered.filter(v => {
-        if (filterType === "access_attempts") return v.accessAttempt;
-        if (filterType === "authorized") return v.hasAccess === true;
-        if (filterType === "unauthorized") return v.hasAccess === false;
-        if (filterType === "deal_documents") return !v.accessAttempt;
+        if (filterType === "accredited") return v.accredited === true;
+        if (filterType === "non_accredited") return v.accredited === false;
         return true;
       });
     }
@@ -64,17 +60,17 @@ export default function AdminVisitorsPage() {
     setFilteredVisitors(filtered);
   }, [visitors, searchTerm, filterType]);
 
-  const handleDelete = async (index: number) => {
+  const handleDelete = async (visitorId: number) => {
     if (!confirm("Are you sure you want to delete this visitor record?")) return;
     
     try {
-      const response = await fetch(`/api/visitors?index=${index}`, {
+      const response = await fetch(`/api/visitors?id=${visitorId}`, {
         method: 'DELETE',
       });
       
       if (response.ok) {
         // Remove from local state
-        const updatedVisitors = visitors.filter((_, i) => i !== index);
+        const updatedVisitors = visitors.filter(v => v.id !== visitorId);
         setVisitors(updatedVisitors);
       } else {
         alert("Failed to delete visitor record");
@@ -119,9 +115,9 @@ export default function AdminVisitorsPage() {
               // Fetch all visitors
               const res = await fetch('/api/visitors');
               const visitors = await res.json();
-              // Delete each visitor by index (from last to first to avoid index shifting)
-              for (let i = visitors.length - 1; i >= 0; i--) {
-                await fetch(`/api/visitors?index=${i}`, { method: 'DELETE' });
+              // Delete each visitor by ID
+              for (const visitor of visitors) {
+                await fetch(`/api/visitors?id=${visitor.id}`, { method: 'DELETE' });
               }
               window.location.reload();
             }}
@@ -155,10 +151,8 @@ export default function AdminVisitorsPage() {
               className="px-2 sm:px-3 py-2 border border-gray-300 rounded-md bg-white text-xs sm:text-sm"
             >
               <option value="all">All Records</option>
-              <option value="access_attempts">Access Attempts</option>
-              <option value="authorized">Authorized Access</option>
-              <option value="unauthorized">Unauthorized Requests</option>
-              <option value="deal_documents">Deal Documents</option>
+              <option value="accredited">Accredited Investors</option>
+              <option value="non_accredited">Non-Accredited Investors</option>
             </select>
             <Button
               onClick={() => {
@@ -182,80 +176,42 @@ export default function AdminVisitorsPage() {
         </div>
       ) : (
         <div className="overflow-x-auto w-full">
-          <table className="min-w-[1000px] sm:min-w-[1200px] border border-gray-200 rounded-lg">
+          <table className="min-w-[800px] sm:min-w-[1000px] border border-gray-200 rounded-lg">
             <thead className="bg-gray-50">
               <tr>
                 <th className="px-2 sm:px-4 py-2 border-b text-left text-xs sm:text-sm">First Name</th>
                 <th className="px-2 sm:px-4 py-2 border-b text-left text-xs sm:text-sm">Last Name</th>
                 <th className="px-2 sm:px-4 py-2 border-b text-left text-xs sm:text-sm">Email</th>
                 <th className="px-2 sm:px-4 py-2 border-b text-left text-xs sm:text-sm">Timestamp</th>
-                <th className="px-2 sm:px-4 py-2 border-b text-left text-xs sm:text-sm">Access Type</th>
-                <th className="px-2 sm:px-4 py-2 border-b text-left text-xs sm:text-sm">Request Type</th>
-                <th className="px-2 sm:px-4 py-2 border-b text-left text-xs sm:text-sm">Access Granted</th>
                 <th className="px-2 sm:px-4 py-2 border-b text-left text-xs sm:text-sm">Accredited</th>
                 <th className="px-2 sm:px-4 py-2 border-b text-left text-xs sm:text-sm">Accredited Selections</th>
                 <th className="px-2 sm:px-4 py-2 border-b text-left text-xs sm:text-sm">Actions</th>
               </tr>
             </thead>
             <tbody>
-              {filteredVisitors.map((v, i) => {
-                const originalIndex = visitors.findIndex(visitor => visitor === v);
-                return (
-                <tr key={i} className={i % 2 === 0 ? "bg-white" : "bg-gray-50"}>
-                  <td className="px-2 sm:px-4 py-2 border-b text-xs sm:text-sm">{v.firstName}</td>
-                  <td className="px-2 sm:px-4 py-2 border-b text-xs sm:text-sm">{v.lastName}</td>
+              {filteredVisitors.map((v, i) => (
+                <tr key={v.id} className={i % 2 === 0 ? "bg-white" : "bg-gray-50"}>
+                  <td className="px-2 sm:px-4 py-2 border-b text-xs sm:text-sm">{v.first_name}</td>
+                  <td className="px-2 sm:px-4 py-2 border-b text-xs sm:text-sm">{v.last_name}</td>
                   <td className="px-2 sm:px-4 py-2 border-b text-xs sm:text-sm">{v.email}</td>
                   <td className="px-2 sm:px-4 py-2 border-b font-mono text-xs">{new Date(v.timestamp).toLocaleString()}</td>
                   <td className="px-2 sm:px-4 py-2 border-b">
-                    {v.accessAttempt ? (
-                      <span className="px-1.5 sm:px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs">
-                        {v.accessType === 'access_request' ? 'Access Request' : 'Investment Access'}
-                      </span>
-                    ) : (
-                      <span className="px-1.5 sm:px-2 py-1 bg-gray-100 text-gray-800 rounded text-xs">
-                        Deal Document
-                      </span>
-                    )}
+                    <span className={`px-1.5 sm:px-2 py-1 rounded text-xs ${
+                      v.accredited 
+                        ? 'bg-green-100 text-green-800' 
+                        : 'bg-gray-100 text-gray-800'
+                    }`}>
+                      {v.accredited ? '✅ Yes' : '❌ No'}
+                    </span>
                   </td>
-                  <td className="px-2 sm:px-4 py-2 border-b">
-                    {v.accessAttempt ? (
-                      <span className={`px-1.5 sm:px-2 py-1 rounded text-xs ${
-                        v.requestType === 'unauthorized_request' 
-                          ? 'bg-orange-100 text-orange-800' 
-                          : 'bg-green-100 text-green-800'
-                      }`}>
-                        {v.requestType === 'unauthorized_request' ? '🔒 Unauthorized Request' : '✅ Authorized Access'}
-                      </span>
-                    ) : (
-                      <span className="px-1.5 sm:px-2 py-1 bg-gray-100 text-gray-800 rounded text-xs">
-                        N/A
-                      </span>
-                    )}
-                  </td>
-                  <td className="px-2 sm:px-4 py-2 border-b">
-                    {v.accessAttempt ? (
-                      <span className={`px-1.5 sm:px-2 py-1 rounded text-xs ${
-                        v.hasAccess 
-                          ? 'bg-green-100 text-green-800' 
-                          : 'bg-red-100 text-red-800'
-                      }`}>
-                        {v.hasAccess ? '✅ Granted' : '❌ Denied'}
-                      </span>
-                    ) : (
-                      <span className="px-1.5 sm:px-2 py-1 bg-gray-100 text-gray-800 rounded text-xs">
-                        N/A
-                      </span>
-                    )}
-                  </td>
-                  <td className="px-2 sm:px-4 py-2 border-b text-xs sm:text-sm">{v.accredited !== undefined ? String(v.accredited) : ""}</td>
                   <td className="px-2 sm:px-4 py-2 border-b text-xs sm:text-sm">
-                    {Array.isArray(v.accreditedSelections)
-                      ? v.accreditedSelections.join(", ")
-                      : v.accreditedSelections || ""}
+                    {Array.isArray(v.accredited_selections)
+                      ? v.accredited_selections.join(", ")
+                      : v.accredited_selections || ""}
                   </td>
                   <td className="px-2 sm:px-4 py-2 border-b">
                     <Button
-                      onClick={() => handleDelete(originalIndex)}
+                      onClick={() => handleDelete(v.id)}
                       variant="outline"
                       size="sm"
                       className="text-red-600 hover:text-red-700 hover:bg-red-50 h-7 sm:h-8 w-7 sm:w-8 p-0"
@@ -264,8 +220,7 @@ export default function AdminVisitorsPage() {
                     </Button>
                   </td>
                 </tr>
-              );
-            })}
+              ))}
             </tbody>
           </table>
         </div>
