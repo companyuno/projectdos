@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getAllTheses, createThesis, updateThesis, deleteThesis } from '@/lib/db';
+import { getAllTheses, createThesis, updateThesis, deleteThesis, getThesis } from '@/lib/db';
 
 // Roman numeral conversion function (same as admin panel)
 const toRomanNumeral = (num: number): string => {
@@ -103,29 +103,34 @@ export async function PUT(req: NextRequest) {
       return NextResponse.json({ error: 'Missing thesisId' }, { status: 400 });
     }
 
+    // Get existing thesis data
+    const existingThesis = await getThesis(thesisId);
+    let thesisData = existingThesis || {
+      title: '',
+      industry: '',
+      publishDate: '',
+      readTime: '',
+      tags: [],
+      content: {},
+      contact: null,
+      sources: null
+    };
+
     // Handle featured status update (special case)
     if (featured !== undefined) {
-      // Read existing data
-      let thesisData;
-      try {
-        const file = await fs.readFile(THESIS_DATA_FILE, 'utf-8');
-        thesisData = JSON.parse(file);
-      } catch (e) {
-        thesisData = defaultThesisData;
+      // For now, we'll store featured status in the content object
+      // since we don't have a featured column in the database
+      if (!thesisData.content) {
+        thesisData.content = {};
       }
-
-      // Initialize thesis if it doesn't exist
-      if (!thesisData[thesisId]) {
-        thesisData[thesisId] = { content: {} };
-      }
-
-      // Update featured status
-      thesisData[thesisId].featured = featured;
-
-      // Write back to file
-      await fs.writeFile(THESIS_DATA_FILE, JSON.stringify(thesisData, null, 2));
+      thesisData.content.featured = featured;
       
-      return NextResponse.json({ success: true });
+      const success = await updateThesis(thesisId, thesisData);
+      if (success) {
+        return NextResponse.json({ success: true });
+      } else {
+        return NextResponse.json({ error: 'Failed to update thesis' }, { status: 500 });
+      }
     }
 
     // Handle regular content updates
@@ -133,40 +138,38 @@ export async function PUT(req: NextRequest) {
       return NextResponse.json({ error: 'Missing section or content' }, { status: 400 });
     }
 
-    // Read existing data
-    let thesisData;
-    try {
-      const file = await fs.readFile(THESIS_DATA_FILE, 'utf-8');
-      thesisData = JSON.parse(file);
-    } catch (e) {
-      thesisData = defaultThesisData;
-    }
-
-    // Initialize thesis if it doesn't exist
-    if (!thesisData[thesisId]) {
-      thesisData[thesisId] = { content: {} };
-    }
-
     // Handle different section types
     if (section === 'title' || section === 'subtitle' || section === 'industry' || section === 'publishDate' || section === 'readTime') {
       // Update top-level fields
-      thesisData[thesisId][section] = content;
+      if (section === 'publishDate') {
+        thesisData.publishDate = content;
+      } else if (section === 'readTime') {
+        thesisData.readTime = content;
+      } else if (section === 'title') {
+        thesisData.title = content;
+      } else if (section === 'industry') {
+        thesisData.industry = content;
+      }
     } else if (section === 'tags') {
       // Update tags array
-      thesisData[thesisId].tags = Array.isArray(content) ? content : [content];
+      thesisData.tags = Array.isArray(content) ? content : [content];
     } else if (section === 'contact' || section === 'sources') {
       // Update contact and sources as top-level fields
-      thesisData[thesisId][section] = content;
+      if (section === 'contact') {
+        thesisData.contact = content;
+      } else if (section === 'sources') {
+        thesisData.sources = content;
+      }
       
       // Also update them in the content object if they exist there
-      if (!thesisData[thesisId].content) {
-        thesisData[thesisId].content = {};
+      if (!thesisData.content) {
+        thesisData.content = {};
       }
       
       // Calculate the correct Roman numeral based on existing sections
-      const existingSections = Object.keys(thesisData[thesisId].content || {})
+      const existingSections = Object.keys(thesisData.content || {})
         .map(key => {
-          const sectionData = thesisData[thesisId].content[key];
+          const sectionData = thesisData.content[key];
           const sectionTitle = typeof sectionData === 'object' && sectionData.title ? sectionData.title : key;
           const romanMatch = sectionTitle.match(/^([IVX]+)\./);
           const position = romanMatch ? 
@@ -194,37 +197,41 @@ export async function PUT(req: NextRequest) {
       const romanNumeral = toRomanNumeral(nextPosition);
       
       if (section === 'contact') {
-        thesisData[thesisId].content[section] = {
+        thesisData.content[section] = {
           title: `${romanNumeral}. Contact`,
           content: content
         };
       } else if (section === 'sources') {
-        thesisData[thesisId].content[section] = {
+        thesisData.content[section] = {
           title: `${romanNumeral}. Sources`,
           content: content
         };
       }
     } else if (section === 'content') {
       // Update entire content object (for adding new sections)
-      thesisData[thesisId].content = content;
+      thesisData.content = content;
     } else {
       // Update content sections
-      if (!thesisData[thesisId].content) {
-        thesisData[thesisId].content = {};
+      if (!thesisData.content) {
+        thesisData.content = {};
       }
-      thesisData[thesisId].content[section] = content;
+      thesisData.content[section] = content;
     }
 
     // Update thesis title if provided
     if (thesisTitle) {
-      thesisData[thesisId].title = thesisTitle;
+      thesisData.title = thesisTitle;
     }
 
-    // Write back to file
-    await fs.writeFile(THESIS_DATA_FILE, JSON.stringify(thesisData, null, 2));
-    
-    return NextResponse.json({ success: true });
+    // Update the thesis in the database
+    const success = await updateThesis(thesisId, thesisData);
+    if (success) {
+      return NextResponse.json({ success: true });
+    } else {
+      return NextResponse.json({ error: 'Failed to update thesis' }, { status: 500 });
+    }
   } catch (e) {
+    console.error('Error updating thesis:', e);
     return NextResponse.json({ error: 'Server error' }, { status: 500 });
   }
 }
@@ -238,24 +245,15 @@ export async function DELETE(req: NextRequest) {
       return NextResponse.json({ error: 'Missing thesisId' }, { status: 400 });
     }
 
-    // Read existing data
-    let thesisData;
-    try {
-      const file = await fs.readFile(THESIS_DATA_FILE, 'utf-8');
-      thesisData = JSON.parse(file);
-    } catch (e) {
-      thesisData = defaultThesisData;
-    }
-
-    // Delete the thesis
-    if (thesisData[thesisId]) {
-      delete thesisData[thesisId];
-      await fs.writeFile(THESIS_DATA_FILE, JSON.stringify(thesisData, null, 2));
+    // Delete the thesis from the database
+    const success = await deleteThesis(thesisId);
+    if (success) {
       return NextResponse.json({ success: true });
     } else {
-      return NextResponse.json({ error: 'Thesis not found' }, { status: 404 });
+      return NextResponse.json({ error: 'Failed to delete thesis' }, { status: 500 });
     }
   } catch (e) {
+    console.error('Error deleting thesis:', e);
     return NextResponse.json({ error: 'Server error' }, { status: 500 });
   }
 } 
