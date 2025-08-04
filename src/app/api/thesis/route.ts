@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { promises as fs } from 'fs';
-import path from 'path';
+import { getAllTheses, createThesis, updateThesis, deleteThesis } from '@/lib/db';
 
 // Roman numeral conversion function (same as admin panel)
 const toRomanNumeral = (num: number): string => {
@@ -31,9 +30,7 @@ const toRomanNumeral = (num: number): string => {
   return result
 }
 
-const THESIS_DATA_FILE = path.resolve(process.cwd(), 'thesis-data.json');
-
-// Initialize with simple default data if file doesn't exist
+// Initialize with simple default data if database is empty
 const defaultThesisData = {
   "example": {
     title: "Example Thesis",
@@ -69,8 +66,7 @@ const defaultThesisData = {
 
 export async function GET() {
   try {
-    const file = await fs.readFile(THESIS_DATA_FILE, 'utf-8');
-    const data = JSON.parse(file);
+    const data = await getAllTheses();
     return NextResponse.json(data);
   } catch (e) {
     return NextResponse.json(defaultThesisData);
@@ -86,24 +82,15 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Missing thesisId' }, { status: 400 });
     }
 
-    // Read existing data
-    let existingThesisData;
-    try {
-      const file = await fs.readFile(THESIS_DATA_FILE, 'utf-8');
-      existingThesisData = JSON.parse(file);
-    } catch (e) {
-      existingThesisData = defaultThesisData;
+    const success = await createThesis(thesisId, thesisData);
+    if (success) {
+      return NextResponse.json({ success: true });
+    } else {
+      return NextResponse.json({ error: 'Failed to create thesis' }, { status: 500 });
     }
-
-    // Create the new thesis with the provided data
-    existingThesisData[thesisId] = thesisData;
-
-    // Write back to file
-    await fs.writeFile(THESIS_DATA_FILE, JSON.stringify(existingThesisData, null, 2));
-    
-    return NextResponse.json({ success: true, data: existingThesisData[thesisId] });
   } catch (e) {
-    return NextResponse.json({ error: 'Server error' }, { status: 500 });
+    console.error('Error creating thesis:', e);
+    return NextResponse.json({ error: 'Failed to create thesis' }, { status: 500 });
   }
 }
 
