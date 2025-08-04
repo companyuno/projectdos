@@ -68,7 +68,7 @@ export async function GET() {
   try {
     const data = await getAllTheses();
     return NextResponse.json(data);
-  } catch (e) {
+  } catch {
     return NextResponse.json(defaultThesisData);
   }
 }
@@ -105,7 +105,7 @@ export async function PUT(req: NextRequest) {
 
     // Get existing thesis data
     const existingThesis = await getThesis(thesisId);
-    let thesisData = existingThesis || {
+    const thesisData = existingThesis || {
       title: '',
       industry: '',
       publishDate: '',

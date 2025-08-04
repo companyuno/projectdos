@@ -172,7 +172,7 @@ export async function getThesis(thesisId: string) {
   }
 }
 
-export async function createThesis(thesisId: string, thesisData: any) {
+export async function createThesis(thesisId: string, thesisData: Record<string, unknown>) {
   try {
     if (!supabase) {
       console.error('Supabase client not initialized');
@@ -201,7 +201,7 @@ export async function createThesis(thesisId: string, thesisData: any) {
   }
 }
 
-export async function updateThesis(thesisId: string, thesisData: any) {
+export async function updateThesis(thesisId: string, thesisData: Record<string, unknown>) {
   try {
     if (!supabase) {
       console.error('Supabase client not initialized');

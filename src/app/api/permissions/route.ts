@@ -1,12 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getPermissions, addPermission, removePermission } from '@/lib/db';
 
-// Define a type for permission objects
-interface Permission {
-  email: string;
-  added_at: string;
-  added_by: string;
-}
+
 
 export async function GET() {
   try {
