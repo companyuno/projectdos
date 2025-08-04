@@ -439,24 +439,7 @@ export default function ThesisAdmin() {
           }
                   } else {
             // Create new structure with title and content
-            // For pre-filled sections, use the editSectionTitle if provided, otherwise use default
-            let newTitle = editSectionTitle.trim()
-            
-            if (!newTitle) {
-              // Default titles for pre-filled sections
-              const sectionTitles: { [key: string]: string } = {
-                executiveSummary: "I. Executive Summary",
-                narrative: "II. Narrative", 
-                structuralObservations: "III. Structural Observations",
-                fundingSignals: "IV. Funding Signals",
-                workflowFit: "V. Workflow Fit",
-                productStrategy: "VI. Product Strategy",
-                segmentStrategy: "VII. Segment Strategy",
-                salesRealities: "VIII. Sales Realities",
-                conclusion: "IX. Conclusion"
-              }
-              newTitle = sectionTitles[selectedSection] || selectedSection
-            }
+            const newTitle = editSectionTitle.trim() || selectedSection
             
             // Special handling for complex sections
             if (selectedSection === 'structuralObservations') {
@@ -1585,60 +1568,6 @@ export default function ThesisAdmin() {
                             content = currentThesis.readTime || ""
                           } else if (value === 'tags') {
                             content = currentThesis.tags?.join(', ') || ""
-                          } else if (value === 'executiveSummary') {
-                            const sectionData = currentThesis.content?.executiveSummary
-                            if (!sectionData) {
-                              content = ""
-                              setEditSectionTitle("I. Executive Summary")
-                            } else if (typeof sectionData === 'string') {
-                              content = sectionData
-                              setEditSectionTitle("I. Executive Summary")
-                            } else if ((sectionData as any).content) {
-                              content = (sectionData as any).content
-                              setEditSectionTitle((sectionData as any).title || "I. Executive Summary")
-                            } else {
-                              content = ""
-                              setEditSectionTitle("I. Executive Summary")
-                            }
-                          } else if (value === 'conclusion') {
-                            const sectionData = currentThesis.content?.conclusion
-                            if (!sectionData) {
-                              content = ""
-                              setEditSectionTitle("IX. Conclusion")
-                            } else if (typeof sectionData === 'string') {
-                              content = sectionData
-                              setEditSectionTitle("IX. Conclusion")
-                            } else if ((sectionData as any).content) {
-                              content = (sectionData as any).content
-                              setEditSectionTitle((sectionData as any).title || "IX. Conclusion")
-                            } else {
-                              content = ""
-                              setEditSectionTitle("IX. Conclusion")
-                            }
-                          } else if (value === 'contact') {
-                            const contact = currentThesis.contact
-                            if (!contact) {
-                              content = ""
-                              setEditSectionTitle("III. Contact")
-                            } else if (typeof contact === 'string') {
-                              content = contact
-                              setEditSectionTitle("III. Contact")
-                            } else {
-                              content = `${contact.name}\n${contact.title}\n${contact.company}\n${contact.email}`
-                              setEditSectionTitle("III. Contact")
-                            }
-                          } else if (value === 'sources') {
-                            const sources = currentThesis.sources
-                            if (!sources) {
-                              content = ""
-                              setEditSectionTitle("IV. Sources")
-                            } else if (Array.isArray(sources)) {
-                              content = sources.join('\n')
-                              setEditSectionTitle("IV. Sources")
-                            } else {
-                              content = JSON.stringify(sources, null, 2)
-                              setEditSectionTitle("IV. Sources")
-                            }
                           } else {
                             const sectionData = currentThesis.content?.[value]
                             if (!sectionData) {
@@ -1761,12 +1690,6 @@ export default function ThesisAdmin() {
                         <SelectItem value="readTime">Read Time</SelectItem>
                         <SelectItem value="tags">Tags</SelectItem>
                         
-                        {/* Pre-filled section templates */}
-                        <SelectItem value="executiveSummary">Executive Summary</SelectItem>
-                        <SelectItem value="conclusion">Conclusion</SelectItem>
-                        <SelectItem value="contact">Contact</SelectItem>
-                        <SelectItem value="sources">Sources</SelectItem>
-                        
                         {/* Content sections from current thesis - sorted by Roman numeral */}
                         {currentThesis?.content && Object.keys(currentThesis.content)
                           .filter((sectionKey) => {
@@ -1838,8 +1761,6 @@ export default function ThesisAdmin() {
                               </div>
                             )
                           })}
-                        
-
                     </SelectContent>
                   </Select>
                   <Button

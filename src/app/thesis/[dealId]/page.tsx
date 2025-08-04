@@ -616,29 +616,7 @@ export default function IndustryThesis() {
                   if (!sectionData || typeof sectionData !== 'object') return null
                   
                   // Handle different section types
-                  if (sectionKey === 'executiveSummary') {
-                    return (
-                      <section key={sectionKey}>
-                        <h2 className="text-2xl font-semibold text-muted-foreground mb-6 border-b-2 border-accent pb-2">
-                          {(sectionData as Record<string, unknown>).title as string || 'I. Executive Summary'}
-                        </h2>
-                        <div className="text-muted-foreground leading-relaxed text-base">
-                          {renderContent(((sectionData as Record<string, unknown>).content as string) || '')}
-                        </div>
-                      </section>
-                    )
-                  } else if (sectionKey === 'narrative') {
-                    return (
-                      <section key={sectionKey}>
-                        <h2 className="text-2xl font-semibold text-muted-foreground mb-6 border-b-2 border-accent pb-2">
-                          {(sectionData as Record<string, unknown>).title as string}
-                        </h2>
-                        <div className="text-muted-foreground leading-relaxed text-base">
-                          {renderContent((sectionData as Record<string, unknown>).content as string)}
-                        </div>
-                      </section>
-                    )
-                  } else if (sectionKey === 'structuralObservations') {
+                  if (sectionKey === 'structuralObservations') {
                     return (
                       <section key={sectionKey}>
                         <h2 className="text-2xl font-semibold text-muted-foreground mb-6 border-b-2 border-accent pb-2">
