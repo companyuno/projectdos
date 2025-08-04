@@ -159,7 +159,7 @@ export async function PUT(req: NextRequest) {
 
     // Handle live status update (special case)
     if (live !== undefined) {
-      (thesisData as any).live = live;
+      (thesisData as Record<string, unknown>).live = live;
       
       const success = await updateThesis(thesisId, thesisData);
       if (success) {
