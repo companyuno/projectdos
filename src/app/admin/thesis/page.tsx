@@ -1684,6 +1684,63 @@ export default function ThesisAdmin() {
                   </div>
                 )}
 
+                {/* Category Selector */}
+                {selectedThesis && (
+                  <div className="space-y-2">
+                    <Label htmlFor="thesisCategory">Category</Label>
+                    <Select
+                      value={currentThesis?.category || "industry-theses"}
+                      onValueChange={async (value) => {
+                        if (!selectedThesis) return
+                        
+                        setSaving(true)
+                        try {
+                          const response = await fetch('/api/thesis', {
+                            method: 'PUT',
+                            headers: {
+                              'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                              thesisId: selectedThesis,
+                              section: 'category',
+                              content: value
+                            }),
+                          })
+                          
+                          if (response.ok) {
+                            // Store current selections
+                            const currentThesis = selectedThesis
+                            const currentSection = selectedSection
+                            
+                            // Refresh the thesis data to show the updated category
+                            await fetchThesisData()
+                            
+                            // Restore selections after refresh
+                            setSelectedThesis(currentThesis)
+                            setSelectedSection(currentSection)
+                          } else {
+                            console.error('Failed to update category')
+                          }
+                        } catch (error) {
+                          console.error('Error updating category:', error)
+                        } finally {
+                          setSaving(false)
+                        }
+                      }}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select category" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="build-process">InVitro Builder</SelectItem>
+                        <SelectItem value="whitepapers">White Papers</SelectItem>
+                        <SelectItem value="industry-theses">Industry Theses</SelectItem>
+                        <SelectItem value="industry-decompositions">Industry Decompositions</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
+
                 {/* Featured Research Toggle */}
                 {selectedThesis && (
                   <div className="space-y-2">

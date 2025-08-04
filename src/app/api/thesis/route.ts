@@ -162,7 +162,7 @@ export async function PUT(req: NextRequest) {
     }
 
     // Handle different section types
-    if (section === 'title' || section === 'subtitle' || section === 'industry' || section === 'publishDate' || section === 'readTime') {
+    if (section === 'title' || section === 'subtitle' || section === 'industry' || section === 'publishDate' || section === 'readTime' || section === 'category') {
       // Update top-level fields
       if (section === 'publishDate') {
         thesisData.publishDate = content;
@@ -172,6 +172,12 @@ export async function PUT(req: NextRequest) {
         thesisData.title = content;
       } else if (section === 'industry') {
         thesisData.industry = content;
+      } else if (section === 'category') {
+        // Store category in content object since we don't have a category column
+        if (!thesisData.content) {
+          thesisData.content = {};
+        }
+        thesisData.content.category = content;
       }
     } else if (section === 'tags') {
       // Update tags array
