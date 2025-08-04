@@ -1,19 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { promises as fs } from 'fs';
-import path from 'path';
-
-const PERMISSIONS_FILE = path.resolve(process.cwd(), 'permissions.json');
+import { getPermissions, addPermission, removePermission } from '@/lib/db';
 
 // Define a type for permission objects
 interface Permission {
   email: string;
-  [key: string]: unknown;
+  added_at: string;
+  added_by: string;
 }
 
 export async function GET() {
   try {
-    const file = await fs.readFile(PERMISSIONS_FILE, 'utf-8');
-    const permissions = JSON.parse(file);
+    const permissions = await getPermissions();
     return NextResponse.json(permissions);
   } catch {
     return NextResponse.json([]);
@@ -27,30 +24,12 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Email is required' }, { status: 400 });
     }
 
-    const newPermission = {
-      email: body.email.toLowerCase().trim(),
-      addedAt: new Date().toISOString(),
-      addedBy: 'admin', // You can enhance this to track who added it
-    };
-
-    let permissions = [];
-    try {
-      const file = await fs.readFile(PERMISSIONS_FILE, 'utf-8');
-      permissions = JSON.parse(file);
-    } catch {
-      // File does not exist or is empty
-      permissions = [];
-    }
-
-    // Check if email already exists
-    const emailExists = permissions.some((p: Permission) => p.email === newPermission.email);
-    if (emailExists) {
+    const success = await addPermission(body.email);
+    if (success) {
+      return NextResponse.json({ success: true });
+    } else {
       return NextResponse.json({ error: 'Email already has permission' }, { status: 400 });
     }
-
-    permissions.push(newPermission);
-    await fs.writeFile(PERMISSIONS_FILE, JSON.stringify(permissions, null, 2));
-    return NextResponse.json({ success: true });
   } catch {
     return NextResponse.json({ error: 'Server error' }, { status: 500 });
   }
@@ -63,22 +42,12 @@ export async function DELETE(req: NextRequest) {
       return NextResponse.json({ error: 'Email is required' }, { status: 400 });
     }
 
-    let permissions = [];
-    try {
-      const file = await fs.readFile(PERMISSIONS_FILE, 'utf-8');
-      permissions = JSON.parse(file);
-    } catch {
-      return NextResponse.json({ error: 'No permissions found' }, { status: 404 });
-    }
-
-    const filteredPermissions = permissions.filter((p: Permission) => p.email !== body.email);
-    
-    if (filteredPermissions.length === permissions.length) {
+    const success = await removePermission(body.email);
+    if (success) {
+      return NextResponse.json({ success: true });
+    } else {
       return NextResponse.json({ error: 'Permission not found' }, { status: 404 });
     }
-
-    await fs.writeFile(PERMISSIONS_FILE, JSON.stringify(filteredPermissions, null, 2));
-    return NextResponse.json({ success: true });
   } catch {
     return NextResponse.json({ error: 'Server error' }, { status: 500 });
   }
