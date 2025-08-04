@@ -574,6 +574,7 @@ export default function IndustryThesis() {
   const getPdfLink = (thesisId: string) => {
     const pdfMap: { [key: string]: string } = {
       "long-term-care": "/Industry Thesis - Long Term Care.pdf",
+      "build-thesis-long-term-care-test": "/Industry Thesis - Long Term Care.pdf",
       "invitro-investment-build-process": "/IVC -- Investment & Build Thesis.pdf",
       "invitro-private-markets-whitepaper": "/PrivateMarketsWhitePaper.pdf",
       "healthcare-elearning-thesis": "/Industry Thesis - Healthcare E-Learning.pdf",
