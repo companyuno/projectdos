@@ -1749,7 +1749,7 @@ export default function ThesisAdmin() {
                       <input
                         type="checkbox"
                         id="thesisFeatured"
-                        checked={currentThesis?.featured || false}
+                        checked={Boolean(currentThesis?.featured || currentThesis?.content?.featured || false)}
                         onChange={async (e) => {
                           if (!selectedThesis) return
                           
