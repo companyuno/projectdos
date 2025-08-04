@@ -1,12 +1,21 @@
 import { createClient } from '@supabase/supabase-js';
 
 // Initialize Supabase client
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
-const supabase = createClient(supabaseUrl, supabaseKey);
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+// Only create client if environment variables are set
+const supabase = supabaseUrl && supabaseKey 
+  ? createClient(supabaseUrl, supabaseKey)
+  : null;
 
 export async function getPermissions() {
   try {
+    if (!supabase) {
+      console.error('Supabase client not initialized');
+      return [];
+    }
+    
     const { data, error } = await supabase
       .from('permissions')
       .select('email, added_at, added_by')
@@ -22,6 +31,11 @@ export async function getPermissions() {
 
 export async function addPermission(email: string) {
   try {
+    if (!supabase) {
+      console.error('Supabase client not initialized');
+      return false;
+    }
+    
     const { data, error } = await supabase
       .from('permissions')
       .insert({
@@ -45,6 +59,11 @@ export async function addPermission(email: string) {
 
 export async function removePermission(email: string) {
   try {
+    if (!supabase) {
+      console.error('Supabase client not initialized');
+      return false;
+    }
+    
     const { error } = await supabase
       .from('permissions')
       .delete()
@@ -60,6 +79,11 @@ export async function removePermission(email: string) {
 
 export async function checkPermission(email: string) {
   try {
+    if (!supabase) {
+      console.error('Supabase client not initialized');
+      return false;
+    }
+    
     const { data, error } = await supabase
       .from('permissions')
       .select('id')
