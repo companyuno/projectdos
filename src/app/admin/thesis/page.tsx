@@ -25,6 +25,7 @@ interface ThesisData {
     content?: Record<string, unknown>;
     contact?: Record<string, unknown>;
     sources?: string[];
+    live?: boolean;
   };
 }
 
@@ -41,6 +42,10 @@ export default function ThesisAdmin() {
   const [showPreview, setShowPreview] = useState(false)
   const [newThesisId, setNewThesisId] = useState("")
   const [newThesisTitle, setNewThesisTitle] = useState("")
+  const [uploading, setUploading] = useState(false)
+  const [showPositionDialog, setShowPositionDialog] = useState(false)
+  const [selectedSectionForPosition, setSelectedSectionForPosition] = useState("")
+  const [positionBeforeSection, setPositionBeforeSection] = useState("")
   
   // Auto-generate thesis ID from title
   const generateThesisId = (title: string) => {
@@ -59,7 +64,6 @@ export default function ThesisAdmin() {
   const [newThesisCategory, setNewThesisCategory] = useState("industry-theses")
   const [newThesisFeatured, setNewThesisFeatured] = useState(false)
   const [showCreateForm, setShowCreateForm] = useState(false)
-  const [uploading, setUploading] = useState(false)
   const [textAlignment, setTextAlignment] = useState<'left' | 'center' | 'right'>('left')
 
   // Text formatting functions
@@ -1301,6 +1305,119 @@ export default function ThesisAdmin() {
     }
   }
 
+  const handlePositionSection = async (sectionKey: string, beforeSection: string) => {
+    if (!selectedThesis || !currentThesis?.content) return
+
+    setSaving(true)
+    try {
+      // Get all sections with their positions
+      const sectionsWithPositions = Object.keys(currentThesis.content)
+        .filter((sectionKey) => {
+          const metadataKeys = ['featured', 'category']
+          return !metadataKeys.includes(sectionKey)
+        })
+        .map((sectionKey) => {
+          const sectionData = (currentThesis.content as Record<string, unknown>)[sectionKey]
+          const sectionTitle = typeof sectionData === 'object' && (sectionData as any).title ? (sectionData as any).title : sectionKey
+          const romanMatch = sectionTitle.match(/^([IVX]+)\./)
+          const position = romanMatch ? 
+            (romanMatch[1] === 'I' ? 1 : 
+             romanMatch[1] === 'II' ? 2 : 
+             romanMatch[1] === 'III' ? 3 : 
+             romanMatch[1] === 'IV' ? 4 : 
+             romanMatch[1] === 'V' ? 5 : 
+             romanMatch[1] === 'VI' ? 6 : 
+             romanMatch[1] === 'VII' ? 7 : 
+             romanMatch[1] === 'VIII' ? 8 : 
+             romanMatch[1] === 'IX' ? 9 : 
+             romanMatch[1] === 'X' ? 10 : 
+             romanMatch[1] === 'XI' ? 11 : 
+             romanMatch[1] === 'XII' ? 12 : 
+             romanMatch[1] === 'XIII' ? 13 : 
+             romanMatch[1] === 'XIV' ? 14 : 
+             romanMatch[1] === 'XV' ? 15 : 999) : 999
+          return { key: sectionKey, section: sectionData, position }
+        })
+        .sort((a, b) => a.position - b.position)
+
+      // Find the target section position
+      const targetSection = sectionsWithPositions.find(s => s.key === beforeSection)
+      if (!targetSection) {
+        alert('Target section not found')
+        return
+      }
+
+      // Find the section to move
+      const sectionToMove = sectionsWithPositions.find(s => s.key === sectionKey)
+      if (!sectionToMove) {
+        alert('Section to move not found')
+        return
+      }
+
+      // Remove the section from its current position
+      const sectionsWithoutMoved = sectionsWithPositions.filter(s => s.key !== sectionKey)
+      
+      // Insert the section before the target
+      const targetIndex = sectionsWithoutMoved.findIndex(s => s.key === beforeSection)
+      const newSectionsWithPositions = [
+        ...sectionsWithoutMoved.slice(0, targetIndex),
+        sectionToMove,
+        ...sectionsWithoutMoved.slice(targetIndex)
+      ]
+
+      // Create new content object with updated positions
+      const newContent = { ...currentThesis.content }
+      
+      // Update Roman numerals for all sections
+      newSectionsWithPositions.forEach(({ key, section }, index) => {
+        const newPosition = index + 1
+        const romanNumeral = toRomanNumeral(newPosition)
+        
+        if (typeof section === 'object' && (section as any).title) {
+          const titleWithoutRoman = (section as any).title.replace(/^[IVX]+\.\s*/, '')
+          newContent[key] = {
+            ...(section as any),
+            title: `${romanNumeral}. ${titleWithoutRoman}`
+          }
+        } else {
+          // For sections without title, create one
+          newContent[key] = {
+            title: `${romanNumeral}. ${key}`,
+            content: section
+          }
+        }
+      })
+
+      // Update the thesis
+      const response = await fetch('/api/thesis', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          thesisId: selectedThesis,
+          section: 'content',
+          content: newContent
+        }),
+      })
+
+      if (response.ok) {
+        // Refresh the thesis data
+        await fetchThesisData()
+        alert('Section positioned successfully!')
+      } else {
+        console.error('Failed to position section')
+        alert('Failed to position section')
+      }
+    } catch (error) {
+      console.error('Error positioning section:', error)
+      alert('Error positioning section')
+    } finally {
+      setSaving(false)
+      setShowPositionDialog(false)
+    }
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
@@ -1757,6 +1874,21 @@ export default function ThesisAdmin() {
                                   >
                                     <ChevronDown className="w-3 h-3" />
                                   </Button>
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={(e) => {
+                                      e.preventDefault()
+                                      e.stopPropagation()
+                                      setSelectedSectionForPosition(sectionKey)
+                                      setShowPositionDialog(true)
+                                    }}
+                                    disabled={saving}
+                                    className="h-6 w-6 p-0"
+                                    title="Position before another section"
+                                  >
+                                    <span className="text-xs">⚡</span>
+                                  </Button>
                                 </div>
                               </div>
                             )
@@ -1909,6 +2041,60 @@ export default function ThesisAdmin() {
                       />
                       <Label htmlFor="thesisFeatured" className="text-sm text-gray-600">
                         Show in featured research section
+                      </Label>
+                    </div>
+                  </div>
+                )}
+
+                {/* Live Toggle */}
+                {selectedThesis && (
+                  <div className="space-y-2">
+                    <Label htmlFor="thesisLive">Live Status</Label>
+                    <div className="flex items-center space-x-2 pt-2">
+                      <input
+                        type="checkbox"
+                        id="thesisLive"
+                        checked={Boolean(currentThesis?.live || false)}
+                        onChange={async (e) => {
+                          if (!selectedThesis) return
+                          
+                          setSaving(true)
+                          try {
+                            const response = await fetch('/api/thesis', {
+                              method: 'PUT',
+                              headers: {
+                                'Content-Type': 'application/json',
+                              },
+                              body: JSON.stringify({
+                                thesisId: selectedThesis,
+                                live: e.target.checked
+                              }),
+                            })
+                            
+                            if (response.ok) {
+                              // Store current selections
+                              const currentThesis = selectedThesis
+                              const currentSection = selectedSection
+                              
+                              // Refresh the thesis data to show the updated live status
+                              await fetchThesisData()
+                              
+                              // Restore selections after refresh
+                              setSelectedThesis(currentThesis)
+                              setSelectedSection(currentSection)
+                            } else {
+                              console.error('Failed to update live status')
+                            }
+                          } catch (error) {
+                            console.error('Error updating live status:', error)
+                          } finally {
+                            setSaving(false)
+                          }
+                        }}
+                        className="rounded border-gray-300 text-green-600 focus:ring-green-500"
+                      />
+                      <Label htmlFor="thesisLive" className="text-sm text-gray-600">
+                        Show on frontend (live)
                       </Label>
                     </div>
                   </div>
@@ -2312,6 +2498,49 @@ export default function ThesisAdmin() {
           </div>
         )}
       </div>
+
+      {/* Positioning Dialog */}
+      {showPositionDialog && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+            <h3 className="text-lg font-semibold mb-4">Position Section</h3>
+            <p className="text-sm text-gray-600 mb-4">
+              Choose where to position "{selectedSectionForPosition}" before:
+            </p>
+            <div className="space-y-2 max-h-60 overflow-y-auto">
+              {currentThesis?.content && Object.keys(currentThesis.content)
+                .filter((sectionKey) => {
+                  const metadataKeys = ['featured', 'category']
+                  return !metadataKeys.includes(sectionKey) && sectionKey !== selectedSectionForPosition
+                })
+                .map((sectionKey) => {
+                  const sectionData = (currentThesis.content as Record<string, unknown>)[sectionKey]
+                  const sectionTitle = typeof sectionData === 'object' && (sectionData as any).title ? (sectionData as any).title : sectionKey
+                  return (
+                    <button
+                      key={sectionKey}
+                      onClick={() => {
+                        setPositionBeforeSection(sectionKey)
+                        handlePositionSection(selectedSectionForPosition, sectionKey)
+                      }}
+                      className="w-full text-left p-2 hover:bg-gray-100 rounded border"
+                    >
+                      {sectionTitle}
+                    </button>
+                  )
+                })}
+            </div>
+            <div className="flex justify-end space-x-2 mt-4">
+              <Button
+                variant="outline"
+                onClick={() => setShowPositionDialog(false)}
+              >
+                Cancel
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 } 

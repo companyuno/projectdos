@@ -112,26 +112,28 @@ export async function getAllTheses() {
     
     const { data, error } = await supabase
       .from('thesis_data')
-      .select('*');
+      .select('*')
+      .order('updated_at', { ascending: false });
     
     if (error) throw error;
     
-    // Convert array to object format expected by the app
-    const thesesObject: Record<string, Record<string, unknown>> = {};
-    data?.forEach(thesis => {
-      thesesObject[thesis.id] = {
-        title: thesis.title,
-        industry: thesis.industry,
-        publishDate: thesis.publish_date,
-        readTime: thesis.read_time,
-        tags: thesis.tags || [],
-        content: thesis.content,
-        contact: thesis.contact,
-        sources: thesis.sources
+    // Convert database format to expected format
+    const theses: Record<string, Record<string, unknown>> = {};
+    data?.forEach((row) => {
+      theses[row.id] = {
+        title: row.title,
+        industry: row.industry,
+        publishDate: row.publish_date,
+        readTime: row.read_time,
+        tags: row.tags || [],
+        content: row.content,
+        contact: row.contact,
+        sources: row.sources,
+        live: row.live || false
       };
     });
     
-    return thesesObject;
+    return theses;
   } catch (error) {
     console.error('Error fetching theses:', error);
     return {};
@@ -190,7 +192,8 @@ export async function createThesis(thesisId: string, thesisData: Record<string, 
         tags: thesisData.tags,
         content: thesisData.content,
         contact: thesisData.contact,
-        sources: thesisData.sources
+        sources: thesisData.sources,
+        live: thesisData.live || false
       });
     
     if (error) throw error;
@@ -218,7 +221,8 @@ export async function updateThesis(thesisId: string, thesisData: Record<string, 
         tags: thesisData.tags,
         content: thesisData.content,
         contact: thesisData.contact,
-        sources: thesisData.sources
+        sources: thesisData.sources,
+        live: thesisData.live
       })
       .eq('id', thesisId);
     

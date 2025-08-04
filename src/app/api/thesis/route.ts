@@ -120,7 +120,7 @@ export async function POST(req: NextRequest) {
 export async function PUT(req: NextRequest) {
   try {
     const body = await req.json();
-    const { thesisId, section, content, thesisTitle, featured } = body;
+    const { thesisId, section, content, thesisTitle, featured, live } = body;
     
     if (!thesisId) {
       return NextResponse.json({ error: 'Missing thesisId' }, { status: 400 });
@@ -136,7 +136,8 @@ export async function PUT(req: NextRequest) {
       tags: [],
       content: {},
       contact: null,
-      sources: null
+      sources: null,
+      live: false
     };
 
     // Handle featured status update (special case)
@@ -147,6 +148,18 @@ export async function PUT(req: NextRequest) {
         thesisData.content = {};
       }
       thesisData.content.featured = featured;
+      
+      const success = await updateThesis(thesisId, thesisData);
+      if (success) {
+        return NextResponse.json({ success: true });
+      } else {
+        return NextResponse.json({ error: 'Failed to update thesis' }, { status: 500 });
+      }
+    }
+
+    // Handle live status update (special case)
+    if (live !== undefined) {
+      (thesisData as any).live = live;
       
       const success = await updateThesis(thesisId, thesisData);
       if (success) {

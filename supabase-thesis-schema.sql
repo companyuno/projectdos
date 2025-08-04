@@ -9,6 +9,7 @@ CREATE TABLE IF NOT EXISTS thesis_data (
   content JSONB NOT NULL,
   contact JSONB,
   sources JSONB,
+  live BOOLEAN DEFAULT FALSE,
   created_at TIMESTAMP DEFAULT NOW(),
   updated_at TIMESTAMP DEFAULT NOW()
 );

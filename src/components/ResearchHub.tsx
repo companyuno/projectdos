@@ -157,25 +157,27 @@ export default function ResearchHub() {
     const fetchTheses = async () => {
       try {
         const response = await fetch('/api/thesis')
-        if (response.ok) {
-          const thesisData = await response.json()
-          const allTheses = Object.entries(thesisData)
-            .map(([id, thesis]: [string, any]) => ({
-              id,
-              title: thesis.title,
-              description: thesis.subtitle || thesis.content?.executiveSummary?.content?.substring(0, 100) + "..." || "",
-              category: thesis.category || thesis.content?.category || "industry-theses", // Check both top level and content object
-              publishDate: thesis.publishDate || "2025-01-01",
-              readTime: thesis.readTime || "10 min read",
-              tags: thesis.tags || [],
-              featured: thesis.featured || thesis.content?.featured || false
-            }))
-          setDynamicTheses(allTheses)
-        }
+        const thesisData = await response.json()
+        
+        const allTheses = Object.entries(thesisData)
+          .filter(([id, thesis]: [string, any]) => {
+            // Only show theses that are marked as live
+            return thesis.live === true
+          })
+          .map(([id, thesis]: [string, any]) => ({
+            id,
+            title: thesis.title,
+            description: thesis.subtitle || thesis.content?.executiveSummary?.content?.substring(0, 100) + "..." || "",
+            category: thesis.category || thesis.content?.category || "industry-theses", // Check both top level and content object
+            publishDate: thesis.publishDate || "2025-01-01",
+            readTime: thesis.readTime || "10 min read",
+            tags: thesis.tags || [],
+            featured: thesis.featured || thesis.content?.featured || false // Updated to check content.featured
+          }))
+        
+        setDynamicTheses(allTheses)
       } catch (error) {
-        console.error('Failed to fetch theses:', error)
-      } finally {
-        setLoadingTheses(false)
+        console.error('Error fetching theses:', error)
       }
     }
 
