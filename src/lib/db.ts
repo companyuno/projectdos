@@ -117,7 +117,7 @@ export async function getAllTheses() {
     if (error) throw error;
     
     // Convert array to object format expected by the app
-    const thesesObject: Record<string, any> = {};
+    const thesesObject: Record<string, Record<string, unknown>> = {};
     data?.forEach(thesis => {
       thesesObject[thesis.id] = {
         title: thesis.title,

@@ -22,14 +22,14 @@ export async function POST(req: NextRequest) {
     try {
       const file = await fs.readFile(DATA_FILE, 'utf-8');
       visitors = JSON.parse(file);
-    } catch (e) {
+    } catch {
       // File does not exist or is empty
       visitors = [];
     }
     visitors.push(newVisitor);
     await fs.writeFile(DATA_FILE, JSON.stringify(visitors, null, 2));
     return NextResponse.json({ success: true });
-  } catch (e) {
+  } catch {
     return NextResponse.json({ error: 'Server error' }, { status: 500 });
   }
 }
@@ -39,7 +39,7 @@ export async function GET() {
     const file = await fs.readFile(DATA_FILE, 'utf-8');
     const visitors = JSON.parse(file);
     return NextResponse.json(visitors);
-  } catch (e) {
+  } catch {
     return NextResponse.json([]);
   }
 }
@@ -62,7 +62,7 @@ export async function DELETE(req: NextRequest) {
     try {
       const file = await fs.readFile(DATA_FILE, 'utf-8');
       visitors = JSON.parse(file);
-    } catch (e) {
+    } catch {
       return NextResponse.json({ error: 'No visitors file found' }, { status: 404 });
     }
     
@@ -77,7 +77,7 @@ export async function DELETE(req: NextRequest) {
     await fs.writeFile(DATA_FILE, JSON.stringify(visitors, null, 2));
     
     return NextResponse.json({ success: true });
-  } catch (e) {
+  } catch {
     return NextResponse.json({ error: 'Server error' }, { status: 500 });
   }
 } 
