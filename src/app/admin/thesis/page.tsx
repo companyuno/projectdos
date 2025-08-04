@@ -1689,7 +1689,7 @@ export default function ThesisAdmin() {
                   <div className="space-y-2">
                     <Label htmlFor="thesisCategory">Category</Label>
                     <Select
-                      value={currentThesis?.category || "industry-theses"}
+                      value={(currentThesis?.category || currentThesis?.content?.category || "industry-theses") as string}
                       onValueChange={async (value) => {
                         if (!selectedThesis) return
                         

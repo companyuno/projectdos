@@ -164,7 +164,7 @@ export default function ResearchHub() {
               id,
               title: thesis.title,
               description: thesis.subtitle || thesis.content?.executiveSummary?.content?.substring(0, 100) + "..." || "",
-              category: thesis.category || "industry-theses", // Default to industry-theses if no category
+              category: thesis.category || thesis.content?.category || "industry-theses", // Check both top level and content object
               publishDate: thesis.publishDate || "2025-01-01",
               readTime: thesis.readTime || "10 min read",
               tags: thesis.tags || [],
