@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { writeFile, mkdir } from 'fs/promises'
-import path from 'path'
+import { createClient } from '@supabase/supabase-js'
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 
 export async function POST(request: NextRequest) {
   try {
@@ -28,27 +30,44 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'File too large. Maximum size is 10MB.' }, { status: 400 })
     }
 
-    // Create upload directory for this thesis if it doesn't exist
-    const uploadDir = path.join(process.cwd(), 'public', 'uploads', thesisId)
-    await mkdir(uploadDir, { recursive: true })
+    // Initialize Supabase client
+    if (!supabaseUrl || !supabaseKey) {
+      return NextResponse.json({ error: 'Storage not configured' }, { status: 500 })
+    }
+
+    const supabase = createClient(supabaseUrl, supabaseKey)
 
     // Generate unique filename
     const timestamp = Date.now()
-    const fileExtension = path.extname(file.name)
-    const fileName = `${timestamp}${fileExtension}`
-    const filePath = path.join(uploadDir, fileName)
+    const fileExtension = file.name.split('.').pop()
+    const fileName = `${timestamp}.${fileExtension}`
+    const filePath = `${thesisId}/${fileName}`
 
-    // Convert file to buffer and save
+    // Convert file to buffer
     const bytes = await file.arrayBuffer()
     const buffer = Buffer.from(bytes)
-    await writeFile(filePath, buffer)
 
-    // Return the public URL
-    const publicUrl = `/uploads/${thesisId}/${fileName}`
+    // Upload to Supabase Storage
+    const { data, error } = await supabase.storage
+      .from('thesis-uploads')
+      .upload(filePath, buffer, {
+        contentType: file.type,
+        upsert: false
+      })
+
+    if (error) {
+      console.error('Supabase upload error:', error)
+      return NextResponse.json({ error: 'Upload failed' }, { status: 500 })
+    }
+
+    // Get public URL
+    const { data: urlData } = supabase.storage
+      .from('thesis-uploads')
+      .getPublicUrl(filePath)
 
     return NextResponse.json({ 
       success: true, 
-      url: publicUrl,
+      url: urlData.publicUrl,
       fileName: fileName,
       fileType: file.type
     })
