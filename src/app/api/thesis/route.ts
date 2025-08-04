@@ -1,5 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAllTheses, createThesis, updateThesis, deleteThesis, getThesis } from '@/lib/db';
+import { promises as fs } from 'fs';
+import path from 'path';
+
+const THESIS_DATA_FILE = path.resolve(process.cwd(), 'thesis-data.json');
 
 // Roman numeral conversion function (same as admin panel)
 const toRomanNumeral = (num: number): string => {
@@ -67,9 +71,28 @@ const defaultThesisData = {
 export async function GET() {
   try {
     const data = await getAllTheses();
+    
+    // If database is empty, fall back to file
+    if (Object.keys(data).length === 0) {
+      try {
+        const file = await fs.readFile(THESIS_DATA_FILE, 'utf-8');
+        const fileData = JSON.parse(file);
+        return NextResponse.json(fileData);
+      } catch {
+        return NextResponse.json(defaultThesisData);
+      }
+    }
+    
     return NextResponse.json(data);
   } catch {
-    return NextResponse.json(defaultThesisData);
+    // Fall back to file if database fails
+    try {
+      const file = await fs.readFile(THESIS_DATA_FILE, 'utf-8');
+      const fileData = JSON.parse(file);
+      return NextResponse.json(fileData);
+    } catch {
+      return NextResponse.json(defaultThesisData);
+    }
   }
 }
 
