@@ -10,6 +10,7 @@ CREATE TABLE IF NOT EXISTS thesis_data (
   contact JSONB,
   sources JSONB,
   live BOOLEAN DEFAULT FALSE,
+  featured BOOLEAN DEFAULT FALSE,
   type VARCHAR(50) DEFAULT 'thesis', -- 'thesis' or 'decomposition'
   created_at TIMESTAMP DEFAULT NOW(),
   updated_at TIMESTAMP DEFAULT NOW()
