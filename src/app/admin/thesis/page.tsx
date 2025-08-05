@@ -417,7 +417,7 @@ export default function ThesisAdmin() {
       if (selectedSection === 'tags') {
         // Convert comma-separated string back to array
         contentToSave = editContent.split(',').map(tag => tag.trim()).filter(tag => tag.length > 0)
-      } else if (selectedSection === 'title' || selectedSection === 'subtitle' || selectedSection === 'industry' || selectedSection === 'publishDate' || selectedSection === 'readTime') {
+      } else if (selectedSection === 'title' || selectedSection === 'subtitle' || selectedSection === 'industry' || selectedSection === 'category' || selectedSection === 'publishDate' || selectedSection === 'readTime') {
         // These are simple string fields, save directly
         contentToSave = editContent
       } else if (selectedSection === 'contact') {
@@ -1730,6 +1730,8 @@ export default function ThesisAdmin() {
                             content = currentThesis.subtitle || ""
                           } else if (value === 'industry') {
                             content = currentThesis.industry || ""
+                          } else if (value === 'category') {
+                            content = currentThesis.category || ""
                           } else if (value === 'publishDate') {
                             content = currentThesis.publishDate || ""
                           } else if (value === 'readTime') {

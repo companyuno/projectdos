@@ -162,6 +162,7 @@ export async function getThesis(thesisId: string) {
     
     return {
       title: data.title,
+      subtitle: data.subtitle,
       industry: data.industry,
       publishDate: data.publish_date,
       readTime: data.read_time,
@@ -190,6 +191,7 @@ export async function createThesis(thesisId: string, thesisData: Record<string, 
       .insert({
         id: thesisId,
         title: thesisData.title,
+        subtitle: thesisData.subtitle,
         industry: thesisData.industry,
         publish_date: thesisData.publishDate,
         read_time: thesisData.readTime,
@@ -221,6 +223,7 @@ export async function updateThesis(thesisId: string, thesisData: Record<string, 
       .from('thesis_data')
       .update({
         title: thesisData.title,
+        subtitle: thesisData.subtitle,
         industry: thesisData.industry,
         publish_date: thesisData.publishDate,
         read_time: thesisData.readTime,

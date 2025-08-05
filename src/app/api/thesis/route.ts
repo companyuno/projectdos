@@ -133,6 +133,7 @@ export async function PUT(req: NextRequest) {
     const existingThesis = await getThesis(thesisId);
     const thesisData = existingThesis || {
       title: '',
+      subtitle: '',
       industry: '',
       publishDate: '',
       readTime: '',
@@ -223,6 +224,8 @@ export async function PUT(req: NextRequest) {
         thesisData.readTime = content;
       } else if (section === 'title') {
         thesisData.title = content;
+      } else if (section === 'subtitle') {
+        thesisData.subtitle = content;
       } else if (section === 'industry') {
         thesisData.industry = content;
       } else if (section === 'category') {
