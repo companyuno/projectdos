@@ -362,7 +362,7 @@ function DealCard({
                 variant="outline"
                 size="sm"
                 className="justify-start bg-transparent cursor-pointer text-xs sm:text-sm h-8 sm:h-9"
-                onClick={() => onDocumentClick(deal.id, "decomposition")}
+                onClick={() => onDocumentClick(deal.id === "curenta" ? "long-term-care" : deal.id, "decomposition")}
               >
                 <TrendingUp className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1.5 sm:mr-2" />
                 Industry Decomposition

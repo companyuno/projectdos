@@ -199,6 +199,9 @@ export default function ResearchHub() {
       if (paperId === "invitro-investment-build-process" || paperId === "invitro-private-markets-whitepaper" || paperId === "healthcare-elearning-thesis" || paperId === "healthcare-prescription-dtc-thesis") {
         // These have dedicated research pages
         router.push(`/research/${paperId}`)
+      } else if (paperId === "long-term-care" || paperId === "construction-tech" || paperId === "healthcare-e-learning" || paperId === "accounting-services" || paperId === "b2b-sales-marketing-software" || paperId === "dtc-healthcare") {
+        // These are decomposition pages
+        router.push(`/decomposition/${paperId}`)
       } else {
         // All others go to thesis pages
         router.push(`/thesis/${paperId}`)
@@ -234,7 +237,14 @@ export default function ResearchHub() {
     const isAccreditedNow = (typeof window !== 'undefined' && localStorage.getItem('invitro-accredited') === 'true') || isAccredited;
     if (pendingNavigation) {
       if (isAccreditedNow) {
-        router.push(`/research/${pendingNavigation}`);
+        // Use the same routing logic as handlePaperClick
+        if (pendingNavigation === "invitro-investment-build-process" || pendingNavigation === "invitro-private-markets-whitepaper" || pendingNavigation === "healthcare-elearning-thesis" || pendingNavigation === "healthcare-prescription-dtc-thesis") {
+          router.push(`/research/${pendingNavigation}`)
+        } else if (pendingNavigation === "long-term-care" || pendingNavigation === "construction-tech" || pendingNavigation === "healthcare-e-learning" || pendingNavigation === "accounting-services" || pendingNavigation === "b2b-sales-marketing-software" || pendingNavigation === "dtc-healthcare") {
+          router.push(`/decomposition/${pendingNavigation}`)
+        } else {
+          router.push(`/thesis/${pendingNavigation}`)
+        }
         setPendingNavigation(null);
       } else {
         setShowAccreditedModal(true);
@@ -259,7 +269,14 @@ export default function ResearchHub() {
           body: JSON.stringify({ ...userInfo, accredited: "true", accreditedSelections }),
         });
       } catch {}
-      router.push(`/research/${pendingNavigation}`)
+      // Use the same routing logic as handlePaperClick
+      if (pendingNavigation === "invitro-investment-build-process" || pendingNavigation === "invitro-private-markets-whitepaper" || pendingNavigation === "healthcare-elearning-thesis" || pendingNavigation === "healthcare-prescription-dtc-thesis") {
+        router.push(`/research/${pendingNavigation}`)
+      } else if (pendingNavigation === "long-term-care" || pendingNavigation === "construction-tech" || pendingNavigation === "healthcare-e-learning" || pendingNavigation === "accounting-services" || pendingNavigation === "b2b-sales-marketing-software" || pendingNavigation === "dtc-healthcare") {
+        router.push(`/decomposition/${pendingNavigation}`)
+      } else {
+        router.push(`/thesis/${pendingNavigation}`)
+      }
       setPendingNavigation(null)
     }
   }

@@ -92,7 +92,7 @@ interface DecompositionData {
 }
 
 const decompositionData: DecompositionData = {
-  curenta: {
+  "long-term-care": {
     title: "Industry Decomposition: Long Term Care",
     industry: "Long Term Care",
     publishDate: "2025-01-01",
@@ -578,7 +578,7 @@ export default function IndustryDecomposition() {
           onClick={() => {
             // PDF mapping for decomposition pages
             const pdfMap: { [key: string]: string } = {
-              "curenta": "/Industry Decomposition - Long Term Care (LTC).pdf",
+              "long-term-care": "/Industry Decomposition - Long Term Care (LTC).pdf",
               "construction-tech": "/Industry Decomposition Construction Tech.pdf",
               "dtc-healthcare": "/Industry Decomposition- DTC Healthcare.pdf",
               "accounting-services": "/Industry Decomposition - Accounting Services.pdf",
