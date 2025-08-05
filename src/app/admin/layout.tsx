@@ -52,11 +52,6 @@ export default function AdminLayout({
       icon: FileText
     },
     {
-      href: "/admin/decomposition",
-      label: "Decomposition",
-      icon: BarChart3
-    },
-    {
       href: "/admin/visitors",
       label: "Visitors",
       icon: Users

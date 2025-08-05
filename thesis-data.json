@@ -171,14 +171,15 @@
       "Decomposition"
     ],
     "category": "industry-decompositions",
-    "featured": true,
+    "featured": false,
     "live": true,
     "type": "decomposition",
     "content": {
       "overview": {
         "title": "Overview",
         "content": "Long Term Care industry analysis and opportunities"
-      }
+      },
+      "featured": false
     }
   },
   "construction-tech": {

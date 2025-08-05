@@ -145,8 +145,8 @@ export async function PUT(req: NextRequest) {
 
     // Handle featured status update (special case)
     if (featured !== undefined) {
-      // For now, we'll store featured status in the content object
-      // since we don't have a featured column in the database
+      // Update both top-level and content object for consistency
+      (thesisData as Record<string, unknown>).featured = featured;
       if (!thesisData.content) {
         thesisData.content = {};
       }
@@ -156,7 +156,28 @@ export async function PUT(req: NextRequest) {
       if (success) {
         return NextResponse.json({ success: true });
       } else {
-        return NextResponse.json({ error: 'Failed to update thesis' }, { status: 500 });
+        // Fall back to JSON file update if database fails
+        try {
+          const file = await fs.readFile(THESIS_DATA_FILE, 'utf-8');
+          const fileData = JSON.parse(file);
+          
+          if (fileData[thesisId]) {
+            // Update both top-level and content object for consistency
+            fileData[thesisId].featured = featured;
+            if (!fileData[thesisId].content) {
+              fileData[thesisId].content = {};
+            }
+            fileData[thesisId].content.featured = featured;
+            
+            await fs.writeFile(THESIS_DATA_FILE, JSON.stringify(fileData, null, 2));
+            return NextResponse.json({ success: true });
+          } else {
+            return NextResponse.json({ error: 'Thesis not found' }, { status: 404 });
+          }
+        } catch (fileError) {
+          console.error('Error updating JSON file:', fileError);
+          return NextResponse.json({ error: 'Failed to update thesis' }, { status: 500 });
+        }
       }
     }
 
@@ -168,7 +189,23 @@ export async function PUT(req: NextRequest) {
       if (success) {
         return NextResponse.json({ success: true });
       } else {
-        return NextResponse.json({ error: 'Failed to update thesis' }, { status: 500 });
+        // Fall back to JSON file update if database fails
+        try {
+          const file = await fs.readFile(THESIS_DATA_FILE, 'utf-8');
+          const fileData = JSON.parse(file);
+          
+          if (fileData[thesisId]) {
+            fileData[thesisId].live = live;
+            
+            await fs.writeFile(THESIS_DATA_FILE, JSON.stringify(fileData, null, 2));
+            return NextResponse.json({ success: true });
+          } else {
+            return NextResponse.json({ error: 'Thesis not found' }, { status: 404 });
+          }
+        } catch (fileError) {
+          console.error('Error updating JSON file:', fileError);
+          return NextResponse.json({ error: 'Failed to update thesis' }, { status: 500 });
+        }
       }
     }
 
@@ -273,7 +310,27 @@ export async function PUT(req: NextRequest) {
     if (success) {
       return NextResponse.json({ success: true });
     } else {
-      return NextResponse.json({ error: 'Failed to update thesis' }, { status: 500 });
+      // Fall back to JSON file update if database fails
+      try {
+        const file = await fs.readFile(THESIS_DATA_FILE, 'utf-8');
+        const fileData = JSON.parse(file);
+        
+        if (fileData[thesisId]) {
+          // Update the thesis data in the JSON file
+          fileData[thesisId] = {
+            ...fileData[thesisId],
+            ...thesisData
+          };
+          
+          await fs.writeFile(THESIS_DATA_FILE, JSON.stringify(fileData, null, 2));
+          return NextResponse.json({ success: true });
+        } else {
+          return NextResponse.json({ error: 'Thesis not found' }, { status: 404 });
+        }
+      } catch (fileError) {
+        console.error('Error updating JSON file:', fileError);
+        return NextResponse.json({ error: 'Failed to update thesis' }, { status: 500 });
+      }
     }
   } catch (e) {
     console.error('Error updating thesis:', e);

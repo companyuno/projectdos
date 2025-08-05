@@ -48,6 +48,8 @@ export default function ThesisAdmin() {
   const [selectedSectionForPosition, setSelectedSectionForPosition] = useState("")
   const [positionBeforeSection, setPositionBeforeSection] = useState("")
   const [hasChanges, setHasChanges] = useState(false)
+  const [featuredToggle, setFeaturedToggle] = useState<boolean | null>(null)
+  const [liveToggle, setLiveToggle] = useState<boolean | null>(null)
   
   // Auto-generate thesis ID from title
   const generateThesisId = (title: string) => {
@@ -399,7 +401,13 @@ export default function ThesisAdmin() {
   }
 
   const handleSave = async () => {
-    if (!selectedThesis || !selectedSection || (!editContent.trim() && !editSectionTitle.trim() && !editThesisTitle.trim())) return
+    if (!selectedThesis) return
+    
+    // Check if we have any changes to save
+    const hasContentChanges = selectedSection && (editContent.trim() || editSectionTitle.trim() || editThesisTitle.trim())
+    const hasToggleChanges = featuredToggle !== null || liveToggle !== null
+    
+    if (!hasContentChanges && !hasToggleChanges) return
 
     setSaving(true)
     try {
@@ -501,6 +509,14 @@ export default function ThesisAdmin() {
           requestBody.thesisTitle = editThesisTitle.trim()
         }
 
+        // Add toggle changes if they were modified
+        if (featuredToggle !== null) {
+          requestBody.featured = featuredToggle
+        }
+        if (liveToggle !== null) {
+          requestBody.live = liveToggle
+        }
+
         const response = await fetch('/api/thesis', {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
@@ -564,6 +580,8 @@ export default function ThesisAdmin() {
         
         alert('Content updated successfully!')
         setHasChanges(false)
+        setFeaturedToggle(null)
+        setLiveToggle(null)
       } else {
         const errorData = await response.json()
         alert(`Failed to save: ${errorData.error || 'Unknown error'}`)
@@ -1654,7 +1672,12 @@ export default function ThesisAdmin() {
                 <div className="space-y-2">
                   <Label htmlFor="thesis">Select Thesis</Label>
                   <div className="flex gap-2">
-                  <Select value={selectedThesis} onValueChange={setSelectedThesis}>
+                  <Select value={selectedThesis} onValueChange={(value) => {
+                    setSelectedThesis(value)
+                    setFeaturedToggle(null)
+                    setLiveToggle(null)
+                    setHasChanges(false)
+                  }}>
                     <SelectTrigger>
                       <SelectValue placeholder="Select a thesis" />
                     </SelectTrigger>
@@ -2029,43 +2052,11 @@ export default function ThesisAdmin() {
                       <input
                         type="checkbox"
                         id="thesisFeatured"
-                        checked={Boolean(currentThesis?.featured || currentThesis?.content?.featured || false)}
-                        onChange={async (e) => {
+                        checked={featuredToggle !== null ? featuredToggle : Boolean(currentThesis?.featured || currentThesis?.content?.featured || false)}
+                        onChange={(e) => {
                           if (!selectedThesis) return
-                          
+                          setFeaturedToggle(e.target.checked)
                           setHasChanges(true)
-                          setSaving(true)
-                          try {
-                            const response = await fetch('/api/thesis', {
-                              method: 'PUT',
-                              headers: {
-                                'Content-Type': 'application/json',
-                              },
-                              body: JSON.stringify({
-                                thesisId: selectedThesis,
-                                featured: e.target.checked
-                              }),
-                            })
-                            
-                            if (response.ok) {
-                              // Store current selections
-                              const currentThesis = selectedThesis
-                              const currentSection = selectedSection
-                              
-                              // Refresh the thesis data to show the updated featured status
-                              await fetchThesisData()
-                              
-                              // Restore selections after refresh
-                              setSelectedThesis(currentThesis)
-                              setSelectedSection(currentSection)
-                            } else {
-                              console.error('Failed to update featured status')
-                            }
-                          } catch (error) {
-                            console.error('Error updating featured status:', error)
-                          } finally {
-                            setSaving(false)
-                          }
                         }}
                         className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                       />
@@ -2084,43 +2075,11 @@ export default function ThesisAdmin() {
                       <input
                         type="checkbox"
                         id="thesisLive"
-                        checked={Boolean(currentThesis?.live || false)}
-                        onChange={async (e) => {
+                        checked={liveToggle !== null ? liveToggle : Boolean(currentThesis?.live || false)}
+                        onChange={(e) => {
                           if (!selectedThesis) return
-                          
+                          setLiveToggle(e.target.checked)
                           setHasChanges(true)
-                          setSaving(true)
-                          try {
-                            const response = await fetch('/api/thesis', {
-                              method: 'PUT',
-                              headers: {
-                                'Content-Type': 'application/json',
-                              },
-                              body: JSON.stringify({
-                                thesisId: selectedThesis,
-                                live: e.target.checked
-                              }),
-                            })
-                            
-                            if (response.ok) {
-                              // Store current selections
-                              const currentThesis = selectedThesis
-                              const currentSection = selectedSection
-                              
-                              // Refresh the thesis data to show the updated live status
-                              await fetchThesisData()
-                              
-                              // Restore selections after refresh
-                              setSelectedThesis(currentThesis)
-                              setSelectedSection(currentSection)
-                            } else {
-                              console.error('Failed to update live status')
-                            }
-                          } catch (error) {
-                            console.error('Error updating live status:', error)
-                          } finally {
-                            setSaving(false)
-                          }
                         }}
                         className="rounded border-gray-300 text-green-600 focus:ring-green-500"
                       />
@@ -2332,7 +2291,7 @@ export default function ThesisAdmin() {
                 {/* Save Button */}
                 <Button 
                   onClick={handleSave}
-                  disabled={saving || !selectedThesis || !hasChanges}
+                  disabled={saving || !selectedThesis || (!hasChanges && !selectedSection)}
                   className="w-full"
                 >
                   <Save className="w-4 h-4 mr-2" />
@@ -2381,15 +2340,29 @@ export default function ThesisAdmin() {
                         "healthcare-elearning-thesis",
                         "healthcare-prescription-dtc-thesis"
                       ]
-                      const url = researchPages.includes(selectedThesis) 
-                        ? `/research/${encodeURIComponent(selectedThesis)}`
-                        : `/thesis/${encodeURIComponent(selectedThesis)}`
+                      const decompositionPages = [
+                        "long-term-care",
+                        "construction-tech",
+                        "healthcare-e-learning",
+                        "accounting-services",
+                        "b2b-sales-marketing-software",
+                        "dtc-healthcare"
+                      ]
+                      
+                      let url = ""
+                      if (researchPages.includes(selectedThesis)) {
+                        url = `/research/${encodeURIComponent(selectedThesis)}`
+                      } else if (decompositionPages.includes(selectedThesis)) {
+                        url = `/decomposition/${encodeURIComponent(selectedThesis)}`
+                      } else {
+                        url = `/thesis/${encodeURIComponent(selectedThesis)}`
+                      }
                       window.open(url, '_blank')
                     }}
                     className="w-full"
                   >
                     <Eye className="w-4 h-4 mr-2" />
-                    View Thesis Page
+                    View {currentThesis?.type === 'decomposition' ? 'Decomposition' : 'Thesis'} Page
                   </Button>
                 </CardContent>
               </Card>
