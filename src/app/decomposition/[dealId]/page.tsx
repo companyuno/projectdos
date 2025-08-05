@@ -6,6 +6,7 @@ import { useRouter, useParams } from "next/navigation"
 import Image from "next/image"
 
 
+
 // Define types for decompositionData
 interface DecompositionContent {
   criteriaScoring: {
@@ -550,8 +551,7 @@ export default function IndustryDecomposition() {
   const params = useParams()
   const dealId = params.dealId as string
   
-  // Use static data for now - the decomposition content structure is complex
-  // and not stored in the database in the same format
+  // Use static data with subtitle
   const decomposition = fallbackData[dealId] || fallbackData["long-term-care"]
 
   return (
