@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button"
 import { ArrowLeft, Download } from "lucide-react"
 import { useRouter, useParams } from "next/navigation"
 import Image from "next/image"
-import { useState, useEffect } from "react"
+
 
 // Define types for decompositionData
 interface DecompositionContent {
@@ -97,6 +97,7 @@ interface DecompositionData {
 const fallbackData: DecompositionData = {
   "long-term-care": {
     title: "Industry Decomposition: Long Term Care",
+    subtitle: "Comprehensive analysis of the Long Term Care industry, including market size, key players, and investment opportunities",
     industry: "Long Term Care",
     publishDate: "2025-01-01",
     readTime: "30 min read",
@@ -549,49 +550,9 @@ export default function IndustryDecomposition() {
   const params = useParams()
   const dealId = params.dealId as string
   
-  // Dynamic data fetching
-  const [decompositionData, setDecompositionData] = useState<DecompositionData>({})
-  const [loading, setLoading] = useState(true)
-
-  // Fetch data from API
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch('/api/thesis')
-        if (response.ok) {
-          const data = await response.json()
-          // Filter for decomposition entries only
-          const decompositionEntries: DecompositionData = {}
-          Object.keys(data).forEach(key => {
-            if (data[key].type === 'decomposition') {
-              decompositionEntries[key] = data[key]
-            }
-          })
-          setDecompositionData(decompositionEntries)
-        }
-      } catch (error) {
-        console.error('Failed to fetch decomposition data:', error)
-      } finally {
-        setLoading(false)
-      }
-    }
-    
-    fetchData()
-  }, [])
-  
-  // Use dynamic data if available, otherwise fall back to hardcoded data
-  const decomposition = decompositionData[dealId] || fallbackData[dealId] || fallbackData["long-term-care"]
-  
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading decomposition...</p>
-        </div>
-      </div>
-    )
-  }
+  // Use static data for now - the decomposition content structure is complex
+  // and not stored in the database in the same format
+  const decomposition = fallbackData[dealId] || fallbackData["long-term-care"]
 
   return (
     <div className="min-h-screen bg-white">
