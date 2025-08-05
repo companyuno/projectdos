@@ -157,5 +157,140 @@
       "4. Pitchbook. Companies Profiles. Pitchbook, 2025.",
       "5. Crunchbase. Organizations Financial Details. Crunchbase, 2025."
     ]
+  },
+  "long-term-care": {
+    "title": "Long Term Care Industry Decomposition",
+    "subtitle": "Comprehensive analysis of the Long Term Care industry, including market size, key players, and investment opportunities",
+    "industry": "Healthcare",
+    "publishDate": "2025-01-15",
+    "readTime": "15 min read",
+    "tags": [
+      "Long Term Care",
+      "Healthcare",
+      "Industry Analysis",
+      "Decomposition"
+    ],
+    "category": "industry-decompositions",
+    "featured": true,
+    "live": true,
+    "type": "decomposition",
+    "content": {
+      "overview": {
+        "title": "Overview",
+        "content": "Long Term Care industry analysis and opportunities"
+      }
+    }
+  },
+  "construction-tech": {
+    "title": "Construction Technology Industry Decomposition",
+    "subtitle": "Deep dive into construction technology workflows, market opportunities, and investment thesis",
+    "industry": "Construction",
+    "publishDate": "2024-06-01",
+    "readTime": "20 min read",
+    "tags": [
+      "Construction Tech",
+      "Industry Analysis",
+      "Decomposition"
+    ],
+    "category": "industry-decompositions",
+    "featured": false,
+    "live": true,
+    "type": "decomposition",
+    "content": {
+      "overview": {
+        "title": "Overview",
+        "content": "Construction technology workflows and opportunities"
+      }
+    }
+  },
+  "healthcare-e-learning": {
+    "title": "Healthcare E-Learning Industry Decomposition",
+    "subtitle": "Analysis of healthcare education technology market and opportunities",
+    "industry": "Healthcare",
+    "publishDate": "2024-06-09",
+    "readTime": "12 min read",
+    "tags": [
+      "Healthcare",
+      "E-Learning",
+      "Industry Analysis",
+      "Decomposition"
+    ],
+    "category": "industry-decompositions",
+    "featured": false,
+    "live": true,
+    "type": "decomposition",
+    "content": {
+      "overview": {
+        "title": "Overview",
+        "content": "Healthcare education technology market analysis"
+      }
+    }
+  },
+  "accounting-services": {
+    "title": "Accounting Services Industry Decomposition",
+    "subtitle": "Comprehensive analysis of accounting services industry and automation opportunities",
+    "industry": "Professional Services",
+    "publishDate": "2024-12-01",
+    "readTime": "10 min read",
+    "tags": [
+      "Accounting Services",
+      "Industry Analysis",
+      "Decomposition"
+    ],
+    "category": "industry-decompositions",
+    "featured": false,
+    "live": true,
+    "type": "decomposition",
+    "content": {
+      "overview": {
+        "title": "Overview",
+        "content": "Accounting services industry and automation opportunities"
+      }
+    }
+  },
+  "b2b-sales-marketing-software": {
+    "title": "B2B Sales & Marketing Technology Decomposition",
+    "subtitle": "Analysis of B2B sales and marketing technology landscape and opportunities",
+    "industry": "Software",
+    "publishDate": "2024-12-01",
+    "readTime": "18 min read",
+    "tags": [
+      "B2B Sales",
+      "Marketing Software",
+      "Industry Analysis",
+      "Decomposition"
+    ],
+    "category": "industry-decompositions",
+    "featured": false,
+    "live": true,
+    "type": "decomposition",
+    "content": {
+      "overview": {
+        "title": "Overview",
+        "content": "B2B sales and marketing technology landscape"
+      }
+    }
+  },
+  "dtc-healthcare": {
+    "title": "DTC Healthcare Industry Decomposition",
+    "subtitle": "Direct-to-consumer healthcare market analysis and investment opportunities",
+    "industry": "Healthcare",
+    "publishDate": "2024-12-01",
+    "readTime": "14 min read",
+    "tags": [
+      "DTC Healthcare",
+      "Industry Analysis",
+      "Decomposition"
+    ],
+    "category": "industry-decompositions",
+    "featured": false,
+    "live": true,
+    "type": "decomposition",
+    "content": {
+      "overview": {
+        "title": "Overview",
+        "content": "Direct-to-consumer healthcare market analysis"
+      }
+    }
   }
 }

@@ -162,8 +162,8 @@ export default function ResearchHub() {
         
         const allTheses = Object.entries(thesisData)
           .filter(([id, thesis]: [string, any]) => {
-            // Only show theses that are marked as live
-            return thesis.live === true
+            // Show theses that are marked as live OR don't have a live field (for backward compatibility)
+            return thesis.live === true || thesis.live === undefined
           })
           .map(([id, thesis]: [string, any]) => ({
             id,
@@ -301,8 +301,74 @@ export default function ResearchHub() {
   const theses = dynamicTheses.filter((thesis: ResearchPaper) => thesis.type !== 'decomposition')
   const decompositions = dynamicTheses.filter((thesis: ResearchPaper) => thesis.type === 'decomposition')
 
-  // Use database decompositions instead of hardcoded ones
-  const industryDecompositionsSorted = decompositions.sort((a, b) => a.title.localeCompare(b.title));
+  // Fallback to hardcoded decompositions if database is empty
+  const hardcodedDecompositions: ResearchPaper[] = [
+    {
+      id: 'long-term-care',
+      title: 'Long Term Care Industry Decomposition',
+      description: 'Comprehensive analysis of the Long Term Care industry, including market size, key players, and investment opportunities.',
+      category: 'industry-decompositions',
+      publishDate: '2025-01-15',
+      readTime: '15 min read',
+      tags: ['Long Term Care', 'Healthcare', 'Industry Analysis', 'Decomposition'],
+      type: 'decomposition'
+    },
+    {
+      id: 'construction-tech',
+      title: 'Construction Technology Industry Decomposition',
+      description: 'Deep dive into construction technology workflows, market opportunities, and investment thesis.',
+      category: 'industry-decompositions',
+      publishDate: '2024-06-01',
+      readTime: '20 min read',
+      tags: ['Construction Tech', 'Industry Analysis', 'Decomposition'],
+      type: 'decomposition'
+    },
+    {
+      id: 'healthcare-e-learning',
+      title: 'Healthcare E-Learning Industry Decomposition',
+      description: 'Analysis of healthcare education technology market and opportunities.',
+      category: 'industry-decompositions',
+      publishDate: '2024-06-09',
+      readTime: '12 min read',
+      tags: ['Healthcare', 'E-Learning', 'Industry Analysis', 'Decomposition'],
+      type: 'decomposition'
+    },
+    {
+      id: 'accounting-services',
+      title: 'Accounting Services Industry Decomposition',
+      description: 'Comprehensive analysis of accounting services industry and automation opportunities.',
+      category: 'industry-decompositions',
+      publishDate: '2024-12-01',
+      readTime: '10 min read',
+      tags: ['Accounting Services', 'Industry Analysis', 'Decomposition'],
+      type: 'decomposition'
+    },
+    {
+      id: 'b2b-sales-marketing-software',
+      title: 'B2B Sales & Marketing Technology Decomposition',
+      description: 'Analysis of B2B sales and marketing technology landscape and opportunities.',
+      category: 'industry-decompositions',
+      publishDate: '2024-12-01',
+      readTime: '18 min read',
+      tags: ['B2B Sales', 'Marketing Software', 'Industry Analysis', 'Decomposition'],
+      type: 'decomposition'
+    },
+    {
+      id: 'dtc-healthcare',
+      title: 'DTC Healthcare Industry Decomposition',
+      description: 'Direct-to-consumer healthcare market analysis and investment opportunities.',
+      category: 'industry-decompositions',
+      publishDate: '2024-12-01',
+      readTime: '14 min read',
+      tags: ['DTC Healthcare', 'Industry Analysis', 'Decomposition'],
+      type: 'decomposition'
+    }
+  ];
+
+  // Use database decompositions if available, otherwise fall back to hardcoded ones
+  const industryDecompositionsSorted = decompositions.length > 0 
+    ? decompositions.sort((a, b) => a.title.localeCompare(b.title))
+    : hardcodedDecompositions.sort((a, b) => a.title.localeCompare(b.title));
 
   return (
     <div className="space-y-8">

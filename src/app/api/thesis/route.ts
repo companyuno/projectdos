@@ -70,27 +70,30 @@ const defaultThesisData = {
 
 export async function GET() {
   try {
+    // First try to get data from database
     const data = await getAllTheses();
     
-    // If database is empty, fall back to file
-    if (Object.keys(data).length === 0) {
-      try {
-        const file = await fs.readFile(THESIS_DATA_FILE, 'utf-8');
-        const fileData = JSON.parse(file);
-        return NextResponse.json(fileData);
-      } catch {
-        return NextResponse.json(defaultThesisData);
-      }
+    // If database has data, return it
+    if (data && Object.keys(data).length > 0) {
+      return NextResponse.json(data);
     }
     
-    return NextResponse.json(data);
-  } catch {
-    // Fall back to file if database fails
+    // If database is empty or fails, fall back to JSON file
+    console.log('Database empty or failed, falling back to JSON file');
+    const file = await fs.readFile(THESIS_DATA_FILE, 'utf-8');
+    const fileData = JSON.parse(file);
+    return NextResponse.json(fileData);
+    
+  } catch (error) {
+    console.error('Error fetching thesis data:', error);
+    
+    // Final fallback to JSON file
     try {
       const file = await fs.readFile(THESIS_DATA_FILE, 'utf-8');
       const fileData = JSON.parse(file);
       return NextResponse.json(fileData);
-    } catch {
+    } catch (fileError) {
+      console.error('Error reading JSON file:', fileError);
       return NextResponse.json(defaultThesisData);
     }
   }

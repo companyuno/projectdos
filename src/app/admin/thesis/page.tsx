@@ -896,6 +896,7 @@ export default function ThesisAdmin() {
       return
     }
 
+    setHasChanges(true)
     setSaving(true)
     try {
       // Generate a unique section ID
@@ -1050,6 +1051,7 @@ export default function ThesisAdmin() {
     const confirmDelete = confirm(`Are you sure you want to delete "${selectedSection}"?`)
     if (!confirmDelete) return
 
+    setHasChanges(true)
     setSaving(true)
     try {
       const currentThesisData = thesisData[selectedThesis]
@@ -1207,6 +1209,7 @@ export default function ThesisAdmin() {
   const handleMoveSection = async (direction: 'up' | 'down') => {
     if (!selectedThesis || !selectedSection || !currentThesis?.content) return
 
+    setHasChanges(true)
     setSaving(true)
     try {
       // Get all sections with their positions
@@ -1314,6 +1317,7 @@ export default function ThesisAdmin() {
   const handlePositionSection = async (sectionKey: string, beforeSection: string) => {
     if (!selectedThesis || !currentThesis?.content) return
 
+    setHasChanges(true)
     setSaving(true)
     try {
       // Get all sections with their positions
@@ -1968,6 +1972,7 @@ export default function ThesisAdmin() {
                       onValueChange={async (value) => {
                         if (!selectedThesis) return
                         
+                        setHasChanges(true)
                         setSaving(true)
                         try {
                           const response = await fetch('/api/thesis', {
@@ -2028,6 +2033,7 @@ export default function ThesisAdmin() {
                         onChange={async (e) => {
                           if (!selectedThesis) return
                           
+                          setHasChanges(true)
                           setSaving(true)
                           try {
                             const response = await fetch('/api/thesis', {
@@ -2082,6 +2088,7 @@ export default function ThesisAdmin() {
                         onChange={async (e) => {
                           if (!selectedThesis) return
                           
+                          setHasChanges(true)
                           setSaving(true)
                           try {
                             const response = await fetch('/api/thesis', {
