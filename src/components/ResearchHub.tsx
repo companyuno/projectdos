@@ -17,6 +17,7 @@ interface ResearchPaper {
   id: string
   title: string
   description: string
+  subtitle?: string
   category: "build-process" | "whitepapers" | "industry-theses" | "industry-decompositions"
   publishDate: string
   readTime: string
@@ -169,6 +170,7 @@ export default function ResearchHub() {
             id,
             title: thesis.title,
             description: thesis.subtitle || thesis.content?.executiveSummary?.content?.substring(0, 100) + "..." || "",
+            subtitle: thesis.subtitle,
             category: thesis.category || thesis.content?.category || "industry-theses", // Check both top level and content object
             publishDate: thesis.publishDate || "2025-01-01",
             readTime: thesis.readTime || "10 min read",
@@ -630,8 +632,8 @@ function FileItem({ paper, onPaperClick }: { paper: ResearchPaper; onPaperClick:
         <div className="truncate text-sm sm:text-base font-semibold">
           {paper.title}
         </div>
-        {paper.description && (
-        <div className="text-xs text-gray-500 truncate">{paper.description}</div>
+        {(paper.description || paper.subtitle) && (
+        <div className="text-xs text-gray-500 truncate">{paper.description || paper.subtitle}</div>
         )}
       </div>
       <span className="text-xs text-gray-400 whitespace-nowrap ml-1 sm:ml-2 flex-shrink-0">{paper.readTime}</span>
