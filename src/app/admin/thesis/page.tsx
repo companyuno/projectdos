@@ -525,60 +525,6 @@ export default function ThesisAdmin() {
         })
 
       if (response.ok) {
-        // Store current selections before refreshing data
-        const currentThesis = selectedThesis
-        const currentSection = selectedSection
-        
-        await fetchThesisData()
-        
-        // Restore selections after refresh
-        setSelectedThesis(currentThesis)
-        setSelectedSection(currentSection)
-        
-        // Manually load the content for the restored section
-        const updatedThesisData = await fetch('/api/thesis').then(res => res.json())
-        const currentThesisData = updatedThesisData[currentThesis]
-        if (currentThesisData) {
-          let content = ""
-          
-          // Get content based on section type
-          if (currentSection === 'title') {
-            content = currentThesisData.title || ""
-          } else if (currentSection === 'subtitle') {
-            content = currentThesisData.subtitle || ""
-          } else if (currentSection === 'industry') {
-            content = currentThesisData.industry || ""
-          } else if (currentSection === 'publishDate') {
-            content = currentThesisData.publishDate || ""
-          } else if (currentSection === 'readTime') {
-            content = currentThesisData.readTime || ""
-          } else if (currentSection === 'tags') {
-            content = Array.isArray(currentThesisData.tags) ? currentThesisData.tags.join(', ') : ""
-          } else if (currentSection === 'contact') {
-            const contact = currentThesisData.contact
-            if (contact && typeof contact === 'object') {
-              content = `${contact.name || ''}\n${contact.title || ''}\n${contact.company || ''}\n${contact.email || ''}`
-            }
-          } else if (currentSection === 'sources') {
-            const sources = currentThesisData.sources
-            if (Array.isArray(sources)) {
-              content = sources.join('\n')
-            }
-          } else {
-            // Content sections
-            const sectionData = currentThesisData.content?.[currentSection]
-            if (sectionData) {
-              if (typeof sectionData === 'object' && sectionData.content) {
-                content = sectionData.content
-              } else if (typeof sectionData === 'string') {
-                content = sectionData
-              }
-            }
-          }
-          
-          setEditContent(content)
-        }
-        
         alert('Content updated successfully!')
         setHasChanges(false)
         setFeaturedToggle(null)
