@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button"
 import { ArrowLeft, Download } from "lucide-react"
 import { useRouter, useParams } from "next/navigation"
 import Image from "next/image"
+import { useState, useEffect } from "react"
 
 // Define types for decompositionData
 interface DecompositionContent {
@@ -82,6 +83,7 @@ interface DecompositionContent {
 interface DecompositionData {
   [key: string]: {
     title: string;
+    subtitle?: string;
     industry: string;
     publishDate?: string;
     readTime?: string;
@@ -91,7 +93,38 @@ interface DecompositionData {
   };
 }
 
-const decompositionData: DecompositionData = {
+// Dynamic data fetching instead of hardcoded data
+const [decompositionData, setDecompositionData] = useState<DecompositionData>({})
+const [loading, setLoading] = useState(true)
+
+// Fetch data from API
+useEffect(() => {
+  const fetchData = async () => {
+    try {
+      const response = await fetch('/api/thesis')
+      if (response.ok) {
+        const data = await response.json()
+        // Filter for decomposition entries only
+        const decompositionEntries: DecompositionData = {}
+        Object.keys(data).forEach(key => {
+          if (data[key].type === 'decomposition') {
+            decompositionEntries[key] = data[key]
+          }
+        })
+        setDecompositionData(decompositionEntries)
+      }
+    } catch (error) {
+      console.error('Failed to fetch decomposition data:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+  
+  fetchData()
+}, [])
+
+// Fallback to hardcoded data if API fails
+const fallbackData: DecompositionData = {
   "long-term-care": {
     title: "Industry Decomposition: Long Term Care",
     industry: "Long Term Care",
@@ -545,7 +578,20 @@ export default function IndustryDecomposition() {
   const router = useRouter()
   const params = useParams()
   const dealId = params.dealId as string
-  const decomposition = decompositionData[dealId] || decompositionData.allrx
+  
+  // Use dynamic data if available, otherwise fall back to hardcoded data
+  const decomposition = decompositionData[dealId] || fallbackData[dealId] || fallbackData["long-term-care"]
+  
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading decomposition...</p>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-white">
@@ -598,6 +644,9 @@ export default function IndustryDecomposition() {
       <div className="max-w-6xl mx-auto px-8 py-12">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">{decomposition.title}</h1>
+          {decomposition.subtitle && (
+            <p className="text-lg text-gray-600 mt-2">{decomposition.subtitle}</p>
+          )}
         </div>
         {decomposition.content ? (
           <div className="space-y-12">

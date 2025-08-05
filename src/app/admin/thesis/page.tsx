@@ -389,7 +389,8 @@ export default function ThesisAdmin() {
       if (response.ok) {
         const data = await response.json()
         setThesisData(data)
-        if (Object.keys(data).length > 0) {
+        // Only set selected thesis if none is currently selected
+        if (Object.keys(data).length > 0 && !selectedThesis) {
           setSelectedThesis(Object.keys(data)[0])
         }
       }
@@ -585,6 +586,12 @@ export default function ThesisAdmin() {
         
         // Refresh data to show updated content
         await fetchThesisData()
+        
+        // Force update the content display for the current section
+        if (selectedSection) {
+          const updatedContent = getCurrentContent()
+          setEditContent(updatedContent)
+        }
       } else {
         const errorData = await response.json()
         alert(`Failed to save: ${errorData.error || 'Unknown error'}`)
