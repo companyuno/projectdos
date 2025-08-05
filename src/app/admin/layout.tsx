@@ -4,7 +4,9 @@ import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Lock } from "lucide-react"
+import { Lock, FileText, Users, Settings, BarChart3 } from "lucide-react"
+import Link from "next/link"
+import { usePathname } from "next/navigation"
 
 // Get password from environment variable - no fallback for security
 const ADMIN_PASSWORD = process.env.NEXT_PUBLIC_ADMIN_PASSWORD
@@ -17,6 +19,7 @@ export default function AdminLayout({
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [password, setPassword] = useState("")
   const [error, setError] = useState("")
+  const pathname = usePathname()
 
   useEffect(() => {
     // Check if already authenticated
@@ -41,6 +44,29 @@ export default function AdminLayout({
     setIsAuthenticated(false)
     sessionStorage.removeItem("admin-authenticated")
   }
+
+  const navItems = [
+    {
+      href: "/admin/thesis",
+      label: "Thesis Editor",
+      icon: FileText
+    },
+    {
+      href: "/admin/decomposition",
+      label: "Decomposition",
+      icon: BarChart3
+    },
+    {
+      href: "/admin/visitors",
+      label: "Visitors",
+      icon: Users
+    },
+    {
+      href: "/admin/permissions",
+      label: "Permissions",
+      icon: Settings
+    }
+  ]
 
   if (!isAuthenticated) {
     return (
@@ -83,7 +109,28 @@ export default function AdminLayout({
   return (
     <div>
       <div className="bg-gray-800 text-white px-6 py-3 flex justify-between items-center shadow-md">
-        <span className="font-semibold text-lg">Admin Panel</span>
+        <div className="flex items-center gap-6">
+          <span className="font-semibold text-lg">Admin Panel</span>
+          <nav className="flex items-center gap-4">
+            {navItems.map((item) => {
+              const Icon = item.icon
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={`flex items-center gap-2 px-3 py-2 rounded-md transition-colors ${
+                    pathname === item.href
+                      ? "bg-gray-700 text-white"
+                      : "text-gray-300 hover:text-white hover:bg-gray-700"
+                  }`}
+                >
+                  <Icon className="w-4 h-4" />
+                  {item.label}
+                </Link>
+              )
+            })}
+          </nav>
+        </div>
         <Button 
           onClick={handleLogout} 
           className="bg-red-600 hover:bg-red-700 text-white font-medium px-4 py-2 rounded-md"
