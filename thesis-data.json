@@ -159,28 +159,19 @@
     ]
   },
   "long-term-care": {
-    "title": "Long Term Care Industry Decomposition",
+    "title": "",
     "subtitle": "Comprehensive analysis of the Long Term Care industry, including market size, key players, and investment opportunities",
-    "industry": "Healthcare",
-    "publishDate": "2025-01-15",
-    "readTime": "15 min read",
-    "tags": [
-      "Long Term Care",
-      "Healthcare",
-      "Industry Analysis",
-      "Decomposition"
-    ],
+    "industry": "",
+    "publishDate": "",
+    "readTime": "",
+    "tags": [],
     "category": "industry-decompositions",
     "featured": false,
-    "live": true,
+    "live": false,
     "type": "decomposition",
-    "content": {
-      "overview": {
-        "title": "Overview",
-        "content": "Long Term Care industry analysis and opportunities"
-      },
-      "featured": false
-    }
+    "content": {},
+    "contact": null,
+    "sources": null
   },
   "construction-tech": {
     "title": "Construction Technology Industry Decomposition",
