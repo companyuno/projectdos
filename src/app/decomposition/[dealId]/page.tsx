@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button"
 import { ArrowLeft, Download } from "lucide-react"
 import { useRouter, useParams } from "next/navigation"
 import Image from "next/image"
+import { useState, useEffect } from "react"
 
 
 
@@ -551,8 +552,37 @@ export default function IndustryDecomposition() {
   const params = useParams()
   const dealId = params.dealId as string
   
-  // Use static data with subtitle
-  const decomposition = fallbackData[dealId] || fallbackData["long-term-care"]
+  // Fetch basic data (title, subtitle) from database
+  const [basicData, setBasicData] = useState<{title?: string, subtitle?: string}>({})
+  
+  useEffect(() => {
+    const fetchBasicData = async () => {
+      try {
+        const response = await fetch('/api/thesis')
+        if (response.ok) {
+          const data = await response.json()
+          if (data[dealId]) {
+            setBasicData({
+              title: data[dealId].title,
+              subtitle: data[dealId].subtitle
+            })
+          }
+        }
+      } catch (error) {
+        console.error('Failed to fetch basic data:', error)
+      }
+    }
+    
+    fetchBasicData()
+  }, [dealId])
+  
+  // Use static data for complex content, but merge with dynamic basic data
+  const staticDecomposition = fallbackData[dealId] || fallbackData["long-term-care"]
+  const decomposition = {
+    ...staticDecomposition,
+    title: basicData.title || staticDecomposition.title,
+    subtitle: basicData.subtitle || staticDecomposition.subtitle
+  }
 
   return (
     <div className="min-h-screen bg-white">
