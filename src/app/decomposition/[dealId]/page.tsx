@@ -639,7 +639,7 @@ export default function IndustryDecomposition() {
       <div className="max-w-6xl mx-auto px-8 py-12">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">{decomposition.title}</h1>
-          <p className="text-lg text-gray-600 mt-2">
+          <p className="text-lg text-gray-600 mt-2" key="subtitle-fixed">
             Comprehensive analysis of the Long Term Care industry, including market size, key players, and investment opportunities
           </p>
         </div>
