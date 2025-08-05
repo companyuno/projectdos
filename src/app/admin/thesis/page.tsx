@@ -582,6 +582,9 @@ export default function ThesisAdmin() {
         setHasChanges(false)
         setFeaturedToggle(null)
         setLiveToggle(null)
+        
+        // Refresh data to show updated content
+        await fetchThesisData()
       } else {
         const errorData = await response.json()
         alert(`Failed to save: ${errorData.error || 'Unknown error'}`)
