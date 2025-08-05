@@ -93,36 +93,6 @@ interface DecompositionData {
   };
 }
 
-// Dynamic data fetching instead of hardcoded data
-const [decompositionData, setDecompositionData] = useState<DecompositionData>({})
-const [loading, setLoading] = useState(true)
-
-// Fetch data from API
-useEffect(() => {
-  const fetchData = async () => {
-    try {
-      const response = await fetch('/api/thesis')
-      if (response.ok) {
-        const data = await response.json()
-        // Filter for decomposition entries only
-        const decompositionEntries: DecompositionData = {}
-        Object.keys(data).forEach(key => {
-          if (data[key].type === 'decomposition') {
-            decompositionEntries[key] = data[key]
-          }
-        })
-        setDecompositionData(decompositionEntries)
-      }
-    } catch (error) {
-      console.error('Failed to fetch decomposition data:', error)
-    } finally {
-      setLoading(false)
-    }
-  }
-  
-  fetchData()
-}, [])
-
 // Fallback to hardcoded data if API fails
 const fallbackData: DecompositionData = {
   "long-term-care": {
@@ -578,6 +548,36 @@ export default function IndustryDecomposition() {
   const router = useRouter()
   const params = useParams()
   const dealId = params.dealId as string
+  
+  // Dynamic data fetching
+  const [decompositionData, setDecompositionData] = useState<DecompositionData>({})
+  const [loading, setLoading] = useState(true)
+
+  // Fetch data from API
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch('/api/thesis')
+        if (response.ok) {
+          const data = await response.json()
+          // Filter for decomposition entries only
+          const decompositionEntries: DecompositionData = {}
+          Object.keys(data).forEach(key => {
+            if (data[key].type === 'decomposition') {
+              decompositionEntries[key] = data[key]
+            }
+          })
+          setDecompositionData(decompositionEntries)
+        }
+      } catch (error) {
+        console.error('Failed to fetch decomposition data:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+    
+    fetchData()
+  }, [])
   
   // Use dynamic data if available, otherwise fall back to hardcoded data
   const decomposition = decompositionData[dealId] || fallbackData[dealId] || fallbackData["long-term-care"]
