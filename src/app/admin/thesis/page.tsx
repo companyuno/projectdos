@@ -46,6 +46,7 @@ export default function ThesisAdmin() {
   const [showPositionDialog, setShowPositionDialog] = useState(false)
   const [selectedSectionForPosition, setSelectedSectionForPosition] = useState("")
   const [positionBeforeSection, setPositionBeforeSection] = useState("")
+  const [hasChanges, setHasChanges] = useState(false)
   
   // Auto-generate thesis ID from title
   const generateThesisId = (title: string) => {
@@ -560,6 +561,7 @@ export default function ThesisAdmin() {
         }
         
         alert('Content updated successfully!')
+        setHasChanges(false)
       } else {
         const errorData = await response.json()
         alert(`Failed to save: ${errorData.error || 'Unknown error'}`)
@@ -1668,6 +1670,7 @@ export default function ThesisAdmin() {
                       setEditContent("")
                       setEditSectionTitle("")
                       setEditThesisTitle("")
+                      setHasChanges(false)
                       // Auto-load content when section changes
                       setTimeout(() => {
                         if (currentThesis && value) {
@@ -2107,7 +2110,10 @@ export default function ThesisAdmin() {
                     <Input
                       id="sectionTitle"
                       value={editSectionTitle}
-                      onChange={(e) => setEditSectionTitle(e.target.value)}
+                                              onChange={(e) => {
+                          setEditSectionTitle(e.target.value)
+                          setHasChanges(true)
+                        }}
                       placeholder="Enter new section title..."
                       className="w-full"
                     />
@@ -2243,7 +2249,10 @@ export default function ThesisAdmin() {
                   <Textarea
                     id="content"
                     value={editContent}
-                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setEditContent(e.target.value)}
+                                            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
+                          setEditContent(e.target.value)
+                          setHasChanges(true)
+                        }}
                     placeholder="Enter content here..."
                     className="min-h-[300px]"
                   />
@@ -2295,7 +2304,7 @@ export default function ThesisAdmin() {
                 {/* Save Button */}
                 <Button 
                   onClick={handleSave}
-                  disabled={saving || !selectedThesis || !selectedSection || !editContent.trim()}
+                  disabled={saving || !selectedThesis || !hasChanges}
                   className="w-full"
                 >
                   <Save className="w-4 h-4 mr-2" />
