@@ -129,7 +129,8 @@ export async function getAllTheses() {
         content: row.content,
         contact: row.contact,
         sources: row.sources,
-        live: row.live || false
+        live: row.live || false,
+        type: row.type || 'thesis'
       };
     });
     
@@ -193,7 +194,8 @@ export async function createThesis(thesisId: string, thesisData: Record<string, 
         content: thesisData.content,
         contact: thesisData.contact,
         sources: thesisData.sources,
-        live: thesisData.live || false
+        live: thesisData.live || false,
+        type: thesisData.type || 'thesis'
       });
     
     if (error) throw error;
@@ -222,7 +224,8 @@ export async function updateThesis(thesisId: string, thesisData: Record<string, 
         content: thesisData.content,
         contact: thesisData.contact,
         sources: thesisData.sources,
-        live: thesisData.live
+        live: thesisData.live,
+        type: thesisData.type
       })
       .eq('id', thesisId);
     

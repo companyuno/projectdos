@@ -26,6 +26,7 @@ interface ThesisData {
     contact?: Record<string, unknown>;
     sources?: string[];
     live?: boolean;
+    type?: string;
   };
 }
 
@@ -63,6 +64,7 @@ export default function ThesisAdmin() {
   const [newThesisReadTime, setNewThesisReadTime] = useState("")
   const [newThesisTags, setNewThesisTags] = useState("")
   const [newThesisCategory, setNewThesisCategory] = useState("industry-theses")
+  const [newThesisType, setNewThesisType] = useState("thesis")
   const [newThesisFeatured, setNewThesisFeatured] = useState(false)
   const [showCreateForm, setShowCreateForm] = useState(false)
   const [textAlignment, setTextAlignment] = useState<'left' | 'center' | 'right'>('left')
@@ -594,6 +596,7 @@ export default function ThesisAdmin() {
           readTime: newThesisReadTime || "10 min read",
           tags: newThesisTags ? newThesisTags.split(',').map((tag: string) => tag.trim()) : ["New", "Industry"],
           category: newThesisCategory,
+          type: newThesisType,
           featured: newThesisFeatured,
             content: {
               executiveSummary: {
@@ -643,6 +646,7 @@ export default function ThesisAdmin() {
         setNewThesisReadTime("")
         setNewThesisTags("")
         setNewThesisCategory("industry-theses")
+        setNewThesisType("thesis")
         setNewThesisFeatured(false)
         setShowCreateForm(false)
         setSelectedThesis(newThesisIdToSelect)
@@ -1576,6 +1580,18 @@ export default function ThesisAdmin() {
                 <h3 className="text-sm font-medium text-gray-700 border-b pb-2">Display Settings</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
+                    <Label htmlFor="newThesisType">Type</Label>
+                    <Select value={newThesisType} onValueChange={setNewThesisType}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select type" />
+                      </SelectTrigger>
+                      <SelectContent className="z-50">
+                        <SelectItem value="thesis">Thesis</SelectItem>
+                        <SelectItem value="decomposition">Decomposition</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
                     <Label htmlFor="newThesisCategory">Category</Label>
                     <Select value={newThesisCategory} onValueChange={setNewThesisCategory}>
                       <SelectTrigger>
@@ -1639,11 +1655,16 @@ export default function ThesisAdmin() {
                       <SelectValue placeholder="Select a thesis" />
                     </SelectTrigger>
                                           <SelectContent className="z-50">
-                      {Object.keys(thesisData).map((thesisId) => (
-                        <SelectItem key={thesisId} value={thesisId}>
-                          {thesisData[thesisId].title || thesisId}
-                        </SelectItem>
-                      ))}
+                      {Object.keys(thesisData).map((thesisId) => {
+                        const thesis = thesisData[thesisId]
+                        const type = thesis.type || 'thesis'
+                        const typeLabel = type === 'decomposition' ? '📊' : '📄'
+                        return (
+                          <SelectItem key={thesisId} value={thesisId}>
+                            {typeLabel} {thesis.title || thesisId}
+                          </SelectItem>
+                        )
+                      })}
                     </SelectContent>
                   </Select>
                     <Button

@@ -22,6 +22,7 @@ interface ResearchPaper {
   readTime: string
   tags: string[]
   featured?: boolean
+  type?: string
 }
 
 // All papers are now fetched dynamically from the API
@@ -172,7 +173,8 @@ export default function ResearchHub() {
             publishDate: thesis.publishDate || "2025-01-01",
             readTime: thesis.readTime || "10 min read",
             tags: thesis.tags || [],
-            featured: thesis.featured || thesis.content?.featured || false // Updated to check content.featured
+            featured: thesis.featured || thesis.content?.featured || false, // Updated to check content.featured
+            type: thesis.type || 'thesis'
           }))
         
         setDynamicTheses(allTheses)
@@ -290,137 +292,17 @@ export default function ResearchHub() {
   const whitepapers = sortedPapers["whitepapers"] || []
   const industryTheses = sortedPapers["industry-theses"] || []
   
-  // Featured research from dynamic sources
-  const featuredResearch = dynamicTheses.filter((thesis: ResearchPaper) => thesis.featured);
+  // Featured research from dynamic sources - sorted by publish date (newest first)
+  const featuredResearch = dynamicTheses
+    .filter((thesis: ResearchPaper) => thesis.featured)
+    .sort((a, b) => new Date(b.publishDate).getTime() - new Date(a.publishDate).getTime());
 
-  // Add Curenta industry decomposition as a research paper
-  const industryDecompositions: ResearchPaper[] = [
-    {
-      id: "curenta-industry-decomposition",
-      title: "Long Term Care",
-      description: "",
-      category: "industry-decompositions",
-      publishDate: "2025-01-01",
-      readTime: "5 min read",
-      tags: ["Long Term Care", "Curenta", "Industry Analysis", "Decomposition"],
-      featured: true,
-    },
-    {
-      id: "construction-tech-industry-decomposition",
-      title: "Construction Tech",
-      description: "",
-      category: "industry-decompositions",
-      publishDate: "2024-06-01",
-      readTime: "5 min read",
-      tags: ["Construction Tech", "Industry Analysis", "Decomposition"],
-      featured: false,
-    },
-    {
-      id: "dtc-healthcare-industry-decomposition",
-      title: "Healthcare Prescription DTC",
-      description: "",
-      category: "industry-decompositions",
-      publishDate: "2024-06-09",
-      readTime: "5 min read",
-      tags: ["DTC Healthcare", "Industry Analysis", "Decomposition"],
-      featured: false,
-    },
-    {
-      id: "accounting-services-industry-decomposition",
-      title: "Accounting Services",
-      description: "",
-      category: "industry-decompositions",
-      publishDate: "2024-12-01",
-      readTime: "5 min read",
-      tags: ["Accounting Services", "Industry Analysis", "Decomposition"],
-      featured: false,
-    },
-    {
-      id: "b2b-sales-marketing-software-industry-decomposition",
-      title: "B2B Sales & Marketing Software",
-      description: "",
-      category: "industry-decompositions",
-      publishDate: "2024-12-01",
-      readTime: "5 min read",
-      tags: ["B2B Sales", "Marketing Software", "Industry Analysis", "Decomposition"],
-      featured: false,
-    },
-    {
-      id: "healthcare-e-learning-industry-decomposition",
-      title: "Healthcare E-Learning",
-      description: "",
-      category: "industry-decompositions",
-      publishDate: "2024-12-01",
-      readTime: "5 min read",
-      tags: ["Healthcare", "E-Learning", "Industry Analysis", "Decomposition"],
-      featured: false,
-    },
-  ]
+  // Separate theses and decompositions for different handling
+  const theses = dynamicTheses.filter((thesis: ResearchPaper) => thesis.type !== 'decomposition')
+  const decompositions = dynamicTheses.filter((thesis: ResearchPaper) => thesis.type === 'decomposition')
 
-  // If there is an industryDecompositions array, sort it alphabetically by title before rendering
-  const industryDecompositionsSorted: ResearchPaper[] = [
-    {
-      id: "curenta-industry-decomposition",
-      title: "Long Term Care",
-      description: "",
-      category: "industry-decompositions",
-      publishDate: "2025-01-01",
-      readTime: "5 min read",
-      tags: ["Long Term Care", "Curenta", "Industry Analysis", "Decomposition"],
-      featured: true,
-    },
-    {
-      id: "construction-tech-industry-decomposition",
-      title: "Construction Tech",
-      description: "",
-      category: "industry-decompositions",
-      publishDate: "2024-06-01",
-      readTime: "5 min read",
-      tags: ["Construction Tech", "Industry Analysis", "Decomposition"],
-      featured: false,
-    },
-    {
-      id: "dtc-healthcare-industry-decomposition",
-      title: "Healthcare Prescription DTC",
-      description: "",
-      category: "industry-decompositions",
-      publishDate: "2024-06-09",
-      readTime: "5 min read",
-      tags: ["DTC Healthcare", "Industry Analysis", "Decomposition"],
-      featured: false,
-    },
-    {
-      id: "accounting-services-industry-decomposition",
-      title: "Accounting Services",
-      description: "",
-      category: "industry-decompositions",
-      publishDate: "2024-12-01",
-      readTime: "5 min read",
-      tags: ["Accounting Services", "Industry Analysis", "Decomposition"],
-      featured: false,
-    },
-    {
-      id: "b2b-sales-marketing-software-industry-decomposition",
-      title: "B2B Sales & Marketing Software",
-      description: "",
-      category: "industry-decompositions",
-      publishDate: "2024-12-01",
-      readTime: "5 min read",
-      tags: ["B2B Sales", "Marketing Software", "Industry Analysis", "Decomposition"],
-      featured: false,
-    },
-    {
-      id: "healthcare-e-learning-industry-decomposition",
-      title: "Healthcare E-Learning",
-      description: "",
-      category: "industry-decompositions",
-      publishDate: "2024-12-01",
-      readTime: "5 min read",
-      tags: ["Healthcare", "E-Learning", "Industry Analysis", "Decomposition"],
-      featured: false,
-    },
-  ];
-  industryDecompositionsSorted.sort((a, b) => a.title.localeCompare(b.title));
+  // Use database decompositions instead of hardcoded ones
+  const industryDecompositionsSorted = decompositions.sort((a, b) => a.title.localeCompare(b.title));
 
   return (
     <div className="space-y-8">
@@ -500,19 +382,8 @@ export default function ResearchHub() {
           isExpanded={expandedFolders["industry-decompositions"] ?? true}
           onToggle={() => toggleFolder("industry-decompositions")}
           onPaperClick={(paperId) => {
-            if (paperId === "curenta-industry-decomposition") {
-              router.push("/decomposition/curenta");
-            } else if (paperId === "construction-tech-industry-decomposition") {
-              router.push("/decomposition/construction-tech");
-            } else if (paperId === "dtc-healthcare-industry-decomposition") {
-              router.push("/decomposition/dtc-healthcare");
-            } else if (paperId === "accounting-services-industry-decomposition") {
-              router.push("/decomposition/accounting-services");
-            } else if (paperId === "b2b-sales-marketing-software-industry-decomposition") {
-              router.push("/decomposition/b2b-sales-marketing-software");
-            } else if (paperId === "healthcare-e-learning-industry-decomposition") {
-              router.push("/decomposition/healthcare-e-learning");
-            }
+            // Route to decomposition pages using the paper ID
+            router.push(`/decomposition/${paperId}`);
           }}
           placeholderText="Industry Decomposition research coming soon."
         />
