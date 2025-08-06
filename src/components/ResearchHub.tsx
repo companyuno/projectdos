@@ -137,7 +137,6 @@ export default function ResearchHub() {
   const [accreditedSelections, setAccreditedSelections] = useState<string[]>([])
   const [isAccredited, setIsAccredited] = useState(false)
   const [dynamicTheses, setDynamicTheses] = useState<ResearchPaper[]>([])
-  const [loadingTheses, setLoadingTheses] = useState(true)
   const [showSubmitTooltip, setShowSubmitTooltip] = useState(true)
   const router = useRouter()
 
@@ -163,7 +162,7 @@ export default function ResearchHub() {
         const thesisData = await response.json()
         
         const allTheses = Object.entries(thesisData)
-          .filter(([id, thesis]: [string, any]) => {
+          .filter(([, thesis]: [string, any]) => {
             // Show theses that are marked as live OR don't have a live field (for backward compatibility)
             return thesis.live === true || thesis.live === undefined
           })
@@ -181,9 +180,9 @@ export default function ResearchHub() {
           }))
         
         setDynamicTheses(allTheses)
-      } catch (error) {
-        console.error('Error fetching theses:', error)
-      }
+          } catch (err) {
+      console.error('Error fetching theses:', err)
+    }
     }
 
     fetchTheses()
@@ -318,7 +317,6 @@ export default function ResearchHub() {
     .sort((a, b) => new Date(b.publishDate).getTime() - new Date(a.publishDate).getTime());
 
   // Separate theses and decompositions for different handling
-  const theses = dynamicTheses.filter((thesis: ResearchPaper) => thesis.type !== 'decomposition')
   const decompositions = dynamicTheses.filter((thesis: ResearchPaper) => thesis.type === 'decomposition')
 
   // Fallback to hardcoded decompositions if database is empty
@@ -533,7 +531,7 @@ export default function ResearchHub() {
           </DialogHeader>
           <form onSubmit={handleAccreditedSubmit} className="space-y-6 mt-4">
             <div className="space-y-3">
-              {visibleOptions.map((option, idx) => (
+              {visibleOptions.map((option) => (
                 <label key={option} className={`flex items-start gap-3 cursor-pointer p-2 rounded-lg transition ${accreditedSelections.includes(option) ? 'bg-blue-50 border border-blue-200' : ''}`}>
                   <input
                     type="checkbox"

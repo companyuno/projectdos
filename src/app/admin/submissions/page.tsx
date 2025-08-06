@@ -13,7 +13,6 @@ import {
   Mail, 
   Phone, 
   Building2, 
-  Users, 
   DollarSign, 
   FileText, 
   ExternalLink,

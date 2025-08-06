@@ -146,7 +146,7 @@ export default function SubmitStartup() {
             <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
             <h2 className="text-2xl font-semibold text-gray-900 mb-2">Thank You!</h2>
             <p className="text-gray-600 mb-6">
-              Your startup submission has been received. We'll review your information and get back to you soon.
+              Your startup submission has been received. We&apos;ll review your information and get back to you soon.
             </p>
             <Button onClick={() => router.push('/?tab=research')} className="w-full">
               Back to Research
