@@ -534,9 +534,48 @@ export default function ThesisAdmin() {
         await fetchThesisData()
         
         // Force update the content display for the current section
-        if (selectedSection) {
-          const updatedContent = getCurrentContent()
-          setEditContent(updatedContent)
+        if (selectedSection && selectedThesis) {
+          const currentThesisData = thesisData[selectedThesis]
+          if (currentThesisData) {
+            let content = ""
+            
+            // Get content based on section type
+            if (selectedSection === 'title') {
+              content = currentThesisData.title || ""
+            } else if (selectedSection === 'subtitle') {
+              content = currentThesisData.subtitle || ""
+            } else if (selectedSection === 'industry') {
+              content = currentThesisData.industry || ""
+            } else if (selectedSection === 'publishDate') {
+              content = currentThesisData.publishDate || ""
+            } else if (selectedSection === 'readTime') {
+              content = currentThesisData.readTime || ""
+            } else if (selectedSection === 'tags') {
+              content = Array.isArray(currentThesisData.tags) ? currentThesisData.tags.join(', ') : ""
+            } else if (selectedSection === 'contact') {
+              const contact = currentThesisData.contact
+              if (contact && typeof contact === 'object') {
+                content = `${contact.name || ''}\n${contact.title || ''}\n${contact.company || ''}\n${contact.email || ''}`
+              }
+            } else if (selectedSection === 'sources') {
+              const sources = currentThesisData.sources
+              if (Array.isArray(sources)) {
+                content = sources.join('\n')
+              }
+                         } else {
+               // Content sections
+               const sectionData = currentThesisData.content?.[selectedSection]
+               if (sectionData) {
+                 if (typeof sectionData === 'object' && (sectionData as any).content) {
+                   content = (sectionData as any).content
+                 } else if (typeof sectionData === 'string') {
+                   content = sectionData
+                 }
+               }
+             }
+            
+            setEditContent(content)
+          }
         }
       } else {
         const errorData = await response.json()

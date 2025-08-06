@@ -314,6 +314,7 @@ export async function PUT(req: NextRequest) {
       return NextResponse.json({ success: true });
     } else {
       // Fall back to JSON file update if database fails
+      console.log('Database update failed, falling back to JSON file update');
       try {
         const file = await fs.readFile(THESIS_DATA_FILE, 'utf-8');
         const fileData = JSON.parse(file);
@@ -324,6 +325,11 @@ export async function PUT(req: NextRequest) {
             ...fileData[thesisId],
             ...thesisData
           };
+          
+          // Ensure subtitle is properly updated
+          if (section === 'subtitle') {
+            fileData[thesisId].subtitle = content;
+          }
           
           await fs.writeFile(THESIS_DATA_FILE, JSON.stringify(fileData, null, 2));
           return NextResponse.json({ success: true });

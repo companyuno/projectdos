@@ -169,8 +169,8 @@ export default function ResearchHub() {
           .map(([id, thesis]: [string, any]) => ({
             id,
             title: thesis.title,
-            description: thesis.subtitle || thesis.content?.executiveSummary?.content?.substring(0, 100) + "..." || "",
-            subtitle: thesis.subtitle,
+            description: thesis.subtitle || thesis.content?.executiveSummary?.content?.substring(0, 100) + "..." || "No description available",
+            subtitle: thesis.subtitle || "",
             category: thesis.category || thesis.content?.category || "industry-theses", // Check both top level and content object
             publishDate: thesis.publishDate || "2025-01-01",
             readTime: thesis.readTime || "10 min read",
