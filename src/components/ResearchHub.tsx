@@ -565,17 +565,17 @@ export default function ResearchHub() {
 
       
       {/* Mobile Floating Action Button */}
-      <div className="md:hidden fixed bottom-20 right-4 z-50">
+      <div className="md:hidden fixed bottom-4 right-4 z-50">
         <div className="relative">
           <Button
             onClick={() => {
               router.push('/submit')
               setShowSubmitTooltip(false)
             }}
-            className="w-14 h-14 rounded-full bg-[hsl(212,74%,15%)] hover:bg-[hsl(212,74%,25%)] text-white shadow-lg"
+            className="w-12 h-12 rounded-full bg-[hsl(212,74%,15%)] hover:bg-[hsl(212,74%,25%)] text-white shadow-lg"
             size="icon"
           >
-            <Rocket className="w-6 h-6" />
+            <Rocket className="w-5 h-5" />
           </Button>
           
           {/* Tooltip */}

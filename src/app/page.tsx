@@ -86,7 +86,7 @@ function HomeContent() {
             </Button>
             <Button
               onClick={() => router.push('/submit')}
-              className="flex items-center gap-1 px-2.5 py-1.5 text-sm rounded-full border border-gray-300 bg-white text-gray-900 hover:bg-gray-50"
+              className="hidden md:flex items-center gap-1 px-2.5 py-1.5 text-sm rounded-full border border-gray-300 bg-white text-gray-900 hover:bg-gray-50"
             >
               <Rocket className="w-4 h-4" />
               Submit Startup
