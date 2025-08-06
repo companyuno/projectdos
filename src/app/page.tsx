@@ -6,7 +6,7 @@ import DealsShowcase from "@/components/DealsShowcase"
 import ResearchHub from "@/components/ResearchHub"
 import PermissionGate from "@/components/PermissionGate"
 import { Button } from "@/components/ui/button"
-import { Building2, FileText, Lightbulb } from "lucide-react"
+import { Building2, FileText, Lightbulb, Rocket } from "lucide-react"
 import Image from "next/image"
 
 function HomeContent() {
@@ -83,6 +83,13 @@ function HomeContent() {
             >
               <Building2 className="w-4 h-4" />
               Investments
+            </Button>
+            <Button
+              onClick={() => router.push('/submit')}
+              className="flex items-center gap-1 px-2.5 py-1.5 text-sm rounded-full border border-gray-300 bg-white text-gray-900 hover:bg-gray-50"
+            >
+              <Rocket className="w-4 h-4" />
+              Submit Startup
             </Button>
           </div>
         </div>

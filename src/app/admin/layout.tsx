@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Lock, FileText, Users, Settings, BarChart3 } from "lucide-react"
+import { Lock, FileText, Users, Settings, BarChart3, Rocket } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 
@@ -50,6 +50,11 @@ export default function AdminLayout({
       href: "/admin/thesis",
       label: "Thesis Editor",
       icon: FileText
+    },
+    {
+      href: "/admin/submissions",
+      label: "Submissions",
+      icon: Rocket
     },
     {
       href: "/admin/visitors",

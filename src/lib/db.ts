@@ -122,6 +122,7 @@ export async function getAllTheses() {
     data?.forEach((row) => {
       theses[row.id] = {
         title: row.title,
+        subtitle: row.subtitle,
         industry: row.industry,
         publishDate: row.publish_date,
         readTime: row.read_time,
@@ -334,6 +335,98 @@ export async function deleteVisitor(visitorId: number) {
     return true;
   } catch (error) {
     console.error('Error deleting visitor:', error);
+    return false;
+  }
+}
+
+// Startup submission functions
+export async function getAllStartupSubmissions() {
+  try {
+    if (!supabase) {
+      console.error('Supabase client not initialized');
+      return [];
+    }
+    
+    const { data, error } = await supabase
+      .from('startup_submissions')
+      .select('*')
+      .order('submitted_at', { ascending: false });
+    
+    if (error) throw error;
+    return data || [];
+  } catch (error) {
+    console.error('Error fetching startup submissions:', error);
+    return [];
+  }
+}
+
+export async function addStartupSubmission(submissionData: {
+  company_name: string;
+  founder_names: string;
+  email: string;
+  phone?: string;
+  stage: string;
+  funding_sought: string;
+  problem_statement: string;
+  solution: string;
+  founder_description: string;
+  additional_materials_url?: string;
+}) {
+  try {
+    if (!supabase) {
+      console.error('Supabase client not initialized');
+      return false;
+    }
+    
+    const { data, error } = await supabase
+      .from('startup_submissions')
+      .insert({
+        company_name: submissionData.company_name,
+        founder_names: submissionData.founder_names,
+        email: submissionData.email.toLowerCase().trim(),
+        phone: submissionData.phone || null,
+        stage: submissionData.stage,
+        funding_sought: submissionData.funding_sought,
+        problem_statement: submissionData.problem_statement,
+        solution: submissionData.solution,
+        founder_description: submissionData.founder_description,
+        additional_materials_url: submissionData.additional_materials_url || null
+      })
+      .select();
+    
+    if (error) throw error;
+    return data && data.length > 0;
+  } catch (error) {
+    console.error('Error adding startup submission:', error);
+    return false;
+  }
+}
+
+export async function updateStartupSubmissionStatus(
+  submissionId: number, 
+  status: 'pending' | 'reviewed' | 'accepted' | 'rejected',
+  notes?: string
+) {
+  try {
+    if (!supabase) {
+      console.error('Supabase client not initialized');
+      return false;
+    }
+    
+    const { error } = await supabase
+      .from('startup_submissions')
+      .update({
+        status,
+        notes: notes || null,
+        reviewed: true,
+        reviewed_at: new Date().toISOString()
+      })
+      .eq('id', submissionId);
+    
+    if (error) throw error;
+    return true;
+  } catch (error) {
+    console.error('Error updating startup submission:', error);
     return false;
   }
 } 

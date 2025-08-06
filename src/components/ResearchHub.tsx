@@ -8,7 +8,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
-import { FileText, Building2, Folder, FolderOpen, ChevronRight, ChevronDown, Lightbulb, Star, Calendar, BookOpen, ExternalLink } from "lucide-react"
+import { FileText, Building2, Folder, FolderOpen, ChevronRight, ChevronDown, Lightbulb, Star, Calendar, BookOpen, ExternalLink, Rocket } from "lucide-react"
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Badge } from "@/components/ui/badge"
@@ -138,6 +138,7 @@ export default function ResearchHub() {
   const [isAccredited, setIsAccredited] = useState(false)
   const [dynamicTheses, setDynamicTheses] = useState<ResearchPaper[]>([])
   const [loadingTheses, setLoadingTheses] = useState(true)
+  const [showSubmitTooltip, setShowSubmitTooltip] = useState(true)
   const router = useRouter()
 
   useEffect(() => {
@@ -404,6 +405,9 @@ export default function ResearchHub() {
           InVitro doesn&apos;t start with ideas—we start with pain. Our research maps labor-intensive, fragmented, and tech-starved industries from first principles, deconstructs workflows, and tests for urgency before anything gets built. We prioritize segments where software is absent, human effort is high, and willingness to pay is measurable. Every thesis begins with real buyer signal—not speculation. This is where disciplined demand generation meets structural insight.
         </p>
       </div>
+      
+
+      
       {/* Featured Research Section */}
       {featuredResearch.length > 0 && (
         <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
@@ -418,6 +422,7 @@ export default function ResearchHub() {
           </div>
         </div>
       )}
+      
       {/* Research Folders Panel */}
       <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
         {/* Research Archive Section (box format, inside folders panel, same size as Featured Research) */}
@@ -558,6 +563,32 @@ export default function ResearchHub() {
           </form>
         </DialogContent>
       </Dialog>
+      
+
+      
+      {/* Mobile Floating Action Button */}
+      <div className="md:hidden fixed bottom-20 right-4 z-50">
+        <div className="relative">
+          <Button
+            onClick={() => {
+              router.push('/submit')
+              setShowSubmitTooltip(false)
+            }}
+            className="w-14 h-14 rounded-full bg-[hsl(212,74%,15%)] hover:bg-[hsl(212,74%,25%)] text-white shadow-lg"
+            size="icon"
+          >
+            <Rocket className="w-6 h-6" />
+          </Button>
+          
+          {/* Tooltip */}
+          {showSubmitTooltip && (
+            <div className="absolute bottom-full right-0 mb-2 w-48 p-2 bg-gray-900 text-white text-xs rounded-lg shadow-lg">
+              Submit your startup for review
+              <div className="absolute top-full right-4 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-gray-900"></div>
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   )
 }

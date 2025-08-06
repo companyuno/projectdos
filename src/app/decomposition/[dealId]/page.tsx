@@ -561,6 +561,7 @@ export default function IndustryDecomposition() {
         const response = await fetch('/api/thesis')
         if (response.ok) {
           const data = await response.json()
+          console.log('API Response for', dealId, ':', data[dealId])
           if (data[dealId]) {
             setBasicData({
               title: data[dealId].title,
@@ -581,7 +582,7 @@ export default function IndustryDecomposition() {
   const decomposition = {
     ...staticDecomposition,
     title: basicData.title || staticDecomposition.title,
-    subtitle: basicData.subtitle || staticDecomposition.subtitle
+    subtitle: basicData.subtitle || staticDecomposition.subtitle || "Comprehensive analysis of the Long Term Care industry, including market size, key players, and investment opportunities"
   }
   
 
