@@ -34,30 +34,40 @@ const categoryConfig: Record<string, {
   icon: React.FC<React.SVGProps<SVGSVGElement>>
   color: string
   iconColor: string
+  borderColor: string
+  bgColor: string
 }> = {
   "build-process": {
     title: "InVitro Builder",
     icon: Building2,
-    color: "bg-[hsl(212,74%,95%)] border-[hsl(212,74%,80%)]",
-    iconColor: "text-[hsl(212,74%,25%)]",
+    color: "bg-blue-50 border-blue-200",
+    iconColor: "text-blue-700",
+    borderColor: "border-l-blue-300",
+    bgColor: "bg-blue-50",
   },
-      whitepapers: {
-      title: "White Papers",
+  "whitepapers": {
+    title: "White Papers",
     icon: FileText,
-    color: "bg-[hsl(212,74%,90%)] border-[hsl(212,74%,75%)]",
-    iconColor: "text-[hsl(212,74%,30%)]",
+    color: "bg-teal-50 border-teal-200",
+    iconColor: "text-teal-700",
+    borderColor: "border-l-teal-300",
+    bgColor: "bg-teal-50",
   },
   "industry-theses": {
     title: "Industry Theses",
     icon: Folder,
-    color: "bg-[hsl(212,74%,85%)] border-[hsl(212,74%,70%)]",
-    iconColor: "text-[hsl(212,74%,35%)]",
+    color: "bg-indigo-50 border-indigo-200",
+    iconColor: "text-indigo-700",
+    borderColor: "border-l-indigo-300",
+    bgColor: "bg-indigo-50",
   },
   "industry-decompositions": {
     title: "Industry Decompositions",
     icon: Folder,
-    color: "bg-[hsl(212,74%,80%)] border-[hsl(212,74%,65%)]",
-    iconColor: "text-[hsl(212,74%,40%)]",
+    color: "bg-slate-50 border-slate-200",
+    iconColor: "text-slate-700",
+    borderColor: "border-l-slate-300",
+    bgColor: "bg-slate-50",
   },
 }
 
@@ -87,17 +97,17 @@ function FeaturedCard({ paper, onPaperClick }: { paper: ResearchPaper; onPaperCl
   return (
     <button
       onClick={() => onPaperClick(paper.id)}
-      className="group relative bg-gradient-to-br from-white to-gray-50 rounded-lg border border-gray-200 hover:border-gray-300 hover:shadow-md transition-all duration-200 p-6 text-left cursor-pointer"
+      className={`group relative bg-white rounded-lg border ${config.color} hover:shadow-lg hover:border-gray-300 transition-all duration-200 p-6 text-left cursor-pointer`}
     >
       <div className="flex items-start justify-between mb-4">
         <div className={`p-2 rounded-lg ${config.color}`}>
           <CategoryIcon className={`w-5 h-5 ${config.iconColor}`} />
         </div>
-        <Badge variant="secondary" className="text-xs">
+        <Badge variant="secondary" className={`text-xs bg-white border ${config.color.split(' ')[1]} ${config.iconColor}`}>
           {config.title}
         </Badge>
       </div>
-      <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-[hsl(212,74%,25%)] transition-colors">{paper.title}</h3>
+      <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-gray-700 transition-colors">{paper.title}</h3>
       {paper.description && (
         <div className="text-xs text-gray-500 mb-2 line-clamp-2">{paper.description}</div>
       )}
@@ -138,6 +148,7 @@ export default function ResearchHub() {
   const [isAccredited, setIsAccredited] = useState(false)
   const [dynamicTheses, setDynamicTheses] = useState<ResearchPaper[]>([])
   const [showSubmitTooltip, setShowSubmitTooltip] = useState(true)
+  const [isLoading, setIsLoading] = useState(true)
   const router = useRouter()
 
   useEffect(() => {
@@ -232,9 +243,11 @@ export default function ResearchHub() {
         
         console.log('Processed theses:', allTheses)
         setDynamicTheses(allTheses)
-          } catch (err) {
-      console.error('Error fetching theses:', err)
-    }
+      } catch (err) {
+        console.error('Error fetching theses:', err)
+      } finally {
+        setIsLoading(false)
+      }
     }
 
     fetchTheses()
@@ -439,6 +452,11 @@ export default function ResearchHub() {
   const industryDecompositionsSorted = decompositions.length > 0 
     ? decompositions.sort((a, b) => a.title.localeCompare(b.title))
     : hardcodedDecompositions.sort((a, b) => a.title.localeCompare(b.title));
+
+  // Don't render anything until data is loaded to prevent flash of "No documents available"
+  if (isLoading) {
+    return null;
+  }
 
   return (
     <div className="space-y-8">
@@ -668,7 +686,7 @@ function FolderSection({
   return (
     <div>
       <button
-        className="w-full flex items-center px-4 sm:px-6 py-3 sm:py-4 text-left hover:bg-gray-50 focus:outline-none"
+        className={`w-full flex items-center px-4 sm:px-6 py-3 sm:py-4 text-left hover:${config.bgColor} focus:outline-none transition-all duration-200 rounded-lg`}
         onClick={onToggle}
         aria-expanded={isExpanded}
       >
@@ -686,13 +704,13 @@ function FolderSection({
         </span>
       </button>
       {isExpanded && (
-        <div className={`ml-6 sm:ml-8 px-6 sm:px-10 pb-4 sm:pb-6 border-l-4 ${config.color.split(' ')[1]}`}> 
+        <div className={`ml-6 sm:ml-8 px-6 sm:px-10 pb-2 border-l-4 ${config.borderColor} ${config.bgColor} rounded-r-lg`}> 
           {papers.length === 0 ? (
             <div className="text-gray-500 italic py-4">{placeholderText || "No documents available."}</div>
           ) : (
             <ul className="space-y-2">
               {papers.map((paper: ResearchPaper) => (
-                <FileItem key={paper.id} paper={paper} onPaperClick={onPaperClick} />
+                <FileItem key={paper.id} paper={paper} onPaperClick={onPaperClick} category={category} />
               ))}
             </ul>
           )}
@@ -702,13 +720,19 @@ function FolderSection({
   )
 }
 
-function FileItem({ paper, onPaperClick }: { paper: ResearchPaper; onPaperClick: (paperId: string) => void }) {
+function FileItem({ paper, onPaperClick, category }: { paper: ResearchPaper; onPaperClick: (paperId: string) => void; category: string }) {
+  const config = categoryConfig[category] || {
+    icon: FileText,
+    iconColor: "text-gray-400",
+  };
+  const CategoryIcon = config.icon;
+  
   return (
     <li
-      className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg hover:bg-gray-100 cursor-pointer transition"
+      className={`flex items-center gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg hover:${config.bgColor} cursor-pointer transition-all duration-200 hover:shadow-sm`}
       onClick={() => onPaperClick(paper.id)}
     >
-      <FileText className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400 flex-shrink-0" />
+      <CategoryIcon className={`w-4 h-4 sm:w-5 sm:h-5 ${config.iconColor} flex-shrink-0`} />
       <div className="flex-1 min-w-0">
         <div className="truncate text-sm sm:text-base font-semibold">
           {paper.title}
