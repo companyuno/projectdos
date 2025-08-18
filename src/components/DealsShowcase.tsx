@@ -94,7 +94,7 @@ const getStatusColor = (status: string) => {
     case "closed":
       return "bg-green-100 text-green-800 border-green-200"
     case "open":
-      return "bg-blue-100 text-blue-800 border-blue-200"
+      return "bg-[hsl(212,74%,85%)] text-[hsl(212,74%,30%)] border-[hsl(212,74%,70%)]"
     case "upcoming":
       return "bg-orange-100 text-orange-800 border-orange-200"
     default:
@@ -196,7 +196,7 @@ export default function DealsShowcase() {
       {/* Open Deals */}
       <section>
         <div className="flex items-center gap-2 sm:gap-3 mb-6 sm:mb-8">
-          <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 bg-blue-500 rounded-full"></div>
+          <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 bg-[hsl(212,74%,30%)] rounded-full"></div>
           <h2 className="font-bold text-xl sm:text-2xl text-[#0a2e4e]">Open Deals ({openDeals.length})</h2>
         </div>
           <div className="grid gap-4 sm:gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -294,7 +294,7 @@ function DealCard({
           <CardTitle className="text-lg sm:text-xl font-bold text-gray-900">{deal.transactionName}</CardTitle>
           <Badge className={`${getStatusColor(deal.status)} font-semibold text-xs sm:text-sm`}>{getStatusText(deal.status)}</Badge>
         </div>
-        <CardDescription className="text-xs sm:text-sm font-medium text-blue-600">{deal.industry}</CardDescription>
+                        <CardDescription className="text-xs sm:text-sm font-medium text-[hsl(212,74%,35%)]">{deal.industry}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-3 sm:space-y-4">
         <div className="grid grid-cols-2 gap-3 sm:gap-4 text-xs sm:text-sm">

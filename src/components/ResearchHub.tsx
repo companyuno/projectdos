@@ -38,26 +38,26 @@ const categoryConfig: Record<string, {
   "build-process": {
     title: "InVitro Builder",
     icon: Building2,
-    color: "bg-blue-50 border-blue-200",
-    iconColor: "text-blue-600",
+    color: "bg-[hsl(212,74%,95%)] border-[hsl(212,74%,80%)]",
+    iconColor: "text-[hsl(212,74%,25%)]",
   },
       whitepapers: {
       title: "White Papers",
     icon: FileText,
-    color: "bg-green-50 border-green-200",
-    iconColor: "text-green-600",
+    color: "bg-[hsl(212,74%,90%)] border-[hsl(212,74%,75%)]",
+    iconColor: "text-[hsl(212,74%,30%)]",
   },
   "industry-theses": {
     title: "Industry Theses",
     icon: Folder,
-    color: "bg-purple-50 border-purple-200",
-    iconColor: "text-purple-600",
+    color: "bg-[hsl(212,74%,85%)] border-[hsl(212,74%,70%)]",
+    iconColor: "text-[hsl(212,74%,35%)]",
   },
   "industry-decompositions": {
     title: "Industry Decompositions",
     icon: Folder,
-    color: "bg-orange-50 border-orange-200",
-    iconColor: "text-orange-600",
+    color: "bg-[hsl(212,74%,80%)] border-[hsl(212,74%,65%)]",
+    iconColor: "text-[hsl(212,74%,40%)]",
   },
 }
 
@@ -97,7 +97,7 @@ function FeaturedCard({ paper, onPaperClick }: { paper: ResearchPaper; onPaperCl
           {config.title}
         </Badge>
       </div>
-      <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">{paper.title}</h3>
+      <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-[hsl(212,74%,25%)] transition-colors">{paper.title}</h3>
       {paper.description && (
         <div className="text-xs text-gray-500 mb-2 line-clamp-2">{paper.description}</div>
       )}
@@ -161,24 +161,76 @@ export default function ResearchHub() {
         const response = await fetch('/api/thesis')
         const thesisData = await response.json()
         
-        const allTheses = Object.entries(thesisData)
+        console.log('Raw thesis data:', thesisData)
+        
+        // Filter out any non-object entries and log them for debugging
+        const validEntries = Object.entries(thesisData).filter(([id, thesis]) => {
+          if (typeof thesis !== 'object' || thesis === null || Array.isArray(thesis)) {
+            console.warn('Invalid thesis data for ID:', id, 'Type:', typeof thesis, 'Value:', thesis)
+            return false
+          }
+          return true
+        })
+        
+        const allTheses = validEntries
           .filter(([, thesis]: [string, any]) => {
             // Show theses that are marked as live OR don't have a live field (for backward compatibility)
             return thesis.live === true || thesis.live === undefined
           })
-          .map(([id, thesis]: [string, any]) => ({
-            id,
-            title: thesis.title,
-            description: thesis.subtitle || thesis.content?.executiveSummary?.content?.substring(0, 100) + "..." || "No description available",
-            subtitle: thesis.subtitle || "",
-            category: thesis.category || thesis.content?.category || "industry-theses", // Check both top level and content object
-            publishDate: thesis.publishDate || "2025-01-01",
-            readTime: thesis.readTime || "10 min read",
-            tags: thesis.tags || [],
-            featured: thesis.featured || thesis.content?.featured || false, // Updated to check content.featured
-            type: thesis.type || 'thesis'
-          }))
+          .map(([id, thesis]: [string, any]) => {
+            // Comprehensive validation of all required properties
+            if (!thesis.title || typeof thesis.title !== 'string') {
+              console.warn('Thesis missing or invalid title:', id, thesis)
+              return null
+            }
+            
+            // Validate and sanitize all properties
+            const safeThesis: Partial<ResearchPaper> & { id: string; title: string } = {
+              id: String(id),
+              title: String(thesis.title),
+              subtitle: thesis.subtitle ? String(thesis.subtitle) : undefined,
+              category: (() => {
+                const cat = thesis.category || thesis.content?.category || "industry-theses";
+                return typeof cat === 'string' ? cat as "build-process" | "whitepapers" | "industry-theses" | "industry-decompositions" : "industry-theses";
+              })(),
+              publishDate: (() => {
+                const date = thesis.publishDate || "2025-01-01";
+                return typeof date === 'string' ? date : "2025-01-01";
+              })(),
+              readTime: (() => {
+                const time = thesis.readTime || "10 min read";
+                return typeof time === 'string' ? time : "10 min read";
+              })(),
+              tags: (() => {
+                if (Array.isArray(thesis.tags)) {
+                  return thesis.tags.filter((tag: any) => typeof tag === 'string');
+                }
+                return [];
+              })(),
+              featured: Boolean(thesis.featured || thesis.content?.featured || false),
+              type: (() => {
+                const type = thesis.type || 'thesis';
+                return typeof type === 'string' ? type : 'thesis';
+              })()
+            };
+            
+            // Create description safely
+            safeThesis.description = (() => {
+              if (safeThesis.subtitle) return safeThesis.subtitle;
+              if (thesis.content?.executiveSummary?.content) {
+                const content = thesis.content.executiveSummary.content;
+                if (typeof content === 'string') {
+                  return content.substring(0, 100) + "...";
+                }
+              }
+              return "No description available";
+            })();
+            
+            return safeThesis as ResearchPaper;
+          })
+          .filter((thesis): thesis is ResearchPaper => thesis !== null) // Remove any null entries and type properly
         
+        console.log('Processed theses:', allTheses)
         setDynamicTheses(allTheses)
           } catch (err) {
       console.error('Error fetching theses:', err)
@@ -634,7 +686,7 @@ function FolderSection({
         </span>
       </button>
       {isExpanded && (
-        <div className={`ml-4 sm:ml-6 px-4 sm:px-8 pb-4 sm:pb-6 border-l-4 ${config.color.split(' ')[1]}`}> 
+        <div className={`ml-6 sm:ml-8 px-6 sm:px-10 pb-4 sm:pb-6 border-l-4 ${config.color.split(' ')[1]}`}> 
           {papers.length === 0 ? (
             <div className="text-gray-500 italic py-4">{placeholderText || "No documents available."}</div>
           ) : (

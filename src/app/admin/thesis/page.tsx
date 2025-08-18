@@ -533,48 +533,30 @@ export default function ThesisAdmin() {
         // Refresh data to show updated content
         await fetchThesisData()
         
-        // Force update the content display for the current section
+        // Update the editor with the content that was just saved
         if (selectedSection && selectedThesis) {
-          const currentThesisData = thesisData[selectedThesis]
-          if (currentThesisData) {
-            let content = ""
-            
-            // Get content based on section type
-            if (selectedSection === 'title') {
-              content = currentThesisData.title || ""
-            } else if (selectedSection === 'subtitle') {
-              content = currentThesisData.subtitle || ""
-            } else if (selectedSection === 'industry') {
-              content = currentThesisData.industry || ""
-            } else if (selectedSection === 'publishDate') {
-              content = currentThesisData.publishDate || ""
-            } else if (selectedSection === 'readTime') {
-              content = currentThesisData.readTime || ""
-            } else if (selectedSection === 'tags') {
-              content = Array.isArray(currentThesisData.tags) ? currentThesisData.tags.join(', ') : ""
-            } else if (selectedSection === 'contact') {
-              const contact = currentThesisData.contact
-              if (contact && typeof contact === 'object') {
-                content = `${contact.name || ''}\n${contact.title || ''}\n${contact.company || ''}\n${contact.email || ''}`
+          // For content sections, update the local state to reflect what was saved
+          if (selectedSection !== 'title' && selectedSection !== 'subtitle' && selectedSection !== 'industry' && selectedSection !== 'publishDate' && selectedSection !== 'readTime' && selectedSection !== 'tags') {
+            // Update the local thesisData state to reflect the saved changes
+            setThesisData(prevData => {
+              const updatedData = { ...prevData }
+              if (updatedData[selectedThesis]) {
+                if (!updatedData[selectedThesis].content) {
+                  updatedData[selectedThesis].content = {}
+                }
+                
+                // Update the content in the local state
+                if (typeof contentToSave === 'object' && (contentToSave as any).content !== undefined) {
+                  updatedData[selectedThesis].content[selectedSection] = contentToSave
+                } else {
+                  updatedData[selectedThesis].content[selectedSection] = {
+                    title: editSectionTitle.trim() || selectedSection,
+                    content: contentToSave
+                  }
+                }
               }
-            } else if (selectedSection === 'sources') {
-              const sources = currentThesisData.sources
-              if (Array.isArray(sources)) {
-                content = sources.join('\n')
-              }
-                         } else {
-               // Content sections
-               const sectionData = currentThesisData.content?.[selectedSection]
-               if (sectionData) {
-                 if (typeof sectionData === 'object' && (sectionData as any).content) {
-                   content = (sectionData as any).content
-                 } else if (typeof sectionData === 'string') {
-                   content = sectionData
-                 }
-               }
-             }
-            
-            setEditContent(content)
+              return updatedData
+            })
           }
         }
       } else {
@@ -695,8 +677,13 @@ export default function ThesisAdmin() {
   // Convert number to Roman numeral
   const toRomanNumeral = (num: number): string => {
     if (num === 0) return ''
+    if (num < 1) return ''
     
     const romanNumerals = [
+      { value: 1000, numeral: 'M' },
+      { value: 900, numeral: 'CM' },
+      { value: 500, numeral: 'D' },
+      { value: 400, numeral: 'CD' },
       { value: 100, numeral: 'C' },
       { value: 90, numeral: 'XC' },
       { value: 50, numeral: 'L' },
@@ -898,8 +885,8 @@ export default function ThesisAdmin() {
     }
 
     // Prompt for section number
-    const sectionNumberStr = prompt('Enter section number (e.g., 3, 4, 5):')
-    if (!sectionNumberStr || sectionNumberStr.trim() === '') {
+    const sectionNumberStr = prompt('Enter section number (e.g., 1, 2, 3):')
+    if (!sectionNumberStr || !sectionNumberStr.trim()) {
       return
     }
 
@@ -909,107 +896,99 @@ export default function ThesisAdmin() {
       return
     }
 
+    // Validate that the position is reasonable
+    const currentThesisData = thesisData[selectedThesis]
+    const existingContent = currentThesisData.content || {}
+    const numberedSections = Object.entries(existingContent)
+      .filter(([key, section]) => {
+        const sectionData = section as Record<string, unknown>
+        const existingSectionTitle = (sectionData.title as string) || key
+        return existingSectionTitle.match(/^[IVX]+\./)
+      })
+      .map(([key, section]) => {
+        const sectionData = section as Record<string, unknown>
+        const existingSectionTitle = (sectionData.title as string) || key
+        const romanMatch = existingSectionTitle.match(/^([IVX]+)\./)
+        const position = romanMatch ? parseRomanNumeral(romanMatch[1]) : 999
+        return { key, section: sectionData, position }
+      })
+      .sort((a, b) => a.position - b.position)
+    
+    const maxPosition = numberedSections.length > 0 ? Math.max(...numberedSections.map(s => s.position)) : 0
+    
+    if (sectionNumber > maxPosition + 2) {
+      const confirmContinue = confirm(`You're adding a section at position ${sectionNumber}, but the highest current position is ${maxPosition}. This will create gaps in numbering. Continue anyway?`)
+      if (!confirmContinue) {
+        return
+      }
+    }
+
     setHasChanges(true)
     setSaving(true)
     try {
       // Generate a unique section ID
       const sectionId = `section-${Math.random().toString(36).substr(2, 9)}`
       
-      // Get current thesis data
-      const currentThesisData = thesisData[selectedThesis]
-      const existingContent = currentThesisData.content || {}
-      
-      // Create new content object with proper ordering and updated Roman numerals
-      const existingSections = Object.entries(existingContent)
+      // Create new content object
       const newContent: Record<string, unknown> = {}
       
-      // Insert the new section at the correct position and update numbering
-      let inserted = false
-      const currentRomanNum = 1
-      
-      // Convert existing sections to array with their positions (only numbered content sections)
-      const sectionsWithPositions = existingSections
-        .filter(([key, section]) => {
-          const sectionData = section as Record<string, unknown>
-          const existingSectionTitle = (sectionData.title as string) || key
-          // Only include sections that have Roman numerals (numbered sections)
-          return existingSectionTitle.match(/^[IVX]+\./)
-        })
-        .map(([key, section]) => {
-          const sectionData = section as Record<string, unknown>
-          const existingSectionTitle = (sectionData.title as string) || key
-          // Extract the Roman numeral position (I=1, II=2, III=3, etc.)
-          const romanMatch = existingSectionTitle.match(/^([IVX]+)\./)
-          const position = romanMatch ? 
-            (romanMatch[1] === 'I' ? 1 : 
-             romanMatch[1] === 'II' ? 2 : 
-             romanMatch[1] === 'III' ? 3 : 
-             romanMatch[1] === 'IV' ? 4 : 
-             romanMatch[1] === 'V' ? 5 : 
-             romanMatch[1] === 'VI' ? 6 : 
-             romanMatch[1] === 'VII' ? 7 : 
-             romanMatch[1] === 'VIII' ? 8 : 
-             romanMatch[1] === 'IX' ? 9 : 
-             romanMatch[1] === 'X' ? 10 : 
-             romanMatch[1] === 'XI' ? 11 : 
-             romanMatch[1] === 'XII' ? 12 : 
-             romanMatch[1] === 'XIII' ? 13 : 
-             romanMatch[1] === 'XIV' ? 14 : 
-             romanMatch[1] === 'XV' ? 15 : 999) : 999
-          
-          return { key, section: sectionData, position }
-        }).sort((a, b) => a.position - b.position)
-      
-      // All sections with positions (including Contact and Sources from content)
-      const allSectionsWithPositions = [...sectionsWithPositions]
-      
-      // Sort by position
-      allSectionsWithPositions.sort((a, b) => a.position - b.position)
-      
-      // Find the maximum current position
-      const maxPosition = allSectionsWithPositions.length > 0 ? Math.max(...allSectionsWithPositions.map(s => s.position)) : 0
-      
-      // If requested position is beyond current max, use max + 1
-      const actualInsertPosition = sectionNumber > maxPosition ? maxPosition + 1 : sectionNumber
-      
-      // First, add all existing sections that don't have Roman numerals (top-level fields)
-      for (const [key, section] of existingSections) {
+      // First, add all non-numbered sections (top-level fields)
+      for (const [key, section] of Object.entries(existingContent)) {
         const sectionData = section as Record<string, unknown>
         const existingSectionTitle = (sectionData.title as string) || key
         if (!existingSectionTitle.match(/^[IVX]+\./)) {
-          // This is a top-level field, keep it as is
           newContent[key] = sectionData
         }
       }
       
-      // Then handle numbered sections (including Contact and Sources)
-      for (const { key, section: sectionData, position } of allSectionsWithPositions) {
-        const existingSectionTitle = (sectionData.title as string) || key
-        
-        if (!inserted && actualInsertPosition <= position) {
-          // Insert new section with Roman numeral (simple form like Executive Summary)
+      // Handle numbered sections with proper renumbering
+      let inserted = false
+      
+      for (const { key, section: sectionData, position } of numberedSections) {
+        if (!inserted && sectionNumber <= position) {
+          // Insert new section here
           newContent[sectionId] = {
-            title: `${toRomanNumeral(actualInsertPosition)}. ${sectionTitle}`,
+            title: `${toRomanNumeral(sectionNumber)}. ${sectionTitle}`,
             content: ""
           }
           inserted = true
         }
         
-        // Update existing section with new Roman numeral
-        const newPosition = inserted && position >= actualInsertPosition ? position + 1 : position
+        // Calculate new position for existing section
+        let newPosition: number
+        if (inserted && position >= sectionNumber) {
+          // This section comes after the inserted section, shift it down by 1
+          newPosition = position + 1
+        } else {
+          // This section comes before the inserted section, keep its original position
+          newPosition = position
+        }
+        
+        // Update the section title with new Roman numeral
+        const cleanTitle = (sectionData.title as string).replace(/^[IVX]+\.\s*/, '')
         newContent[key] = {
           ...sectionData,
-          title: `${toRomanNumeral(newPosition)}. ${existingSectionTitle.replace(/^[IVX]+\.\s*/, '')}`
+          title: `${toRomanNumeral(newPosition)}. ${cleanTitle}`
         }
       }
       
-      // If not inserted yet, add at the end of numbered sections
+      // If not inserted yet, add at the end
       if (!inserted) {
+        const actualPosition = Math.max(sectionNumber, maxPosition + 1)
         newContent[sectionId] = {
-          title: `${toRomanNumeral(actualInsertPosition)}. ${sectionTitle}`,
+          title: `${toRomanNumeral(actualPosition)}. ${sectionTitle}`,
           content: ""
         }
       }
+      
+      // Debug logging
+      console.log('Add Section Debug:', {
+        requestedPosition: sectionNumber,
+        inserted,
+        maxPosition,
+        newContentKeys: Object.keys(newContent),
+        newContentTitles: Object.keys(newContent).map(key => (newContent[key] as any)?.title)
+      })
 
       // Update the thesis with new content
       const response = await fetch('/api/thesis', {
@@ -1035,20 +1014,35 @@ export default function ThesisAdmin() {
         setSelectedThesis(currentThesis)
         setSelectedSection(newSectionId)
         
-        // Clear content for the new section (it should be empty)
+        // Set the section title and clear content for the new section
         setTimeout(() => {
           setEditContent("")
-          setEditSectionTitle("")
+          // Set the section title to what was entered (without the Roman numeral)
+          setEditSectionTitle(sectionTitle)
+          // Force refresh the content display
+          if (newSectionId) {
+            const currentThesisData = thesisData[currentThesis]
+            if (currentThesisData?.content?.[newSectionId]) {
+              const sectionData = currentThesisData.content[newSectionId]
+              if (typeof sectionData === 'object' && (sectionData as any).content !== undefined) {
+                setEditContent((sectionData as any).content || "")
+              } else {
+                setEditContent("")
+              }
+            } else {
+              setEditContent("")
+            }
+          }
         }, 100)
         
-        alert('Section added successfully! You can now edit the new section.')
+        alert(`Section "${sectionTitle}" added successfully at position ${sectionNumber}! You can now edit the new section.`)
       } else {
         const errorData = await response.json()
         alert(`Failed to add section: ${errorData.error || 'Unknown error'}`)
       }
     } catch (error) {
       console.error('Failed to add section:', error)
-      alert('Failed to add section')
+      alert('Failed to add section. Please check the console for details.')
     } finally {
       setSaving(false)
     }
@@ -1061,33 +1055,98 @@ export default function ThesisAdmin() {
       return
     }
 
-    const confirmDelete = confirm(`Are you sure you want to delete "${selectedSection}"?`)
+    // Get the section title for better confirmation
+    const currentThesisData = thesisData[selectedThesis]
+    const sectionData = currentThesisData.content?.[selectedSection]
+    const sectionTitle = typeof sectionData === 'object' && (sectionData as any).title ? 
+      (sectionData as any).title : selectedSection
+
+    const confirmDelete = confirm(`Are you sure you want to delete "${sectionTitle}"?\n\nThis will also renumber all subsequent sections.`)
     if (!confirmDelete) return
 
     setHasChanges(true)
     setSaving(true)
     try {
-      const currentThesisData = thesisData[selectedThesis]
       const existingContent = currentThesisData.content || {}
       const newContent: Record<string, unknown> = {}
       
-      // Remove the selected section and renumber the rest
-      let currentRomanNum = 1
-      for (const [key, section] of Object.entries(existingContent)) {
-        if (key !== selectedSection) {
+      // Get all numbered sections with their positions
+      const numberedSections = Object.entries(existingContent)
+        .filter(([key, section]) => {
           const sectionData = section as Record<string, unknown>
+          const existingSectionTitle = (sectionData.title as string) || key
+          return existingSectionTitle.match(/^[IVX]+\./)
+        })
+        .map(([key, section]) => {
+          const sectionData = section as Record<string, unknown>
+          const existingSectionTitle = (sectionData.title as string) || key
+          const romanMatch = existingSectionTitle.match(/^([IVX]+)\./)
+          const position = romanMatch ? parseRomanNumeral(romanMatch[1]) : 999
+          
+          return { key, section: sectionData, position }
+        })
+        .sort((a, b) => a.position - b.position)
+      
+      // Check if the section to delete is numbered
+      const isNumberedSection = numberedSections.some(s => s.key === selectedSection)
+      
+      if (isNumberedSection) {
+        // Handle numbered section deletion with renumbering
+        const deletedSectionPosition = numberedSections.find(s => s.key === selectedSection)?.position || 0
+        
+        // First, add all non-numbered sections (top-level fields)
+        for (const [key, section] of Object.entries(existingContent)) {
+          const sectionData = section as Record<string, unknown>
+          const existingSectionTitle = (sectionData.title as string) || key
+          if (!existingSectionTitle.match(/^[IVX]+\./)) {
+            newContent[key] = sectionData
+          }
+        }
+        
+        // Then handle numbered sections, preserving order and renumbering those after the deleted section
+        for (const { key, section: sectionData, position } of numberedSections) {
+          if (key === selectedSection) {
+            // Skip the deleted section
+            continue
+          }
+          
           const existingSectionTitle = (sectionData.title as string) || key
           const cleanTitle = existingSectionTitle.replace(/^[IVX]+\.\s*/, '')
           
+          // Determine the new position
+          let newPosition: number
+          if (position < deletedSectionPosition) {
+            // Section comes before the deleted section, keep its original position
+            newPosition = position
+          } else {
+            // Section comes after the deleted section, shift position down by 1
+            newPosition = position - 1
+          }
+          
           newContent[key] = {
             ...sectionData,
-            title: `${toRomanNumeral(currentRomanNum)}. ${cleanTitle}`
+            title: `${toRomanNumeral(newPosition)}. ${cleanTitle}`
           }
-          currentRomanNum++
+        }
+      } else {
+        // Handle non-numbered section deletion (simple removal)
+        for (const [key, section] of Object.entries(existingContent)) {
+          if (key !== selectedSection) {
+            newContent[key] = section
+          }
         }
       }
 
-      // Update the thesis with renumbered content
+      // Debug logging
+      console.log('Delete Section Debug:', {
+        deletedSection: selectedSection,
+        isNumberedSection,
+        sectionTitle,
+        newContentKeys: Object.keys(newContent),
+        newContentTitles: Object.keys(newContent).map(key => (newContent[key] as any)?.title)
+      })
+
+      // Update the thesis with new content
       const response = await fetch('/api/thesis', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -1102,20 +1161,28 @@ export default function ThesisAdmin() {
         // Store current thesis selection before refreshing data
         const currentThesis = selectedThesis
         
+        // Add a small delay to ensure the server has processed the update
+        await new Promise(resolve => setTimeout(resolve, 500))
         await fetchThesisData()
         
         // Restore thesis selection and clear section selection
         setSelectedThesis(currentThesis)
         setSelectedSection('')
         setEditContent('')
-        alert('Section deleted successfully!')
+        setEditSectionTitle('')
+        
+        if (isNumberedSection) {
+          alert(`Section "${sectionTitle}" deleted successfully! All subsequent sections have been renumbered.`)
+        } else {
+          alert(`Section "${sectionTitle}" deleted successfully!`)
+        }
       } else {
         const errorData = await response.json()
         alert(`Failed to delete section: ${errorData.error || 'Unknown error'}`)
       }
     } catch (error) {
       console.error('Failed to delete section:', error)
-      alert('Failed to delete section')
+      alert('Failed to delete section. Please check the console for details.')
     } finally {
       setSaving(false)
     }
@@ -1235,22 +1302,7 @@ export default function ThesisAdmin() {
           const sectionData = (currentThesis.content as Record<string, unknown>)[sectionKey]
           const sectionTitle = typeof sectionData === 'object' && (sectionData as any).title ? (sectionData as any).title : sectionKey
           const romanMatch = sectionTitle.match(/^([IVX]+)\./)
-          const position = romanMatch ? 
-            (romanMatch[1] === 'I' ? 1 : 
-             romanMatch[1] === 'II' ? 2 : 
-             romanMatch[1] === 'III' ? 3 : 
-             romanMatch[1] === 'IV' ? 4 : 
-             romanMatch[1] === 'V' ? 5 : 
-             romanMatch[1] === 'VI' ? 6 : 
-             romanMatch[1] === 'VII' ? 7 : 
-             romanMatch[1] === 'VIII' ? 8 : 
-             romanMatch[1] === 'IX' ? 9 : 
-             romanMatch[1] === 'X' ? 10 : 
-             romanMatch[1] === 'XI' ? 11 : 
-             romanMatch[1] === 'XII' ? 12 : 
-             romanMatch[1] === 'XIII' ? 13 : 
-             romanMatch[1] === 'XIV' ? 14 : 
-             romanMatch[1] === 'XV' ? 15 : 999) : 999
+          const position = romanMatch ? parseRomanNumeral(romanMatch[1]) : 999
           return { key: sectionKey, section: sectionData, position }
         })
         .sort((a, b) => a.position - b.position)
@@ -1343,22 +1395,7 @@ export default function ThesisAdmin() {
           const sectionData = (currentThesis.content as Record<string, unknown>)[sectionKey]
           const sectionTitle = typeof sectionData === 'object' && (sectionData as any).title ? (sectionData as any).title : sectionKey
           const romanMatch = sectionTitle.match(/^([IVX]+)\./)
-          const position = romanMatch ? 
-            (romanMatch[1] === 'I' ? 1 : 
-             romanMatch[1] === 'II' ? 2 : 
-             romanMatch[1] === 'III' ? 3 : 
-             romanMatch[1] === 'IV' ? 4 : 
-             romanMatch[1] === 'V' ? 5 : 
-             romanMatch[1] === 'VI' ? 6 : 
-             romanMatch[1] === 'VII' ? 7 : 
-             romanMatch[1] === 'VIII' ? 8 : 
-             romanMatch[1] === 'IX' ? 9 : 
-             romanMatch[1] === 'X' ? 10 : 
-             romanMatch[1] === 'XI' ? 11 : 
-             romanMatch[1] === 'XII' ? 12 : 
-             romanMatch[1] === 'XIII' ? 13 : 
-             romanMatch[1] === 'XIV' ? 14 : 
-             romanMatch[1] === 'XV' ? 15 : 999) : 999
+          const position = romanMatch ? parseRomanNumeral(romanMatch[1]) : 999
           return { key: sectionKey, section: sectionData, position }
         })
         .sort((a, b) => a.position - b.position)
@@ -1438,6 +1475,252 @@ export default function ThesisAdmin() {
     } finally {
       setSaving(false)
       setShowPositionDialog(false)
+    }
+  }
+
+  // Function to renumber a section
+  const handleRenumberSection = async () => {
+    if (!selectedThesis || !selectedSection) {
+      alert('Please select a thesis and section to renumber')
+      return
+    }
+
+    // Get the current section title for better user experience
+    const currentThesisData = thesisData[selectedThesis]
+    const sectionData = currentThesisData.content?.[selectedSection]
+    const currentSectionTitle = typeof sectionData === 'object' && (sectionData as any).title ? 
+      (sectionData as any).title : selectedSection
+
+    // Prompt for new section number
+    const newSectionNumberStr = prompt(`Enter new position for "${currentSectionTitle}" (e.g., 1, 2, 3):`)
+    if (!newSectionNumberStr || newSectionNumberStr.trim() === '') {
+      return
+    }
+
+    const newSectionNumber = parseInt(newSectionNumberStr)
+    if (isNaN(newSectionNumber) || newSectionNumber < 1) {
+      alert('Please enter a valid number (1 or higher)')
+      return
+    }
+
+    // Validate the new position is reasonable
+    const numberedSections = Object.entries(currentThesisData.content || {})
+      .filter(([key, section]) => {
+        const sectionData = section as Record<string, unknown>
+        const existingSectionTitle = (sectionData.title as string) || key
+        return existingSectionTitle.match(/^[IVX]+\./)
+      })
+      .map(([key, section]) => {
+        const sectionData = section as Record<string, unknown>
+        const existingSectionTitle = (sectionData.title as string) || key
+        const romanMatch = existingSectionTitle.match(/^([IVX]+)\./)
+        const position = romanMatch ? parseRomanNumeral(romanMatch[1]) : 999
+        return { key, section: sectionData, position }
+      })
+      .sort((a, b) => a.position - b.position)
+    
+    const maxPosition = numberedSections.length
+    if (newSectionNumber > maxPosition) {
+      const confirmContinue = confirm(`You're moving the section to position ${newSectionNumber}, but there are only ${maxPosition} numbered sections. This will place it at the end. Continue?`)
+      if (!confirmContinue) {
+        return
+      }
+    }
+
+    setHasChanges(true)
+    setSaving(true)
+    try {
+      const existingContent = currentThesisData.content || {}
+      
+      // Create new content object
+      const newContent: Record<string, unknown> = {}
+      
+      // First, add all non-numbered sections (top-level fields)
+      for (const [key, section] of Object.entries(existingContent)) {
+        const sectionData = section as Record<string, unknown>
+        const existingSectionTitle = (sectionData.title as string) || key
+        if (!existingSectionTitle.match(/^[IVX]+\./)) {
+          newContent[key] = sectionData
+        }
+      }
+      
+      // Remove the section to be renumbered from the list
+      const sectionsWithoutRenumbered = numberedSections.filter(s => s.key !== selectedSection)
+      
+      // Insert the renumbered section at the new position
+      sectionsWithoutRenumbered.splice(newSectionNumber - 1, 0, { 
+        key: selectedSection, 
+        section: numberedSections.find(s => s.key === selectedSection)!.section, 
+        position: newSectionNumber 
+      })
+      
+      // Renumber all sections sequentially
+      sectionsWithoutRenumbered.forEach(({ key, section: sectionData }, index) => {
+        const newPosition = index + 1
+        const romanNumeral = toRomanNumeral(newPosition)
+        
+        if (typeof sectionData === 'object' && (sectionData as any).title) {
+          const titleWithoutRoman = (sectionData as any).title.replace(/^[IVX]+\.\s*/, '')
+          newContent[key] = {
+            ...(sectionData as any),
+            title: `${romanNumeral}. ${titleWithoutRoman}`
+          }
+        } else {
+          newContent[key] = sectionData
+        }
+      })
+      
+      // Debug logging
+      console.log('Renumber Section Debug:', {
+        section: selectedSection,
+        oldTitle: currentSectionTitle,
+        newPosition: newSectionNumber,
+        finalSections: sectionsWithoutRenumbered.map(s => ({ key: s.key, position: s.position, title: (s.section as any).title }))
+      })
+
+      // Update the thesis with renumbered content
+      const response = await fetch('/api/thesis', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          thesisId: selectedThesis,
+          section: 'content',
+          content: newContent
+        })
+      })
+
+      if (response.ok) {
+        // Store current selections before refreshing data
+        const currentThesis = selectedThesis
+        const currentSection = selectedSection
+        
+        // Add a small delay to ensure the server has processed the update
+        await new Promise(resolve => setTimeout(resolve, 500))
+        await fetchThesisData()
+        
+        // Restore selections
+        setSelectedThesis(currentThesis)
+        setSelectedSection(currentSection)
+        
+        alert(`Section "${currentSectionTitle}" successfully moved to position ${newSectionNumber}!`)
+      } else {
+        const errorData = await response.json()
+        alert(`Failed to renumber section: ${errorData.error || 'Unknown error'}`)
+      }
+    } catch (error) {
+      console.error('Failed to renumber section:', error)
+      alert('Failed to renumber section. Please check the console for details.')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  // Helper function to parse Roman numeral to number
+  const parseRomanNumeral = (roman: string): number => {
+    const romanValues: { [key: string]: number } = {
+      'I': 1, 'V': 5, 'X': 10, 'L': 50, 'C': 100, 'D': 500, 'M': 1000
+    }
+    
+    let result = 0
+    let prevValue = 0
+    
+    for (let i = roman.length - 1; i >= 0; i--) {
+      const currentValue = romanValues[roman[i]] || 0
+      
+      if (currentValue >= prevValue) {
+        result += currentValue
+      } else {
+        result -= currentValue
+      }
+      
+      prevValue = currentValue
+    }
+    
+    return result
+  }
+
+  // Function to clean up orphaned sections (sections without proper Roman numerals)
+  const handleCleanupOrphanedSections = async () => {
+    if (!selectedThesis) {
+      alert('Please select a thesis first')
+      return
+    }
+
+    const currentThesisData = thesisData[selectedThesis]
+    const existingContent = currentThesisData.content || {}
+    
+    // Find sections that don't have proper Roman numerals
+    const orphanedSections = Object.entries(existingContent)
+      .filter(([key, section]) => {
+        const sectionData = section as Record<string, unknown>
+        const existingSectionTitle = (sectionData.title as string) || key
+        // Check if it's a content section but doesn't have Roman numerals
+        return typeof sectionData === 'object' && 
+               (sectionData as any).content !== undefined && 
+               !existingSectionTitle.match(/^[IVX]+\./) &&
+               !['featured', 'category'].includes(key)
+      })
+      .map(([key, section]) => ({ key, section }))
+
+    if (orphanedSections.length === 0) {
+      alert('No orphaned sections found!')
+      return
+    }
+
+    const confirmCleanup = confirm(
+      `Found ${orphanedSections.length} orphaned section(s) that need cleanup:\n\n` +
+      orphanedSections.map(({ key, section }) => 
+        `• ${key}: ${(section as any).title || 'No title'}`
+      ).join('\n') +
+      '\n\nWould you like to delete these orphaned sections?'
+    )
+
+    if (!confirmCleanup) return
+
+    setHasChanges(true)
+    setSaving(true)
+    try {
+      const newContent: Record<string, unknown> = {}
+      
+      // Keep only properly numbered sections and top-level fields
+      for (const [key, section] of Object.entries(existingContent)) {
+        const sectionData = section as Record<string, unknown>
+        const existingSectionTitle = (sectionData.title as string) || key
+        
+        // Keep top-level fields and properly numbered sections
+        if (!existingSectionTitle.match(/^[IVX]+\./) && 
+            typeof sectionData === 'object' && 
+            (sectionData as any).content !== undefined) {
+          // This is an orphaned section, skip it
+          continue
+        }
+        
+        newContent[key] = sectionData
+      }
+
+      // Update the thesis
+      const response = await fetch('/api/thesis', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          thesisId: selectedThesis,
+          section: 'content',
+          content: newContent
+        })
+      })
+
+      if (response.ok) {
+        await fetchThesisData()
+        alert(`Successfully cleaned up ${orphanedSections.length} orphaned section(s)!`)
+      } else {
+        const errorData = await response.json()
+        alert(`Failed to cleanup: ${errorData.error || 'Unknown error'}`)
+      }
+    } catch (error) {
+      console.error('Failed to cleanup orphaned sections:', error)
+      alert('Failed to cleanup orphaned sections')
+    } finally {
+      setSaving(false)
     }
   }
 
@@ -1668,10 +1951,16 @@ export default function ThesisAdmin() {
                   <Label htmlFor="thesis">Select Thesis</Label>
                   <div className="flex gap-2">
                   <Select value={selectedThesis} onValueChange={(value) => {
-                    setSelectedThesis(value)
+                    // Clear all form fields when switching theses
+                    setSelectedSection('')
+                    setEditContent('')
+                    setEditSectionTitle('')
+                    setEditThesisTitle('')
+                    setHasChanges(false)
                     setFeaturedToggle(null)
                     setLiveToggle(null)
-                    setHasChanges(false)
+                    // Set the new thesis last to avoid UI flicker
+                    setSelectedThesis(value)
                   }}>
                     <SelectTrigger>
                       <SelectValue placeholder="Select a thesis" />
@@ -1701,273 +1990,9 @@ export default function ThesisAdmin() {
                   </div>
                 </div>
 
-                {/* Section Selection */}
-                <div className="space-y-2">
-                  <Label htmlFor="section">Select Section</Label>
-                  <div className="flex gap-2">
-                    <Select 
-                      value={selectedSection} 
-                      onValueChange={(value) => {
-                      setSelectedSection(value)
-                      // Clear content immediately when section changes
-                      setEditContent("")
-                      setEditSectionTitle("")
-                      setEditThesisTitle("")
-                      setHasChanges(false)
-                      // Auto-load content when section changes
-                      setTimeout(() => {
-                        if (currentThesis && value) {
-                          // Get content for the new section directly
-                          let content = ""
-                          if (value === 'title') {
-                            content = currentThesis.title || ""
-                          } else if (value === 'subtitle') {
-                            content = currentThesis.subtitle || ""
-                          } else if (value === 'industry') {
-                            content = currentThesis.industry || ""
-                          } else if (value === 'category') {
-                            content = currentThesis.category || ""
-                          } else if (value === 'publishDate') {
-                            content = currentThesis.publishDate || ""
-                          } else if (value === 'readTime') {
-                            content = currentThesis.readTime || ""
-                          } else if (value === 'tags') {
-                            content = currentThesis.tags?.join(', ') || ""
-                          } else {
-                            const sectionData = currentThesis.content?.[value]
-                            if (!sectionData) {
-                              content = ""
-                            } else if (typeof sectionData === 'string') {
-                              content = sectionData
-                            } else if ((sectionData as any).content) {
-                              content = (sectionData as any).content
-                              // Set the section title for editing if it exists
-                              if ((sectionData as any).title) {
-                                setEditSectionTitle((sectionData as any).title)
-                              }
-                            } else if ((sectionData as any).title && (sectionData as any).content) {
-                              content = (sectionData as any).content
-                              // Set the section title for editing
-                              setEditSectionTitle((sectionData as any).title)
-                            } else if ((sectionData as any).title) {
-                              // Section has a title but no content yet
-                              content = ""
-                              setEditSectionTitle((sectionData as any).title)
-                                                          } else {
-                                // Use the same logic as getCurrentContent for complex sections
-                                if (value === 'structuralObservations' && (sectionData as any).observations) {
-                                  content = (sectionData as any).observations.map((obs: Record<string, unknown>) => 
-                                    `${obs.title}\n\n${obs.content}`
-                                  ).join('\n\n')
-                                } else if (value === 'fundingSignals' && (sectionData as any).intro) {
-                                  let formattedContent = (sectionData as any).intro + '\n\n'
-                                  if ((sectionData as any).wins) {
-                                    formattedContent += 'Wins:\n' + (sectionData as any).wins.map((win: string) => `• ${win}`).join('\n') + '\n\n'
-                                  }
-                                  if ((sectionData as any).failures) {
-                                    formattedContent += 'Failures:\n' + (sectionData as any).failures.map((failure: string) => `• ${failure}`).join('\n') + '\n\n'
-                                  }
-                                  if ((sectionData as any).conclusion) {
-                                    formattedContent += 'Conclusion:\n' + (sectionData as any).conclusion
-                                  }
-                                  content = formattedContent
-                                                              } else if (value === 'workflowFit' && (sectionData as any).intro) {
-                                  let formattedContent = (sectionData as any).intro + '\n\n'
-                                  if ((sectionData as any).table) {
-                                    formattedContent += 'Table:\n' + (sectionData as any).table.map((row: Record<string, unknown>) => 
-                                      `${row.workflow} | ${row.segmentFit} | ${row.productFit} | ${row.reason}`
-                                    ).join('\n') + '\n\n'
-                                  }
-                                  if ((sectionData as any).conclusion) {
-                                    formattedContent += 'Conclusion:\n' + (sectionData as any).conclusion
-                                  }
-                                  content = formattedContent
-                                } else if (value === 'productStrategy' && (sectionData as any).intro) {
-                                  let formattedContent = (sectionData as any).intro + '\n\n'
-                                  if ((sectionData as any).table) {
-                                    formattedContent += 'Table:\n' + (sectionData as any).table.map((row: Record<string, unknown>) => 
-                                      `${row.startingPoint} | ${row.expansionPath} | ${row.conditions}`
-                                    ).join('\n') + '\n\n'
-                                  }
-                                  if ((sectionData as any).whatNotToDo) {
-                                    formattedContent += 'What Not To Do:\n' + (sectionData as any).whatNotToDo.map((item: string) => `• ${item}`).join('\n') + '\n\n'
-                                  }
-                                  content = formattedContent
-                                                              } else if (value === 'segmentStrategy' && (sectionData as any).intro) {
-                                  let formattedContent = (sectionData as any).intro + '\n\n'
-                                  if ((sectionData as any).segments) {
-                                    formattedContent += 'Segments:\n' + (sectionData as any).segments.map((segment: Record<string, unknown>) => 
-                                      `${segment.name}: ${segment.description}`
-                                    ).join('\n\n') + '\n\n'
-                                  }
-                                  content = formattedContent
-                                } else if (value === 'salesRealities' && (sectionData as any).intro) {
-                                  let formattedContent = (sectionData as any).intro + '\n\n'
-                                  if ((sectionData as any).keyPoints) {
-                                    formattedContent += 'Key Points:\n' + (sectionData as any).keyPoints.map((point: string) => `• ${point}`).join('\n') + '\n\n'
-                                  }
-                                  if ((sectionData as any).timelines) {
-                                    formattedContent += 'Timelines:\n' + (sectionData as any).timelines.map((timeline: Record<string, unknown>) => 
-                                      `${timeline.segment}: ${timeline.timeline} - ${timeline.note}`
-                                    ).join('\n') + '\n\n'
-                                  }
-                                  if ((sectionData as any).buyerPersonas) {
-                                    formattedContent += 'Buyer Personas:\n' + (sectionData as any).buyerPersonas.map((persona: Record<string, unknown>) => 
-                                      `${persona.title}: ${persona.description}`
-                                    ).join('\n\n') + '\n\n'
-                                  }
-                                  if ((sectionData as any).conclusion) {
-                                    formattedContent += 'Conclusion:\n' + (sectionData as any).conclusion
-                                  }
-                                  content = formattedContent
-                              } else {
-                                // For new sections or unknown structures, handle simple content structure
-                                if (sectionData && typeof sectionData === 'object') {
-                                  if ((sectionData as any).content !== undefined) {
-                                    content = (sectionData as any).content
-                                  } else if ((sectionData as any).title) {
-                                    // New sections might have title but no content yet
-                                    content = ""
-                                  } else {
-                                    content = ""
-                                  }
-                                } else {
-                                  content = ""
-                                }
-                              }
-                            }
-                          }
-                          
-                          setEditContent(content)
-                        }
-                      }, 100)
-                    }}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a section" />
-                    </SelectTrigger>
-                                          <SelectContent className="z-50">
-                        {/* Top-level fields */}
-                        <SelectItem value="title">Title</SelectItem>
-                        <SelectItem value="subtitle">Subtitle</SelectItem>
-                        <SelectItem value="industry">Industry</SelectItem>
-                        <SelectItem value="publishDate">Publish Date</SelectItem>
-                        <SelectItem value="readTime">Read Time</SelectItem>
-                        <SelectItem value="tags">Tags</SelectItem>
-                        
-                        {/* Content sections from current thesis - sorted by Roman numeral */}
-                        {currentThesis?.content && Object.keys(currentThesis.content)
-                          .filter((sectionKey) => {
-                            // Filter out metadata properties that shouldn't be editable sections
-                            const metadataKeys = ['featured', 'category']
-                            return !metadataKeys.includes(sectionKey)
-                          })
-                          .map((sectionKey) => {
-                            const sectionData = (currentThesis.content as Record<string, unknown>)[sectionKey]
-                            const sectionTitle = typeof sectionData === 'object' && (sectionData as any).title ? (sectionData as any).title : sectionKey
-                            // Extract Roman numeral position for sorting
-                            const romanMatch = sectionTitle.match(/^([IVX]+)\./)
-                            const position = romanMatch ? 
-                              (romanMatch[1] === 'I' ? 1 : 
-                               romanMatch[1] === 'II' ? 2 : 
-                               romanMatch[1] === 'III' ? 3 : 
-                               romanMatch[1] === 'IV' ? 4 : 
-                               romanMatch[1] === 'V' ? 5 : 
-                               romanMatch[1] === 'VI' ? 6 : 
-                               romanMatch[1] === 'VII' ? 7 : 
-                               romanMatch[1] === 'VIII' ? 8 : 
-                               romanMatch[1] === 'IX' ? 9 : 
-                               romanMatch[1] === 'X' ? 10 : 
-                               romanMatch[1] === 'XI' ? 11 : 
-                               romanMatch[1] === 'XII' ? 12 : 
-                               romanMatch[1] === 'XIII' ? 13 : 
-                               romanMatch[1] === 'XIV' ? 14 : 
-                               romanMatch[1] === 'XV' ? 15 : 999) : 999
-                            return { sectionKey, sectionTitle, position }
-                          })
-                          .sort((a, b) => a.position - b.position)
-                          .map(({ sectionKey, sectionTitle }, index, array) => {
-                            const canMoveUp = index > 0
-                            const canMoveDown = index < array.length - 1
-                            
-                            return (
-                              <div key={sectionKey} className="flex items-center justify-between group">
-                                <SelectItem value={sectionKey} className="flex-1">
-                                  {sectionTitle}
-                                </SelectItem>
-                                <div className="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                  <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    onClick={(e) => {
-                                      e.preventDefault()
-                                      e.stopPropagation()
-                                      handleMoveSection('up')
-                                    }}
-                                    disabled={!canMoveUp || saving}
-                                    className="h-6 w-6 p-0"
-                                  >
-                                    <ChevronUp className="w-3 h-3" />
-                                  </Button>
-                                  <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    onClick={(e) => {
-                                      e.preventDefault()
-                                      e.stopPropagation()
-                                      handleMoveSection('down')
-                                    }}
-                                    disabled={!canMoveDown || saving}
-                                    className="h-6 w-6 p-0"
-                                  >
-                                    <ChevronDown className="w-3 h-3" />
-                                  </Button>
-                                  <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    onClick={(e) => {
-                                      e.preventDefault()
-                                      e.stopPropagation()
-                                      setSelectedSectionForPosition(sectionKey)
-                                      setShowPositionDialog(true)
-                                    }}
-                                    disabled={saving}
-                                    className="h-6 w-6 p-0"
-                                    title="Position before another section"
-                                  >
-                                    <span className="text-xs">⚡</span>
-                                  </Button>
-                                </div>
-                              </div>
-                            )
-                          })}
-                    </SelectContent>
-                  </Select>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleDeleteSection}
-                    disabled={saving || !selectedThesis || !selectedSection || selectedSection === 'title' || selectedSection === 'subtitle' || selectedSection === 'industry' || selectedSection === 'publishDate' || selectedSection === 'readTime' || selectedSection === 'tags' || selectedSection === 'contact' || selectedSection === 'sources'}
-                    className="text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </Button>
-                </div>
-                </div>
 
-                {/* Add Section */}
-                <div className="space-y-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleAddSection}
-                    disabled={saving || !selectedThesis}
-                    className="w-full"
-                  >
-                    <Plus className="w-4 h-4 mr-2" />
-                    Add Section
-                  </Button>
-                </div>
+
+
 
                 {/* Thesis Title Editor */}
                 {selectedThesis && (
@@ -2087,6 +2112,137 @@ export default function ThesisAdmin() {
                   </div>
                 )}
 
+                {/* Section Selection */}
+                <div className="space-y-2">
+                  <Label htmlFor="section">Select Section</Label>
+                  <div className="flex gap-2">
+                    <Select 
+                      value={selectedSection} 
+                      onValueChange={(value) => {
+                        setSelectedSection(value)
+                        // Clear content immediately when section changes
+                        setEditContent("")
+                        setEditSectionTitle("")
+                        setEditThesisTitle("")
+                        setHasChanges(false)
+                        // Auto-load content when section changes
+                        setTimeout(() => {
+                          if (currentThesis && value) {
+                            // Get content for the new section directly
+                            let content = ""
+                            if (value === 'title') {
+                              content = currentThesis.title || ""
+                            } else if (value === 'subtitle') {
+                              content = currentThesis.subtitle || ""
+                            } else if (value === 'industry') {
+                              content = currentThesis.industry || ""
+                            } else if (value === 'category') {
+                              content = currentThesis.category || ""
+                            } else if (value === 'publishDate') {
+                              content = currentThesis.publishDate || ""
+                            } else if (value === 'readTime') {
+                              content = currentThesis.readTime || ""
+                            } else if (value === 'tags') {
+                              content = currentThesis.tags?.join(', ') || ""
+                            } else {
+                              const sectionData = currentThesis.content?.[value]
+                              if (!sectionData) {
+                                content = ""
+                              } else if (typeof sectionData === 'string') {
+                                content = sectionData
+                              } else if ((sectionData as any).content) {
+                                content = (sectionData as any).content
+                                // Set the section title for editing if it exists
+                                if ((sectionData as any).title) {
+                                  setEditSectionTitle((sectionData as any).title)
+                                }
+                              } else if ((sectionData as any).title && (sectionData as any).content) {
+                                content = (sectionData as any).content
+                                // Set the section title for editing
+                                setEditSectionTitle((sectionData as any).title)
+                              } else if ((sectionData as any).title) {
+                                // Section has a title but no content yet
+                                content = ""
+                                setEditSectionTitle((sectionData as any).title)
+                              } else {
+                                // For new sections or unknown structures, handle simple content structure
+                                if (sectionData && typeof sectionData === 'object') {
+                                  if ((sectionData as any).content !== undefined) {
+                                    content = (sectionData as any).content
+                                  } else if ((sectionData as any).title) {
+                                    // New sections might have title but no content yet
+                                    content = ""
+                                  } else {
+                                    content = ""
+                                  }
+                                } else {
+                                  content = ""
+                                }
+                              }
+                            }
+                            
+                            setEditContent(content)
+                          }
+                        }, 100)
+                      }}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a section" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {/* Top-level fields */}
+                        <SelectItem value="title">Title</SelectItem>
+                        <SelectItem value="subtitle">Subtitle</SelectItem>
+                        <SelectItem value="industry">Industry</SelectItem>
+                        <SelectItem value="publishDate">Publish Date</SelectItem>
+                        <SelectItem value="readTime">Read Time</SelectItem>
+                        <SelectItem value="tags">Tags</SelectItem>
+                        
+                        {/* Content sections from current thesis - sorted by Roman numeral */}
+                        {currentThesis?.content && Object.keys(currentThesis.content)
+                          .filter((sectionKey) => {
+                            // Filter out metadata properties that shouldn't be editable sections
+                            const metadataKeys = ['featured', 'category']
+                            return !metadataKeys.includes(sectionKey)
+                          })
+                          .map((sectionKey) => {
+                            const sectionData = (currentThesis.content as Record<string, unknown>)[sectionKey]
+                            const sectionTitle = typeof sectionData === 'object' && (sectionData as any).title ? (sectionData as any).title : sectionKey
+                            // Extract Roman numeral position for sorting
+                            const romanMatch = sectionTitle.match(/^([IVX]+)\./)
+                            const position = romanMatch ? parseRomanNumeral(romanMatch[1]) : 999
+                            return { sectionKey, sectionTitle, position }
+                          })
+                          .sort((a, b) => a.position - b.position)
+                          .map(({ sectionKey, sectionTitle }) => (
+                            <SelectItem key={sectionKey} value={sectionKey}>
+                              {sectionTitle}
+                            </SelectItem>
+                          ))}
+                      </SelectContent>
+                    </Select>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={handleRenumberSection}
+                      disabled={saving || !selectedThesis || !selectedSection}
+                      className="text-blue-600 border-blue-200 hover:bg-blue-50 hover:text-blue-700"
+                      title="Renumber Section"
+                    >
+                      <RefreshCw className="w-4 h-4" />
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={handleDeleteSection}
+                      disabled={saving || !selectedThesis || !selectedSection}
+                      className="text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </div>
+
                 {/* Section Title Editor */}
                 {selectedSection && selectedSection !== 'title' && selectedSection !== 'subtitle' && selectedSection !== 'industry' && selectedSection !== 'publishDate' && selectedSection !== 'readTime' && selectedSection !== 'tags' && selectedSection !== 'contact' && selectedSection !== 'sources' && (
                   <div className="space-y-2">
@@ -2094,15 +2250,31 @@ export default function ThesisAdmin() {
                     <Input
                       id="sectionTitle"
                       value={editSectionTitle}
-                                              onChange={(e) => {
-                          setEditSectionTitle(e.target.value)
-                          setHasChanges(true)
-                        }}
+                      onChange={(e) => {
+                        setEditSectionTitle(e.target.value)
+                        setHasChanges(true)
+                      }}
                       placeholder="Enter new section title..."
                       className="w-full"
                     />
                   </div>
                 )}
+
+                {/* Add Section */}
+                <div className="space-y-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleAddSection}
+                    disabled={saving || !selectedThesis}
+                    className="w-full"
+                  >
+                    <Plus className="w-4 h-4 mr-2" />
+                    Add Section
+                  </Button>
+                  
+
+                </div>
 
                 {/* Content Editor */}
                 <div className="space-y-2">

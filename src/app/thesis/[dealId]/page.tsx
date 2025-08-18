@@ -118,6 +118,7 @@ interface ThesisContent {
 interface ThesisData {
   [key: string]: {
     title: string;
+    subtitle?: string;
     industry: string;
     publishDate?: string;
     readTime?: string;
@@ -132,6 +133,7 @@ interface ThesisData {
 const fallbackThesisData: ThesisData = {
   allrx: {
     title: "Digital Health Industry Thesis",
+    subtitle: "A comprehensive analysis of digital health industry trends and opportunities",
     industry: "Pharmacy Operations",
   },
 }
@@ -578,6 +580,9 @@ export default function IndustryThesis() {
       <div className="max-w-4xl mx-auto px-8 py-16">
         <div className="text-center mb-12">
           <h1 className="font-inter text-3xl font-semibold text-gray-900 mb-4 leading-tight">{thesis.title}</h1>
+          {thesis.subtitle && (
+            <p className="font-inter text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">{thesis.subtitle}</p>
+          )}
         </div>
 
         {thesis.content ? (
