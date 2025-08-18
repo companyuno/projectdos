@@ -578,10 +578,10 @@ export default function IndustryThesis() {
       </div>
 
       <div className="max-w-4xl mx-auto px-8 py-16">
-        <div className="text-center mb-12">
+        <div className="text-left mb-12">
           <h1 className="font-inter text-3xl font-semibold text-gray-900 mb-4 leading-tight">{thesis.title}</h1>
           {thesis.subtitle && (
-            <p className="font-inter text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">{thesis.subtitle}</p>
+            <p className="font-inter text-lg text-gray-600 leading-relaxed">{thesis.subtitle}</p>
           )}
         </div>
 

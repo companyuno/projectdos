@@ -636,7 +636,7 @@ export default function IndustryDecomposition() {
         </Button>
       </div>
       <div className="max-w-6xl mx-auto px-8 py-12">
-        <div className="text-center mb-8">
+        <div className="text-left mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">{decomposition.title}</h1>
           {decomposition.subtitle && (
             <p className="text-lg text-gray-600 mt-2">
