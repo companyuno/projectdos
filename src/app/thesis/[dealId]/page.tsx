@@ -221,7 +221,7 @@ export default function IndustryThesis() {
             
             {/* Render table */}
             <div className="my-4 -mx-4 sm:mx-0 overflow-x-auto text-xs sm:text-sm">
-              <div className="min-w-[480px]" dangerouslySetInnerHTML={{ __html: tableHTML }} />
+              <div className="min-w-[560px] md:min-w-[640px]" dangerouslySetInnerHTML={{ __html: tableHTML }} />
             </div>
             
             {/* Render text after table */}
@@ -701,43 +701,42 @@ export default function IndustryThesis() {
           </a>
                 </Button>
         </div>
-        {/* Mobile tools */}
-        <div className="xl:hidden px-4 py-2 border-t border-gray-100 bg-white/95 backdrop-blur">
-          <div className="flex flex-col gap-2">
+
+      </div>
+ 
+      {/* Mobile tools bar under header */}
+      <div className="xl:hidden sticky top-20 z-20 bg-[hsl(212,74%,97%)] border-b border-gray-200">
+        <div className="max-w-4xl mx-auto px-4">
+          <div className="flex items-center justify-between h-10">
             <button
               onClick={()=>setShowSectionsSheet(true)}
-              aria-label="Jump to Section"
-              className="inline-flex items-center justify-center rounded-full border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-[hsl(212,74%,15%)] shadow-sm"
+              className="flex items-center gap-2 text-[hsl(212,74%,15%)] text-sm font-semibold cursor-pointer px-2 py-1.5 rounded hover:bg-[hsl(212,74%,94%)]"
             >
               Jump to Section
             </button>
             <button
               onClick={()=>setShowAuthorsSheet(true)}
-              aria-label="Authors"
-              className="inline-flex items-center justify-center rounded-full border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-[hsl(212,74%,15%)] shadow-sm"
+              className="flex items-center gap-2 text-[hsl(212,74%,15%)] text-sm font-semibold cursor-pointer px-2 py-1.5 rounded hover:bg-[hsl(212,74%,94%)]"
             >
-              Authors
-            </button>
-          </div>
-          <div className="mt-2 space-y-2">
-            {authors.slice(0,3).map((a, idx)=> (
-              <div key={a.id || idx} className="flex items-center gap-2">
-                <img src={(a.photoUrl && a.photoUrl.startsWith('http')) ? a.photoUrl : '/logo.png'} alt={a.name} className="w-7 h-7 rounded-full object-cover ring-1 ring-gray-200" />
-                <div className="min-w-0">
-                  <div className="text-xs font-semibold text-gray-900">{a.name}</div>
-                  <div className="text-[11px] text-gray-600 whitespace-nowrap overflow-hidden text-ellipsis">{a.title}</div>
-                </div>
+              <span>Authors</span>
+              <div className="flex items-center gap-1">
+                {authors.slice(0,3).map((author, idx)=> (
+                  <img
+                    key={author.id || idx}
+                    src={(author.photoUrl && author.photoUrl.startsWith('http')) ? author.photoUrl : '/logo.png'}
+                    alt={author.name}
+                    className="w-7 h-7 rounded-full object-cover ring-1 ring-gray-200"
+                    onError={(e)=> { if (!e.currentTarget.src.endsWith('/logo.png')) e.currentTarget.src = '/logo.png' }}
+                  />
+                ))}
               </div>
-            ))}
-            {authors.length > 3 && (
-              <button onClick={()=>setShowAuthorsSheet(true)} className="text-xs text-[hsl(212,74%,15%)] underline">View all authors</button>
-            )}
+            </button>
           </div>
         </div>
       </div>
- 
+
       {/* Navigation Sidebar - Only on large screens */}
-      <div className="hidden xl:block fixed top-24 left-4 bg-gray-50 shadow-none rounded-md border border-gray-200/80 p-3 z-20" style={{width: '240px'}}>
+      <div className="hidden xl:block fixed top-24 left-4 bg-[hsl(212,74%,97%)] shadow-none rounded-md border border-gray-200/80 p-3 z-20" style={{width: '240px'}}>
         <h3 className="text-sm font-semibold text-[hsl(212,74%,15%)] mb-3 pb-2 border-b border-gray-200">Jump to Section</h3>
         <nav className="space-y-1">
           {thesis.content && Object.keys(thesis.content)
@@ -776,7 +775,7 @@ export default function IndustryThesis() {
       </div>
 
       {/* Authors Sidebar - Only on large screens */}
-      <div className="hidden xl:block fixed top-24 right-4 bg-gray-50 shadow-none rounded-md border border-gray-200/80 p-3 z-20" style={{width: '240px'}}>
+      <div className="hidden xl:block fixed top-24 right-4 bg-[hsl(212,74%,97%)] shadow-none rounded-md border border-gray-200/80 p-3 z-20" style={{width: '240px'}}>
         <h3 className="text-sm font-semibold text-[hsl(212,74%,15%)] mb-3 pb-2 border-b border-gray-200">Authors</h3>
         {authorsLoading ? null : authors && authors.length > 0 ? (
           <div className="divide-y divide-gray-200/70">
@@ -861,28 +860,49 @@ export default function IndustryThesis() {
               </div>
               <div className="divide-y divide-gray-200/70">
                 {authors.map((author, idx)=> (
-                  <div key={author.id || idx} className="flex items-center gap-3 py-3">
-                    <img src={(author.photoUrl && author.photoUrl.startsWith('http')) ? author.photoUrl : '/logo.png'} alt={author.name} className="w-10 h-10 rounded-full object-cover ring-1 ring-gray-200" />
-                    <div className="min-w-0">
-                      <div className="text-sm font-semibold text-gray-900">{author.name}</div>
-                      <div className="text-xs text-gray-600 whitespace-normal">{author.title}</div>
-                      {author.company && author.company.trim() && (
-                        <div className="text-xs text-gray-500 whitespace-normal">{author.company.trim()}</div>
-                      )}
+                  author.linkedin ? (
+                    <a
+                      key={author.id || idx}
+                      href={(author.linkedin && author.linkedin.startsWith('http')) ? author.linkedin : `https://${author.linkedin || ''}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-3 py-3 cursor-pointer hover:bg-gray-50 rounded"
+                    >
+                      <img src={(author.photoUrl && author.photoUrl.startsWith('http')) ? author.photoUrl : '/logo.png'} alt={author.name} className="w-10 h-10 rounded-full object-cover ring-1 ring-gray-200" />
+                      <div className="min-w-0">
+                        <div className="text-sm font-semibold text-gray-900">{author.name}</div>
+                        <div className="text-xs text-gray-600 whitespace-normal">{author.title}</div>
+                        {author.company && author.company.trim() && (
+                          <div className="text-xs text-gray-500 whitespace-normal">{author.company.trim()}</div>
+                        )}
+                      </div>
+                    </a>
+                  ) : (
+                    <div key={author.id || idx} className="flex items-center gap-3 py-3">
+                      <img src={(author.photoUrl && author.photoUrl.startsWith('http')) ? author.photoUrl : '/logo.png'} alt={author.name} className="w-10 h-10 rounded-full object-cover ring-1 ring-gray-200" />
+                      <div className="min-w-0">
+                        <div className="text-sm font-semibold text-gray-900">{author.name}</div>
+                        <div className="text-xs text-gray-600 whitespace-normal">{author.title}</div>
+                        {author.company && author.company.trim() && (
+                          <div className="text-xs text-gray-500 whitespace-normal">{author.company.trim()}</div>
+                        )}
+                      </div>
                     </div>
-                  </div>
+                  )
                 ))}
               </div>
             </div>
           </div>
         )}
 
-        <div className="text-left mb-12">
-          <h1 className="font-inter text-3xl font-semibold text-gray-900 mb-4 leading-tight">{thesis.title}</h1>
+
+        <div className="text-left mb-16">
+          <h1 className="font-inter text-3xl font-semibold text-gray-900 mb-16 leading-tight">{thesis.title}</h1>
           {thesis.subtitle && (
             <p className="font-inter text-lg text-gray-600 leading-relaxed">{thesis.subtitle}</p>
           )}
         </div>
+
 
         {thesis.content ? (
           <div className="space-y-16">

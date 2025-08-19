@@ -1111,40 +1111,40 @@ export default function ThesisAdmin() {
         inserted = true
       } else {
         // Handle existing numbered sections
-        for (const { key, section: sectionData, position } of numberedSections) {
-          if (!inserted && sectionNumber <= position) {
-            // Insert new section here
-            newContent[sectionId] = {
-              title: `${toRomanNumeral(sectionNumber)}. ${sectionTitle}`,
-              content: ""
-            }
-            inserted = true
+      for (const { key, section: sectionData, position } of numberedSections) {
+        if (!inserted && sectionNumber <= position) {
+          // Insert new section here
+          newContent[sectionId] = {
+            title: `${toRomanNumeral(sectionNumber)}. ${sectionTitle}`,
+            content: ""
           }
-          
-          // Calculate new position for existing section
-          let newPosition: number
-          if (inserted && position >= sectionNumber) {
-            // This section comes after the inserted section, shift it down by 1
-            newPosition = position + 1
-          } else {
-            // This section comes before the inserted section, keep its original position
-            newPosition = position
-          }
-          
-          // Update the section title with new Roman numeral
-          const cleanTitle = (sectionData.title as string).replace(/^[IVX]+\.\s*/, '')
-          newContent[key] = {
-            ...sectionData,
-            title: `${toRomanNumeral(newPosition)}. ${cleanTitle}`
-          }
+          inserted = true
         }
         
-        // If not inserted yet, add at the end
-        if (!inserted) {
-          const actualPosition = Math.max(sectionNumber, maxPosition + 1)
-          newContent[sectionId] = {
-            title: `${toRomanNumeral(actualPosition)}. ${sectionTitle}`,
-            content: ""
+        // Calculate new position for existing section
+        let newPosition: number
+        if (inserted && position >= sectionNumber) {
+          // This section comes after the inserted section, shift it down by 1
+          newPosition = position + 1
+        } else {
+          // This section comes before the inserted section, keep its original position
+          newPosition = position
+        }
+        
+        // Update the section title with new Roman numeral
+        const cleanTitle = (sectionData.title as string).replace(/^[IVX]+\.\s*/, '')
+        newContent[key] = {
+          ...sectionData,
+          title: `${toRomanNumeral(newPosition)}. ${cleanTitle}`
+        }
+      }
+      
+      // If not inserted yet, add at the end
+      if (!inserted) {
+        const actualPosition = Math.max(sectionNumber, maxPosition + 1)
+        newContent[sectionId] = {
+          title: `${toRomanNumeral(actualPosition)}. ${sectionTitle}`,
+          content: ""
           }
         }
       }
@@ -2847,7 +2847,7 @@ export default function ThesisAdmin() {
 
             {/* Authors Management (moved to top) */}
             <Card className="hidden">
-              <CardHeader>
+                <CardHeader>
                 <div className="flex items-center justify-between">
                   <CardTitle className="text-lg">Authors</CardTitle>
                   <Button
@@ -2860,7 +2860,7 @@ export default function ThesisAdmin() {
                     {showAuthorForm ? 'Hide' : 'Add'}
                   </Button>
                 </div>
-              </CardHeader>
+                </CardHeader>
               {showAuthorForm && (
                 <CardContent className="space-y-4 pt-0">
                   <div className="space-y-3">
@@ -2954,11 +2954,11 @@ export default function ThesisAdmin() {
                           </div>
                         </div>
                         <div className="flex items-center space-x-1">
-                          <Button
-                            variant="outline"
+                  <Button
+                    variant="outline"
                             size="sm"
                             className="h-7 w-7 p-0"
-                            onClick={() => {
+                    onClick={() => {
                               setEditingAuthorId(a.id || null)
                               setAuthorName(a.name)
                               setAuthorTitle(a.title)
@@ -3067,7 +3067,7 @@ export default function ThesisAdmin() {
                             }}
                           >
                             Unassign
-                          </Button>
+                  </Button>
                         </div>
                       ))
                     )}
@@ -3084,8 +3084,8 @@ export default function ThesisAdmin() {
                     Assign Author
                   </Button>
                 </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
 
 
 
