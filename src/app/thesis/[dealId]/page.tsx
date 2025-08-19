@@ -719,15 +719,18 @@ export default function IndustryThesis() {
               Authors
             </button>
           </div>
-          <div className="mt-2 flex items-center gap-3">
-            {authors.slice(0,2).map((a, idx)=> (
-              <span key={a.id || idx} className="inline-flex items-center gap-1 text-xs font-semibold text-gray-800">
-                <img src={(a.photoUrl && a.photoUrl.startsWith('http')) ? a.photoUrl : '/logo.png'} alt={a.name} className="w-6 h-6 rounded-full object-cover ring-1 ring-gray-200" />
-                {a.name.split(' ')[0]}
-              </span>
+          <div className="mt-2 space-y-2">
+            {authors.slice(0,3).map((a, idx)=> (
+              <div key={a.id || idx} className="flex items-center gap-2">
+                <img src={(a.photoUrl && a.photoUrl.startsWith('http')) ? a.photoUrl : '/logo.png'} alt={a.name} className="w-7 h-7 rounded-full object-cover ring-1 ring-gray-200" />
+                <div className="min-w-0">
+                  <div className="text-xs font-semibold text-gray-900">{a.name}</div>
+                  <div className="text-[11px] text-gray-600 whitespace-nowrap overflow-hidden text-ellipsis">{a.title}</div>
+                </div>
+              </div>
             ))}
-            {authors.length > 2 && (
-              <button onClick={()=>setShowAuthorsSheet(true)} className="text-xs text-[hsl(212,74%,15%)] underline">+{authors.length - 2} more</button>
+            {authors.length > 3 && (
+              <button onClick={()=>setShowAuthorsSheet(true)} className="text-xs text-[hsl(212,74%,15%)] underline">View all authors</button>
             )}
           </div>
         </div>
