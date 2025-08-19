@@ -38,15 +38,18 @@ export async function GET(request: NextRequest) {
     if (error) throw error
 
     // Transform the data to match the expected format
-    const authors = thesisAuthors?.map((ta: any) => ({
+    type AuthorRow = { id: string; name: string; title: string; company: string; email: string; linkedin: string | null; photo_url: string | null }
+    type ThesisAuthorRow = { author_id: string; authors: AuthorRow }
+    const rows = (thesisAuthors ?? []) as unknown as ThesisAuthorRow[]
+    const authors = rows.map((ta) => ({
       id: ta.authors.id,
       name: ta.authors.name,
       title: ta.authors.title,
       company: ta.authors.company,
       email: ta.authors.email,
       linkedin: ta.authors.linkedin,
-      photoUrl: ta.authors.photo_url
-    })) || []
+      photoUrl: ta.authors.photo_url ?? null
+    }))
 
     return NextResponse.json(authors)
   } catch (error) {

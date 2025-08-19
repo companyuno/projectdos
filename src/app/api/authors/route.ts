@@ -22,10 +22,11 @@ export async function GET() {
     if (error) throw error
 
     return NextResponse.json(authors)
-  } catch (error: any) {
-    console.error('Error fetching authors:', error)
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : 'Failed to fetch authors'
+    console.error('Error fetching authors:', err)
     return NextResponse.json(
-      { error: error?.message || 'Failed to fetch authors' },
+      { error: message },
       { status: 500 }
     )
   }
@@ -61,10 +62,11 @@ export async function POST(request: NextRequest) {
     if (error) throw error
 
     return NextResponse.json(author)
-  } catch (error: any) {
-    console.error('Error creating author:', error)
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : 'Failed to create author'
+    console.error('Error creating author:', err)
     return NextResponse.json(
-      { error: error?.message || 'Failed to create author' },
+      { error: message },
       { status: 500 }
     )
   }
@@ -102,10 +104,11 @@ export async function PUT(request: NextRequest) {
     if (error) throw error
 
     return NextResponse.json(author)
-  } catch (error: any) {
-    console.error('Error updating author:', error)
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : 'Failed to update author'
+    console.error('Error updating author:', err)
     return NextResponse.json(
-      { error: error?.message || 'Failed to update author' },
+      { error: message },
       { status: 500 }
     )
   }
@@ -133,10 +136,11 @@ export async function DELETE(request: NextRequest) {
     if (error) throw error
 
     return NextResponse.json({ success: true })
-  } catch (error: any) {
-    console.error('Error deleting author:', error)
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : 'Failed to delete author'
+    console.error('Error deleting author:', err)
     return NextResponse.json(
-      { error: error?.message || 'Failed to delete author' },
+      { error: message },
       { status: 500 }
     )
   }
