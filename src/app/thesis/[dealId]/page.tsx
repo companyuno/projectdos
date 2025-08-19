@@ -736,7 +736,7 @@ export default function IndustryThesis() {
       </div>
 
       {/* Navigation Sidebar - Only on large screens */}
-      <div className="hidden xl:block fixed top-24 left-4 bg-[hsl(212,74%,97%)] shadow-none rounded-md border border-gray-200/80 p-3 z-20" style={{width: '240px'}}>
+      <div className="hidden xl:block fixed top-24 left-4 bg-gray-50 shadow-none rounded-md border border-gray-200/80 p-3 z-20" style={{width: '240px'}}>
         <h3 className="text-sm font-semibold text-[hsl(212,74%,15%)] mb-3 pb-2 border-b border-gray-200">Jump to Section</h3>
         <nav className="space-y-1">
           {thesis.content && Object.keys(thesis.content)
@@ -775,7 +775,7 @@ export default function IndustryThesis() {
       </div>
 
       {/* Authors Sidebar - Only on large screens */}
-      <div className="hidden xl:block fixed top-24 right-4 bg-[hsl(212,74%,97%)] shadow-none rounded-md border border-gray-200/80 p-3 z-20" style={{width: '240px'}}>
+      <div className="hidden xl:block fixed top-24 right-4 bg-gray-50 shadow-none rounded-md border border-gray-200/80 p-3 z-20" style={{width: '240px'}}>
         <h3 className="text-sm font-semibold text-[hsl(212,74%,15%)] mb-3 pb-2 border-b border-gray-200">Authors</h3>
         {authorsLoading ? null : authors && authors.length > 0 ? (
           <div className="divide-y divide-gray-200/70">
