@@ -642,7 +642,7 @@ export default function ResearchHub() {
               router.push('/submit')
               setShowSubmitTooltip(false)
             }}
-            className="w-12 h-12 rounded-full bg-[hsl(212,74%,15%)] hover:bg-[hsl(212,74%,25%)] text-white shadow-lg"
+            className="w-12 h-12 rounded-full bg-[hsl(212,74%,15%)] hover:bg-[hsl(212,74%,25%)] text-white shadow-lg px-0"
             size="icon"
           >
             <Rocket className="w-5 h-5" />

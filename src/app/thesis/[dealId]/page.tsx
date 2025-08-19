@@ -702,28 +702,33 @@ export default function IndustryThesis() {
                 </Button>
         </div>
         {/* Mobile tools */}
-        <div className="xl:hidden flex items-center justify-between px-6 py-2 border-t border-gray-100">
-          <button
-            onClick={()=>setShowSectionsSheet(true)}
-            aria-label="Jump to Section"
-            className="inline-flex items-center gap-1 rounded-full border border-gray-300 bg-white px-3 py-1 text-xs font-medium text-[hsl(212,74%,15%)] shadow-sm"
-          >
-            Jump to Section
-          </button>
-          <div className="flex items-center gap-2">
+        <div className="xl:hidden px-4 py-2 border-t border-gray-100 bg-white/95 backdrop-blur">
+          <div className="grid grid-cols-2 gap-2">
+            <button
+              onClick={()=>setShowSectionsSheet(true)}
+              aria-label="Jump to Section"
+              className="inline-flex items-center justify-center rounded-full border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-[hsl(212,74%,15%)] shadow-sm"
+            >
+              Jump to Section
+            </button>
+            <button
+              onClick={()=>setShowAuthorsSheet(true)}
+              aria-label="Authors"
+              className="inline-flex items-center justify-center rounded-full border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-[hsl(212,74%,15%)] shadow-sm"
+            >
+              Authors
+            </button>
+          </div>
+          <div className="mt-2 flex items-center gap-2">
             {authors.slice(0,2).map((a, idx)=> (
               <span key={a.id || idx} className="inline-flex items-center gap-1 text-xs text-gray-700">
                 <img src={(a.photoUrl && a.photoUrl.startsWith('http')) ? a.photoUrl : '/logo.png'} alt={a.name} className="w-5 h-5 rounded-full object-cover ring-1 ring-gray-200" />
                 {a.name.split(' ')[0]}
               </span>
             ))}
-            <button
-              onClick={()=>setShowAuthorsSheet(true)}
-              aria-label="Authors"
-              className="inline-flex items-center gap-1 rounded-full border border-gray-300 bg-white px-3 py-1 text-xs font-medium text-[hsl(212,74%,15%)] shadow-sm"
-            >
-              Authors
-            </button>
+            {authors.length > 2 && (
+              <button onClick={()=>setShowAuthorsSheet(true)} className="text-xs text-[hsl(212,74%,15%)] underline">+{authors.length - 2} more</button>
+            )}
           </div>
         </div>
       </div>
