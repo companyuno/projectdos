@@ -92,13 +92,13 @@ const deals: Deal[] = [
 const getStatusColor = (status: string) => {
   switch (status) {
     case "closed":
-      return "bg-green-100 text-green-800 border-green-200"
+      return "bg-[#f8fafc] text-[#032a52] border-[#e2e8f0]"
     case "open":
-      return "bg-[hsl(212,74%,85%)] text-[hsl(212,74%,30%)] border-[hsl(212,74%,70%)]"
+      return "bg-[#f8fafc] text-[#032a52] border-[#e2e8f0]"
     case "upcoming":
-      return "bg-orange-100 text-orange-800 border-orange-200"
+      return "bg-[#f8fafc] text-[#032a52] border-[#e2e8f0]"
     default:
-      return "bg-gray-100 text-gray-800 border-gray-200"
+      return "bg-[#f8fafc] text-[#032a52] border-[#e2e8f0]"
   }
 }
 
@@ -196,8 +196,8 @@ export default function DealsShowcase() {
       {/* Open Deals */}
       <section>
         <div className="flex items-center gap-2 sm:gap-3 mb-6 sm:mb-8">
-          <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 bg-[hsl(212,74%,30%)] rounded-full"></div>
-          <h2 className="font-bold text-xl sm:text-2xl text-[#0a2e4e]">Open Deals ({openDeals.length})</h2>
+          <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 bg-[#6ea9f4] rounded-full"></div>
+          <h2 className="font-bold text-xl sm:text-2xl text-[#032a52]">Open Deals ({openDeals.length})</h2>
         </div>
           <div className="grid gap-4 sm:gap-6 md:grid-cols-2 lg:grid-cols-3">
             {openDeals.map((deal) => (
@@ -209,8 +209,8 @@ export default function DealsShowcase() {
               {/* Upcoming Deals */}
       <section>
         <div className="flex items-center gap-2 sm:gap-3 mb-6 sm:mb-8">
-          <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 bg-orange-500 rounded-full"></div>
-          <h2 className="font-bold text-xl sm:text-2xl text-[#0a2e4e]">Upcoming Deals ({upcomingDeals.length})</h2>
+          <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 bg-[#6ea9f4] rounded-full"></div>
+          <h2 className="font-bold text-xl sm:text-2xl text-[#032a52]">Upcoming Deals ({upcomingDeals.length})</h2>
         </div>
           <div className="grid gap-4 sm:gap-6 md:grid-cols-2 lg:grid-cols-3">
             {upcomingDeals.map((deal) => (
@@ -222,8 +222,8 @@ export default function DealsShowcase() {
               {/* Closed Deals */}
       <section>
         <div className="flex items-center gap-2 sm:gap-3 mb-6 sm:mb-8">
-          <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 bg-green-500 rounded-full"></div>
-          <h2 className="font-bold text-xl sm:text-2xl text-[#0a2e4e]">Closed Deals ({closedDeals.length})</h2>
+          <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 bg-[#6ea9f4] rounded-full"></div>
+          <h2 className="font-bold text-xl sm:text-2xl text-[#032a52]">Closed Deals ({closedDeals.length})</h2>
         </div>
           <div className="grid gap-4 sm:gap-6 md:grid-cols-2 lg:grid-cols-3">
             {closedDeals.map((deal) => (

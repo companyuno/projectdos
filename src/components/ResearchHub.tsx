@@ -8,7 +8,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
-import { FileText, Building2, Folder, FolderOpen, ChevronRight, ChevronDown, Lightbulb, Star, Calendar, BookOpen, ExternalLink, Rocket } from "lucide-react"
+import { FileText, Building2, Folder, FolderOpen, ChevronRight, ChevronDown, Lightbulb, Star, Calendar, BookOpen, ExternalLink, Rocket, GraduationCap, Search, BarChart3 } from "lucide-react"
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Badge } from "@/components/ui/badge"
@@ -39,35 +39,35 @@ const categoryConfig: Record<string, {
 }> = {
   "build-process": {
     title: "InVitro Builder",
-    icon: Building2,
-    color: "bg-blue-50 border-blue-200",
-    iconColor: "text-blue-700",
-    borderColor: "border-l-blue-300",
-    bgColor: "bg-blue-50",
+    icon: Rocket,
+    color: "bg-[#f8fafc] border-[#e2e8f0]",
+    iconColor: "text-[#032a52]",
+    borderColor: "border-l-[#6ea9f4]",
+    bgColor: "bg-[#f8fafc]",
   },
   "whitepapers": {
     title: "White Papers",
-    icon: FileText,
-    color: "bg-teal-50 border-teal-200",
-    iconColor: "text-teal-700",
-    borderColor: "border-l-teal-300",
-    bgColor: "bg-teal-50",
+    icon: BarChart3,
+    color: "bg-[#f8fafc] border-[#e2e8f0]",
+    iconColor: "text-[#032a52]",
+    borderColor: "border-l-[#6ea9f4]",
+    bgColor: "bg-[#f8fafc]",
   },
   "industry-theses": {
     title: "Industry Theses",
-    icon: Folder,
-    color: "bg-indigo-50 border-indigo-200",
-    iconColor: "text-indigo-700",
-    borderColor: "border-l-indigo-300",
-    bgColor: "bg-indigo-50",
+    icon: GraduationCap,
+    color: "bg-[#f8fafc] border-[#e2e8f0]",
+    iconColor: "text-[#032a52]",
+    borderColor: "border-l-[#6ea9f4]",
+    bgColor: "bg-[#f8fafc]",
   },
   "industry-decompositions": {
     title: "Industry Decompositions",
-    icon: Folder,
-    color: "bg-slate-50 border-slate-200",
-    iconColor: "text-slate-700",
-    borderColor: "border-l-slate-300",
-    bgColor: "bg-slate-50",
+    icon: Search,
+    color: "bg-[#f8fafc] border-[#e2e8f0]",
+    iconColor: "text-[#032a52]",
+    borderColor: "border-l-[#6ea9f4]",
+    bgColor: "bg-[#f8fafc]",
   },
 }
 
