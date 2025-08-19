@@ -129,6 +129,17 @@ interface ThesisData {
   };
 }
 
+// New: Author interface for right sidebar
+interface Author {
+  id?: string;
+  name: string;
+  title: string;
+  company: string;
+  email: string;
+  linkedin?: string;
+  photoUrl?: string;
+}
+
 // Fallback data
 const fallbackThesisData: ThesisData = {
   allrx: {
@@ -566,6 +577,10 @@ export default function IndustryThesis() {
   const [thesisData, setThesisData] = useState<ThesisData>(fallbackThesisData)
   const [loading, setLoading] = useState(true)
 
+  // New: authors state
+  const [authors, setAuthors] = useState<Author[]>([])
+  const [authorsLoading, setAuthorsLoading] = useState(false)
+
   // PDF mapping function
   const getPdfLink = (thesisId: string) => {
     const pdfMap: { [key: string]: string } = {
@@ -606,6 +621,30 @@ export default function IndustryThesis() {
   const decodedDealId = decodeURIComponent(dealId)
   const thesis = thesisData[decodedDealId] || thesisData.allrx
 
+  // New: fetch authors for this thesis
+  useEffect(() => {
+    const fetchAuthors = async () => {
+      if (!decodedDealId) return
+      setAuthorsLoading(true)
+      try {
+        const res = await fetch(`/api/thesis-authors?thesisId=${encodeURIComponent(decodedDealId)}`)
+        if (res.ok) {
+          const data = await res.json()
+          setAuthors(Array.isArray(data) ? data : [])
+        } else {
+          console.error('Failed to fetch thesis authors:', await res.text())
+          setAuthors([])
+        }
+      } catch (e) {
+        console.error('Failed to fetch thesis authors:', e)
+        setAuthors([])
+      } finally {
+        setAuthorsLoading(false)
+      }
+    }
+    fetchAuthors()
+  }, [decodedDealId])
+
   if (loading) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
@@ -623,7 +662,7 @@ export default function IndustryThesis() {
         <Button
           variant="ghost"
           size="icon"
-          onClick={() => router.back()}
+          onClick={() => router.push('/')}
           className="rounded-full p-3 text-[hsl(212,74%,15%)] hover:bg-[hsl(212,74%,97%)]"
           aria-label="Back"
         >
@@ -656,6 +695,93 @@ export default function IndustryThesis() {
             <Download className="w-7 h-7" />
           </a>
         </Button>
+      </div>
+
+      {/* Navigation Sidebar - Only on large screens */}
+      <div className="hidden xl:block fixed top-24 left-4 bg-gray-50 shadow-none rounded-md border border-gray-200/80 p-3 z-20" style={{width: '240px'}}>
+        <h3 className="text-sm font-semibold text-[hsl(212,74%,15%)] mb-3 pb-2 border-b border-gray-200">Jump to Section</h3>
+        <nav className="space-y-1">
+          {thesis.content && Object.keys(thesis.content)
+            .filter((sectionKey) => {
+              const metadataKeys = ['featured', 'category']
+              return !metadataKeys.includes(sectionKey)
+            })
+            .map((sectionKey) => {
+              const sectionData = (thesis.content as Record<string, unknown>)[sectionKey]
+              const sectionTitle = typeof sectionData === 'object' && (sectionData as any).title ? (sectionData as any).title : sectionKey
+              const romanMatch = sectionTitle.match(/^([IVX]+)\./)
+              const position = romanMatch ? 
+                (romanMatch[1] === 'I' ? 1 : 
+                 romanMatch[1] === 'II' ? 2 : 
+                 romanMatch[1] === 'III' ? 3 : 
+                 romanMatch[1] === 'IV' ? 4 : 
+                 romanMatch[1] === 'V' ? 5 : 
+                 romanMatch[1] === 'VI' ? 6 : 
+                 romanMatch[1] === 'VII' ? 7 : 
+                 romanMatch[1] === 'VIII' ? 8 : 
+                 romanMatch[1] === 'IX' ? 9 : 
+                 romanMatch[1] === 'X' ? 10 : 999) : 999
+              return { sectionKey, sectionTitle, position }
+            })
+            .sort((a, b) => a.position - b.position)
+            .map(({ sectionKey, sectionTitle }) => (
+              <a
+                key={sectionKey}
+                href={`#${sectionKey}`}
+                className="block text-sm text-gray-700 hover:text-[hsl(212,74%,15%)] hover:bg-[hsl(212,74%,97%)] px-3 py-2 rounded-md transition-colors duration-200 border-l-2 border-transparent hover:border-[hsl(212,74%,15%)]"
+              >
+                {sectionTitle}
+              </a>
+            ))}
+        </nav>
+      </div>
+
+      {/* Authors Sidebar - Only on large screens */}
+      <div className="hidden xl:block fixed top-24 right-4 bg-gray-50 shadow-none rounded-md border border-gray-200/80 p-3 z-20" style={{width: '240px'}}>
+        <h3 className="text-sm font-semibold text-[hsl(212,74%,15%)] mb-3 pb-2 border-b border-gray-200">Authors</h3>
+        {authorsLoading ? (
+          <div className="text-sm text-gray-500">Loading...</div>
+        ) : authors && authors.length > 0 ? (
+          <div className="divide-y divide-gray-200/70">
+            {authors.map((author, idx) => (
+              author.linkedin ? (
+                <a key={author.id || idx} href={(author.linkedin.startsWith('http') ? author.linkedin : `https://${author.linkedin}`)} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 py-3 cursor-pointer hover:bg-white/60 rounded px-2">
+                  <img
+                  src={author.photoUrl || "/logo.png"}
+                  alt={author.name}
+                  className="w-12 h-12 rounded-full object-cover ring-1 ring-gray-200"
+                  onError={(e) => { e.currentTarget.style.display = 'none' }}
+                />
+                                  <div className="min-w-0">
+                    <div className="text-sm font-semibold text-gray-900">{author.name}</div>
+                    <div className="text-xs text-gray-600 whitespace-normal">{author.title}</div>
+                    {author.company && author.company.trim() && (
+                      <div className="text-xs text-gray-500 whitespace-normal">{author.company.trim()}</div>
+                    )}
+                  </div>
+                </a>
+              ) : (
+                <div key={author.id || idx} className="flex items-center gap-3 py-3">
+                  <img
+                    src={author.photoUrl || "/logo.png"}
+                    alt={author.name}
+                    className="w-12 h-12 rounded-full object-cover ring-1 ring-gray-200"
+                    onError={(e) => { e.currentTarget.style.display = 'none' }}
+                  />
+                  <div className="min-w-0">
+                    <div className="text-sm font-semibold text-gray-900">{author.name}</div>
+                    <div className="text-xs text-gray-600 whitespace-normal">{author.title}</div>
+                    {author.company && author.company.trim() && (
+                      <div className="text-xs text-gray-500 whitespace-normal">{author.company.trim()}</div>
+                    )}
+                  </div>
+                </div>
+              )
+              ))}
+          </div>
+        ) : (
+          <div className="text-sm text-gray-500">No authors specified.</div>
+        )}
       </div>
 
       <div className="max-w-4xl mx-auto px-8 py-16">
@@ -704,7 +830,7 @@ export default function IndustryThesis() {
                   // Handle different section types
                   if (sectionKey === 'structuralObservations') {
                     return (
-                      <section key={sectionKey}>
+                      <section key={sectionKey} id={sectionKey}>
                         <h2 className="text-2xl font-semibold text-muted-foreground mb-6 border-b-2 border-accent pb-2">
                           {(sectionData as any).title}
                         </h2>
@@ -1008,7 +1134,7 @@ export default function IndustryThesis() {
                     // This is a catch-all for sections that don't match specific patterns
                     if (sectionData && typeof sectionData === 'object' && (sectionData as any).content) {
                       return (
-                        <section key={sectionKey}>
+                        <section key={sectionKey} id={sectionKey}>
                           <h2 className="text-2xl font-semibold text-muted-foreground mb-6 border-b-2 border-accent pb-2">
                             {(sectionData as any).title || sectionKey}
                           </h2>

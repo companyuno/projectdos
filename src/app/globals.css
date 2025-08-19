@@ -132,6 +132,11 @@ body {
   color: #374151;
 }
 
+/* Fix anchor link positioning for sticky header */
+section {
+  scroll-margin-top: 100px;
+}
+
 .callout-block * {
   font-weight: 500 !important;
 }

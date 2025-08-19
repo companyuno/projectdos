@@ -2,7 +2,7 @@
 // @ts-nocheck
 /* eslint-disable */
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -11,6 +11,16 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { ArrowLeft, Save, RefreshCw, Eye, Edit3, Plus, Trash2, Upload, Bold, Italic, Underline, List, Indent, AlignLeft, AlignCenter, AlignRight, Table, MessageSquare, ChevronUp, ChevronDown } from "lucide-react"
 import { useRouter } from "next/navigation"
+
+interface Author {
+  id?: string
+  name: string
+  title: string
+  company: string
+  email: string
+  linkedin?: string
+  photoUrl?: string
+}
 
 interface ThesisData {
   [key: string]: {
@@ -224,6 +234,23 @@ export default function ThesisAdmin() {
   const [tableStructure, setTableStructure] = useState({ columns: 4, rows: 2 })
   const [useStructure, setUseStructure] = useState(false)
 
+  // Simple Authors Management state
+  const [showAuthorForm, setShowAuthorForm] = useState(false)
+  const [authorName, setAuthorName] = useState("")
+  const [authorTitle, setAuthorTitle] = useState("")
+  const [authorCompany, setAuthorCompany] = useState("")
+  const [authorEmail, setAuthorEmail] = useState("")
+  const [authorLinkedIn, setAuthorLinkedIn] = useState("")
+  const [authorPhoto, setAuthorPhoto] = useState("")
+  const fileInputRef = useRef<HTMLInputElement | null>(null)
+  const [authorsList, setAuthorsList] = useState<Author[]>([])
+  const [editingAuthorId, setEditingAuthorId] = useState<string | null>(null)
+  const [showAuthorsPanel, setShowAuthorsPanel] = useState(false)
+  const [showAssignForm, setShowAssignForm] = useState(false)
+  const [selectedThesisForAuthor, setSelectedThesisForAuthor] = useState("")
+  const [selectedAuthorForThesis, setSelectedAuthorForThesis] = useState("")
+  const [assignedAuthors, setAssignedAuthors] = useState<Author[]>([])
+
   const generateTablePreview = () => {
     if (useStructure) {
       // Generate table based on structure
@@ -406,6 +433,29 @@ export default function ThesisAdmin() {
 
   useEffect(() => {
     fetchThesisData()
+  }, [])
+
+  // Load assigned authors when thesis is selected
+  useEffect(() => {
+    const loadAssigned = async () => {
+      try {
+        if (!selectedThesis) return
+        const res = await fetch(`/api/thesis-authors?thesisId=${encodeURIComponent(selectedThesis)}`)
+        if (res.ok) {
+          const data = await res.json()
+          setAssignedAuthors(Array.isArray(data) ? data : [])
+        } else {
+          setAssignedAuthors([])
+        }
+      } catch (e) {
+        setAssignedAuthors([])
+      }
+    }
+    loadAssigned()
+  }, [selectedThesis])
+
+  useEffect(() => {
+    fetchAuthors()
   }, [])
 
   const fetchThesisData = async () => {
@@ -593,6 +643,114 @@ export default function ThesisAdmin() {
       alert('Failed to save content')
     } finally {
       setSaving(false)
+    }
+  }
+
+  const handleAddAuthor = async () => {
+    if (!authorName || !authorTitle || !authorCompany || !authorEmail) {
+      alert('Please fill in all required fields')
+      return
+    }
+
+    try {
+      const method = editingAuthorId ? 'PUT' : 'POST'
+      const payload: any = {
+        name: authorName,
+        title: authorTitle,
+        company: authorCompany,
+        email: authorEmail,
+        linkedin: authorLinkedIn,
+        photoUrl: authorPhoto
+      }
+      if (editingAuthorId) payload.id = editingAuthorId
+
+      const response = await fetch('/api/authors', {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload)
+      })
+
+      if (!response.ok) {
+        const error = await response.json()
+        throw new Error(error.error || (editingAuthorId ? 'Failed to update author' : 'Failed to create author'))
+      }
+
+      // Refresh list to stay in sync
+      await fetchAuthors()
+      
+      // Clear form
+      setAuthorName("")
+      setAuthorTitle("")
+      setAuthorCompany("")
+      setAuthorEmail("")
+      setAuthorLinkedIn("")
+      setAuthorPhoto("")
+      setEditingAuthorId(null)
+      setShowAuthorForm(false)
+      
+      alert(editingAuthorId ? 'Author updated successfully!' : 'Author added successfully!')
+    } catch (error) {
+      console.error(editingAuthorId ? 'Error updating author:' : 'Error creating author:', error)
+      alert(`${editingAuthorId ? 'Failed to update author' : 'Failed to create author'}: ${error instanceof Error ? error.message : 'Unknown error'}`)
+    }
+  }
+
+  const handleAssignAuthorToThesis = async () => {
+    if (!selectedThesisForAuthor || !selectedAuthorForThesis) {
+      alert('Please select both a thesis and an author')
+      return
+    }
+
+    const authorIndex = parseInt(selectedAuthorForThesis)
+    const author = authorsList[authorIndex]
+    
+    if (!author) {
+      alert('Author not found')
+      return
+    }
+
+    try {
+      const response = await fetch('/api/thesis-authors', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          thesisId: selectedThesisForAuthor,
+          authorId: author.id
+        })
+      })
+
+      if (!response.ok) {
+        const error = await response.json()
+        throw new Error(error.error || 'Failed to assign author')
+      }
+
+      alert(`Author ${author.name} assigned to thesis ${selectedThesisForAuthor} successfully!`)
+      
+      // Clear form
+      setSelectedThesisForAuthor("")
+      setSelectedAuthorForThesis("")
+      setShowAssignForm(false)
+    } catch (error) {
+      console.error('Error assigning author:', error)
+      alert(`Failed to assign author: ${error instanceof Error ? error.message : 'Unknown error'}`)
+    }
+  }
+
+  const fetchAuthors = async () => {
+    try {
+      const response = await fetch('/api/authors')
+      if (!response.ok) {
+        throw new Error('Failed to fetch authors')
+      }
+      const authors = await response.json()
+      setAuthorsList(authors)
+    } catch (error) {
+      console.error('Error fetching authors:', error)
+      // Don't show alert for fetch errors on load
     }
   }
 
@@ -1937,12 +2095,170 @@ export default function ThesisAdmin() {
           )}
         </Card>
 
+        {/* Authors Management (inline below Create New Thesis) */}
+        <Card className="mb-6">
+          <CardHeader className="pb-3">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-lg">Authors</CardTitle>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => { if (showAuthorsPanel) setShowAuthorForm(false); setShowAuthorsPanel(!showAuthorsPanel) }}
+                  className="flex items-center gap-2"
+                >
+                  {showAuthorsPanel ? 'Close' : 'Manage Authors'}
+                </Button>
+              </div>
+            </div>
+          </CardHeader>
+          {showAuthorsPanel && showAuthorForm && (
+            <CardContent className="space-y-4 pt-0">
+              <div className="space-y-3">
+                <div className="space-y-1">
+                  <Label htmlFor="authorName" className="text-sm">Name *</Label>
+                  <Input id="authorName" value={authorName} onChange={(e)=>setAuthorName(e.target.value)} placeholder="Full name" size={1} />
+                </div>
+                <div className="space-y-1">
+                  <Label htmlFor="authorTitle" className="text-sm">Title *</Label>
+                  <Input id="authorTitle" value={authorTitle} onChange={(e)=>setAuthorTitle(e.target.value)} placeholder="Job title" size={1} />
+                </div>
+                <div className="space-y-1">
+                  <Label htmlFor="authorCompany" className="text-sm">Company *</Label>
+                  <Input id="authorCompany" value={authorCompany} onChange={(e)=>setAuthorCompany(e.target.value)} placeholder="Company name" size={1} />
+                </div>
+                <div className="space-y-1">
+                  <Label htmlFor="authorEmail" className="text-sm">Email *</Label>
+                  <Input id="authorEmail" type="email" value={authorEmail} onChange={(e)=>setAuthorEmail(e.target.value)} placeholder="email@company.com" size={1} />
+                </div>
+                <div className="space-y-1">
+                  <Label htmlFor="authorLinkedIn" className="text-sm">LinkedIn</Label>
+                  <Input id="authorLinkedIn" value={authorLinkedIn} onChange={(e)=>setAuthorLinkedIn(e.target.value)} placeholder="LinkedIn URL" size={1} />
+                </div>
+                <div className="space-y-1">
+                  <Label htmlFor="authorPhoto" className="text-sm">Photo</Label>
+                  <div className="flex items-center gap-2">
+                    <Input id="authorPhoto" value={authorPhoto} onChange={(e)=>setAuthorPhoto(e.target.value)} placeholder="Photo URL" size={1} />
+                    <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={async (e)=>{
+                      const file = e.target.files?.[0]
+                      if (!file) return
+                      try {
+                        const form = new FormData()
+                        form.append('file', file)
+                        form.append('thesisId', 'authors')
+                        const res = await fetch('/api/upload', { method: 'POST', body: form })
+                        const data = await res.json()
+                        if (!res.ok || !data?.url) throw new Error(data?.error || 'Upload failed')
+                        setAuthorPhoto(data.url)
+                      } catch (err) {
+                        alert('Failed to upload photo')
+                      } finally {
+                        if (fileInputRef.current) fileInputRef.current.value = ''
+                      }
+                    }} />
+                    <Button type="button" variant="outline" size="sm" onClick={()=>fileInputRef.current?.click()}>Upload</Button>
+                  </div>
+                </div>
+              </div>
+              <div className="pt-2">
+                <Button onClick={handleAddAuthor} disabled={!authorName || !authorTitle || !authorCompany || !authorEmail} className="w-full text-sm" size="sm">
+                  <Plus className="w-4 h-4 mr-2" />
+                  {editingAuthorId ? 'Update Author' : 'Add Author'}
+                </Button>
+              </div>
+            </CardContent>
+          )}
+          {showAuthorsPanel && (
+            <>
+            <CardContent className="pt-0">
+              <div className="space-y-2">
+              {authorsList.length === 0 ? (
+                <div className="text-sm text-gray-500">No authors yet.</div>
+              ) : (
+                authorsList.map((a) => (
+                  <div key={a.id || a.email} className="flex items-center justify-between p-2 border border-gray-200 rounded-lg">
+                    <div className="flex items-center space-x-2 min-w-0">
+                      <img src={a.photoUrl || '/logo.png'} alt={a.name} className="w-8 h-8 rounded-full object-cover" onError={(e)=>{e.currentTarget.style.display='none'}} />
+                      <div className="min-w-0">
+                        <div className="text-sm font-medium text-gray-900 truncate">{a.name}</div>
+                        <div className="text-xs text-gray-600 whitespace-normal break-words">{a.title}{a.company && a.company.trim() ? ` at ${a.company.trim()}` : ''}</div>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-1">
+                      <Button variant="outline" size="sm" className="h-7 px-2 py-1" onClick={()=>{ setEditingAuthorId(a.id || null); setAuthorName(a.name); setAuthorTitle(a.title); setAuthorCompany(a.company); setAuthorEmail(a.email); setAuthorLinkedIn(a.linkedin || ''); setAuthorPhoto(a.photoUrl || ''); setShowAuthorForm(true) }}>✏️ Edit</Button>
+                      <Button variant="outline" size="sm" className="h-7 px-2 py-1 text-red-600" onClick={async ()=>{ if (!a.id) { alert('Missing author id'); return } if (!confirm(`Delete ${a.name}?`)) return; try { const res = await fetch(`/api/authors?id=${a.id}`, { method: 'DELETE' }); if (!res.ok) throw new Error('Delete failed'); await fetchAuthors() } catch { alert('Failed to delete author') } }}>🗑️ Delete</Button>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </CardContent>
+          <CardContent className="space-y-4 pt-0">
+            <div className="space-y-1">
+              <Label htmlFor="thesisSelect" className="text-sm">Assign to Thesis</Label>
+              <Select value={selectedThesisForAuthor || selectedThesis} onValueChange={(v)=>setSelectedThesisForAuthor(v)}>
+                <SelectTrigger className="h-8"><SelectValue placeholder="Choose thesis" /></SelectTrigger>
+                <SelectContent className="z-50">
+                  {Object.keys(thesisData).map((thesisId)=>{ const thesis = thesisData[thesisId]; return (<SelectItem key={thesisId} value={thesisId}>{thesis.title || thesisId}</SelectItem>) })}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-1">
+              <Label htmlFor="authorSelect" className="text-sm">Select Author</Label>
+              <Select value={selectedAuthorForThesis} onValueChange={setSelectedAuthorForThesis}>
+                <SelectTrigger className="h-8"><SelectValue placeholder="Choose author" /></SelectTrigger>
+                <SelectContent className="z-50">
+                  {authorsList.map((author, index)=>(<SelectItem key={author.id || index.toString()} value={index.toString()}>{author.name} - {author.title}</SelectItem>))}
+                </SelectContent>
+              </Select>
+            </div>
+            {selectedThesis && (
+              <div className="space-y-2">
+                <Label className="text-xs font-medium text-gray-700">Currently Assigned</Label>
+                {assignedAuthors.length === 0 ? (
+                  <div className="text-xs text-gray-500">No authors assigned.</div>
+                ) : (
+                  assignedAuthors.map((a, idx)=> (
+                    <div key={a.id || idx} className="flex items-center justify-between p-2 border border-gray-200 rounded-lg">
+                      <div className="flex items-center space-x-2">
+                        <img src={a.photoUrl || '/logo.png'} alt={a.name} className="w-6 h-6 rounded-full object-cover" onError={(e)=>{e.currentTarget.style.display='none'}} />
+                        <span className="text-xs truncate">{a.name}</span>
+                      </div>
+                      <Button variant="outline" size="sm" className="h-6 w-20 p-0 text-red-600" onClick={async ()=>{ if (!a.id || !selectedThesis) return; try { const res = await fetch(`/api/thesis-authors?thesisId=${encodeURIComponent(selectedThesis)}&authorId=${encodeURIComponent(a.id)}`, { method: 'DELETE' }); if (!res.ok) throw new Error('Unassign failed'); const refresh = await fetch(`/api/thesis-authors?thesisId=${encodeURIComponent(selectedThesis)}`); if (refresh.ok) setAssignedAuthors(await refresh.json()) } catch { alert('Failed to unassign author') } }}>Unassign</Button>
+                      </div>
+                    ))
+                  )}
+              </div>
+            )}
+            <div className="pt-2">
+              <Button onClick={handleAssignAuthorToThesis} disabled={!selectedThesisForAuthor && !selectedThesis || !selectedAuthorForThesis} className="w-full text-sm" size="sm">
+                <Save className="w-4 h-4 mr-2" />
+                Assign Author
+              </Button>
+            </div>
+          </CardContent>
+            </>
+          )}
+        </Card>
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Editor */}
           <div className="lg:col-span-2 space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>Update Thesis Content</CardTitle>
+                <div className="flex items-center justify-between">
+                  <CardTitle>Update Thesis Content</CardTitle>
+                  {selectedThesis && (
+                    <Button
+                      variant="outline"
+                      onClick={() => window.open(`/thesis/${selectedThesis}`, '_blank')}
+                      className="flex items-center gap-2"
+                    >
+                      <Eye className="w-4 h-4" />
+                      Preview Thesis
+                    </Button>
+                  )}
+                </div>
               </CardHeader>
               <CardContent className="space-y-6">
                 {/* Thesis Selection */}
@@ -2500,52 +2816,250 @@ export default function ThesisAdmin() {
               </Card>
             )}
 
-
-
-            {/* Preview Link */}
-            {currentThesis && (
-              <Card>
-                <CardHeader>
-                  <CardTitle>Preview</CardTitle>
-                </CardHeader>
-                <CardContent>
+            {/* Authors Management (moved to top) */}
+            <Card className="hidden">
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-lg">Authors</CardTitle>
                   <Button
                     variant="outline"
-                    onClick={() => {
-                      // Use the same routing logic as ResearchHub
-                      const researchPages = [
-                        "invitro-investment-build-process",
-                        "invitro-private-markets-whitepaper", 
-                        "healthcare-elearning-thesis",
-                        "healthcare-prescription-dtc-thesis"
-                      ]
-                      const decompositionPages = [
-                        "long-term-care",
-                        "construction-tech",
-                        "healthcare-e-learning",
-                        "accounting-services",
-                        "b2b-sales-marketing-software",
-                        "dtc-healthcare"
-                      ]
-                      
-                      let url = ""
-                      if (researchPages.includes(selectedThesis)) {
-                        url = `/research/${encodeURIComponent(selectedThesis)}`
-                      } else if (decompositionPages.includes(selectedThesis)) {
-                        url = `/decomposition/${encodeURIComponent(selectedThesis)}`
-                      } else {
-                        url = `/thesis/${encodeURIComponent(selectedThesis)}`
-                      }
-                      window.open(url, '_blank')
-                    }}
-                    className="w-full"
+                    size="sm"
+                    onClick={() => setShowAuthorForm(!showAuthorForm)}
+                    className="flex items-center gap-2"
                   >
-                    <Eye className="w-4 h-4 mr-2" />
-                    View {currentThesis?.type === 'decomposition' ? 'Decomposition' : 'Thesis'} Page
+                    <Plus className="w-4 h-4" />
+                    {showAuthorForm ? 'Hide' : 'Add'}
                   </Button>
+                </div>
+              </CardHeader>
+              {showAuthorForm && (
+                <CardContent className="space-y-4 pt-0">
+                  <div className="space-y-3">
+                    <div className="space-y-1">
+                      <Label htmlFor="authorName" className="text-sm">Name *</Label>
+                      <Input
+                        id="authorName"
+                        value={authorName}
+                        onChange={(e) => setAuthorName(e.target.value)}
+                        placeholder="Full name"
+                        size={1}
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <Label htmlFor="authorTitle" className="text-sm">Title *</Label>
+                      <Input
+                        id="authorTitle"
+                        value={authorTitle}
+                        onChange={(e) => setAuthorTitle(e.target.value)}
+                        placeholder="Job title"
+                        size={1}
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <Label htmlFor="authorCompany" className="text-sm">Company *</Label>
+                      <Input
+                        id="authorCompany"
+                        value={authorCompany}
+                        onChange={(e) => setAuthorCompany(e.target.value)}
+                        placeholder="Company name"
+                        size={1}
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <Label htmlFor="authorEmail" className="text-sm">Email *</Label>
+                      <Input
+                        id="authorEmail"
+                        type="email"
+                        value={authorEmail}
+                        onChange={(e) => setAuthorEmail(e.target.value)}
+                        placeholder="email@company.com"
+                        size={1}
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <Label htmlFor="authorLinkedIn" className="text-sm">LinkedIn</Label>
+                      <Input
+                        id="authorLinkedIn"
+                        value={authorLinkedIn}
+                        onChange={(e) => setAuthorLinkedIn(e.target.value)}
+                        placeholder="LinkedIn URL"
+                        size={1}
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <Label htmlFor="authorPhoto" className="text-sm">Photo URL</Label>
+                      <Input
+                        id="authorPhoto"
+                        value={authorPhoto}
+                        onChange={(e) => setAuthorPhoto(e.target.value)}
+                        placeholder="Photo URL"
+                        size={1}
+                      />
+                    </div>
+                  </div>
+                  <div className="pt-2">
+                    <Button 
+                      onClick={handleAddAuthor}
+                      disabled={!authorName || !authorTitle || !authorCompany || !authorEmail}
+                      className="w-full text-sm"
+                      size="sm"
+                    >
+                      <Plus className="w-4 h-4 mr-2" />
+                      {editingAuthorId ? 'Update Author' : 'Add Author'}
+                    </Button>
+                  </div>
                 </CardContent>
-              </Card>
-            )}
+              )}
+              <CardContent className="pt-0">
+                <div className="space-y-2">
+                  {authorsList.length === 0 ? (
+                    <div className="text-sm text-gray-500">No authors yet.</div>
+                  ) : (
+                    authorsList.map((a) => (
+                      <div key={a.id || a.email} className="flex items-center justify-between p-2 border border-gray-200 rounded-lg">
+                        <div className="flex items-center space-x-2 min-w-0">
+                          <img src={a.photoUrl || '/logo.png'} alt={a.name} className="w-8 h-8 rounded-full object-cover" onError={(e)=>{e.currentTarget.style.display='none'}} />
+                          <div className="min-w-0">
+                            <div className="text-sm font-medium text-gray-900 truncate">{a.name}</div>
+                            <div className="text-xs text-gray-600 whitespace-normal break-words">{a.title}{a.company && a.company.trim() ? ` at ${a.company.trim()}` : ''}</div>
+                          </div>
+                        </div>
+                        <div className="flex items-center space-x-1">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="h-7 w-7 p-0"
+                            onClick={() => {
+                              setEditingAuthorId(a.id || null)
+                              setAuthorName(a.name)
+                              setAuthorTitle(a.title)
+                              setAuthorCompany(a.company)
+                              setAuthorEmail(a.email)
+                              setAuthorLinkedIn(a.linkedin || '')
+                              setAuthorPhoto(a.photoUrl || '')
+                              setShowAuthorForm(true)
+                            }}
+                          >
+                            Edit
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="h-7 w-7 p-0 text-red-600"
+                            onClick={async () => {
+                              if (!a.id) { alert('Missing author id'); return }
+                              if (!confirm(`Delete ${a.name}?`)) return
+                              try {
+                                const res = await fetch(`/api/authors?id=${a.id}`, { method: 'DELETE' })
+                                if (!res.ok) throw new Error('Delete failed')
+                                await fetchAuthors()
+                              } catch (e) {
+                                alert('Failed to delete author')
+                              }
+                            }}
+                          >
+                            Del
+                          </Button>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </CardContent>
+
+              {/* Assign inside Authors card */}
+              <CardContent className="space-y-4 pt-0">
+                <div className="space-y-1">
+                  <Label htmlFor="thesisSelect" className="text-sm">Assign to Thesis</Label>
+                  <Select 
+                    value={selectedThesisForAuthor || selectedThesis} 
+                    onValueChange={(v) => setSelectedThesisForAuthor(v)}
+                  >
+                    <SelectTrigger className="h-8">
+                      <SelectValue placeholder="Choose thesis" />
+                    </SelectTrigger>
+                    <SelectContent className="z-50">
+                      {Object.keys(thesisData).map((thesisId) => {
+                        const thesis = thesisData[thesisId]
+                        return (
+                          <SelectItem key={thesisId} value={thesisId}>
+                            {thesis.title || thesisId}
+                          </SelectItem>
+                        )
+                      })}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-1">
+                  <Label htmlFor="authorSelect" className="text-sm">Select Author</Label>
+                  <Select 
+                    value={selectedAuthorForThesis} 
+                    onValueChange={setSelectedAuthorForThesis}
+                  >
+                    <SelectTrigger className="h-8">
+                      <SelectValue placeholder="Choose author" />
+                    </SelectTrigger>
+                    <SelectContent className="z-50">
+                      {authorsList.map((author, index) => (
+                        <SelectItem key={author.id || index.toString()} value={index.toString()}>
+                          {author.name} - {author.title}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                {selectedThesis && (
+                  <div className="space-y-2">
+                    <Label className="text-xs font-medium text-gray-700">Currently Assigned</Label>
+                    {assignedAuthors.length === 0 ? (
+                      <div className="text-xs text-gray-500">No authors assigned.</div>
+                    ) : (
+                      assignedAuthors.map((a, idx) => (
+                        <div key={a.id || idx} className="flex items-center justify-between p-2 border border-gray-200 rounded-lg">
+                          <div className="flex items-center space-x-2">
+                            <img src={a.photoUrl || '/logo.png'} alt={a.name} className="w-6 h-6 rounded-full object-cover" onError={(e)=>{e.currentTarget.style.display='none'}} />
+                            <span className="text-xs truncate">{a.name}</span>
+                          </div>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="h-6 w-20 p-0 text-red-600"
+                            onClick={async () => {
+                              if (!a.id || !selectedThesis) return
+                              try {
+                                const res = await fetch(`/api/thesis-authors?thesisId=${encodeURIComponent(selectedThesis)}&authorId=${encodeURIComponent(a.id)}`, { method: 'DELETE' })
+                                if (!res.ok) throw new Error('Unassign failed')
+                                // Refresh
+                                const refresh = await fetch(`/api/thesis-authors?thesisId=${encodeURIComponent(selectedThesis)}`)
+                                if (refresh.ok) setAssignedAuthors(await refresh.json())
+                              } catch (e) {
+                                alert('Failed to unassign author')
+                              }
+                            }}
+                          >
+                            Unassign
+                          </Button>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                )}
+                <div className="pt-2">
+                  <Button 
+                    onClick={handleAssignAuthorToThesis}
+                    disabled={!selectedThesisForAuthor && !selectedThesis || !selectedAuthorForThesis}
+                    className="w-full text-sm"
+                    size="sm"
+                  >
+                    <Save className="w-4 h-4 mr-2" />
+                    Assign Author
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+
+
+
           </div>
         </div>
 
