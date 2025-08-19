@@ -435,12 +435,13 @@ export default function ThesisAdmin() {
     fetchThesisData()
   }, [])
 
-  // Load assigned authors when thesis is selected
+  // Load assigned authors when thesis selection changes (either main or assign pane)
   useEffect(() => {
     const loadAssigned = async () => {
       try {
-        if (!selectedThesis) return
-        const res = await fetch(`/api/thesis-authors?thesisId=${encodeURIComponent(selectedThesis)}`)
+        const thesisId = selectedThesisForAuthor || selectedThesis
+        if (!thesisId) return
+        const res = await fetch(`/api/thesis-authors?thesisId=${encodeURIComponent(thesisId)}`)
         if (res.ok) {
           const data = await res.json()
           setAssignedAuthors(Array.isArray(data) ? data : [])
@@ -452,7 +453,7 @@ export default function ThesisAdmin() {
       }
     }
     loadAssigned()
-  }, [selectedThesis])
+  }, [selectedThesis, selectedThesisForAuthor])
 
   useEffect(() => {
     fetchAuthors()
@@ -680,6 +681,19 @@ export default function ThesisAdmin() {
       // Refresh list to stay in sync
       await fetchAuthors()
       
+      // If created new, auto-select for assignment and default thesis
+      if (!editingAuthorId) {
+        try {
+          const latest = await fetch('/api/authors')
+          const list = await latest.json()
+          const created = list.find((a: any) => a.email === authorEmail)
+          if (created?.id) {
+            setSelectedAuthorForThesis(created.id)
+            if (!selectedThesisForAuthor && selectedThesis) setSelectedThesisForAuthor(selectedThesis)
+          }
+        } catch {}
+      }
+      
       // Clear form
       setAuthorName("")
       setAuthorTitle("")
@@ -703,8 +717,7 @@ export default function ThesisAdmin() {
       return
     }
 
-    const authorIndex = parseInt(selectedAuthorForThesis)
-    const author = authorsList[authorIndex]
+    const author = authorsList.find(a => a.id === selectedAuthorForThesis)
     
     if (!author) {
       alert('Author not found')
@@ -2109,6 +2122,7 @@ export default function ThesisAdmin() {
                 >
                   {showAuthorsPanel ? 'Close' : 'Manage Authors'}
                 </Button>
+
               </div>
             </div>
           </CardHeader>
@@ -2138,7 +2152,10 @@ export default function ThesisAdmin() {
                 <div className="space-y-1">
                   <Label htmlFor="authorPhoto" className="text-sm">Photo</Label>
                   <div className="flex items-center gap-2">
-                    <Input id="authorPhoto" value={authorPhoto} onChange={(e)=>setAuthorPhoto(e.target.value)} placeholder="Photo URL" size={1} />
+                    <Input id="authorPhoto" value={authorPhoto} onChange={(e)=>setAuthorPhoto(e.target.value)} placeholder="Photo URL" className="flex-1 min-w-0" />
+                    {authorPhoto && (
+                      <img src={authorPhoto} alt="Preview" className="w-8 h-8 rounded-full object-cover ring-1 ring-gray-200 shrink-0" onError={(e)=>{e.currentTarget.style.display='none'}} />
+                    )}
                     <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={async (e)=>{
                       const file = e.target.files?.[0]
                       if (!file) return
@@ -2170,7 +2187,18 @@ export default function ThesisAdmin() {
           )}
           {showAuthorsPanel && (
             <>
-            <CardContent className="pt-0">
+            <CardContent className="pt-0 space-y-3">
+              <div>
+                <Button
+                  variant="default"
+                  size="sm"
+                  onClick={() => { setEditingAuthorId(null); setAuthorName(""); setAuthorTitle(""); setAuthorCompany(""); setAuthorEmail(""); setAuthorLinkedIn(""); setAuthorPhoto(""); setShowAuthorForm(true) }}
+                  className="flex items-center gap-2"
+                >
+                  <Plus className="w-4 h-4" />
+                  New Author
+                </Button>
+              </div>
               <div className="space-y-2">
               {authorsList.length === 0 ? (
                 <div className="text-sm text-gray-500">No authors yet.</div>
@@ -2241,16 +2269,17 @@ export default function ThesisAdmin() {
           )}
         </Card>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="space-y-8">
           {/* Main Editor */}
-          <div className="lg:col-span-2 space-y-6">
+          <div className="space-y-6">
             <Card>
               <CardHeader>
                 <div className="flex items-center justify-between">
-                  <CardTitle>Update Thesis Content</CardTitle>
+                  <CardTitle className="text-lg">Update Thesis Content</CardTitle>
                   {selectedThesis && (
                     <Button
                       variant="outline"
+                      size="sm"
                       onClick={() => window.open(`/thesis/${selectedThesis}`, '_blank')}
                       className="flex items-center gap-2"
                     >
@@ -3000,8 +3029,8 @@ export default function ThesisAdmin() {
                       <SelectValue placeholder="Choose author" />
                     </SelectTrigger>
                     <SelectContent className="z-50">
-                      {authorsList.map((author, index) => (
-                        <SelectItem key={author.id || index.toString()} value={index.toString()}>
+                      {authorsList.map((author) => (
+                        <SelectItem key={author.id || author.email} value={(author.id || '').toString()}>
                           {author.name} - {author.title}
                         </SelectItem>
                       ))}

@@ -739,18 +739,16 @@ export default function IndustryThesis() {
       {/* Authors Sidebar - Only on large screens */}
       <div className="hidden xl:block fixed top-24 right-4 bg-gray-50 shadow-none rounded-md border border-gray-200/80 p-3 z-20" style={{width: '240px'}}>
         <h3 className="text-sm font-semibold text-[hsl(212,74%,15%)] mb-3 pb-2 border-b border-gray-200">Authors</h3>
-        {authorsLoading ? (
-          <div className="text-sm text-gray-500">Loading...</div>
-        ) : authors && authors.length > 0 ? (
+        {authorsLoading ? null : authors && authors.length > 0 ? (
           <div className="divide-y divide-gray-200/70">
             {authors.map((author, idx) => (
               author.linkedin ? (
                 <a key={author.id || idx} href={(author.linkedin.startsWith('http') ? author.linkedin : `https://${author.linkedin}`)} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 py-3 cursor-pointer hover:bg-white/60 rounded px-2">
                   <img
-                  src={author.photoUrl || "/logo.png"}
+                  src={(author.photoUrl && author.photoUrl.startsWith('http')) ? author.photoUrl : "/logo.png"}
                   alt={author.name}
                   className="w-12 h-12 rounded-full object-cover ring-1 ring-gray-200"
-                  onError={(e) => { e.currentTarget.style.display = 'none' }}
+                  onError={(e) => { if (!e.currentTarget.src.endsWith('/logo.png')) e.currentTarget.src = '/logo.png' }}
                 />
                                   <div className="min-w-0">
                     <div className="text-sm font-semibold text-gray-900">{author.name}</div>
