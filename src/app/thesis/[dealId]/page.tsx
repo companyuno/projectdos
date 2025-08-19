@@ -404,6 +404,66 @@ export default function IndustryThesis() {
         }
       }
 
+      // Check for sign-off block opening
+      if (line.includes('<div class="sign-off-block">')) {
+        // Find the closing div and extract content
+        const closingDivIndex = lines.findIndex((l, i) => i > index && l.trim() === '</div>')
+        if (closingDivIndex > index) {
+          const signOffContentLines = lines.slice(index + 1, closingDivIndex)
+          
+          // Process sign-off content with tight spacing
+          const processedSignOffContent = signOffContentLines.map((contentLine, contentIndex) => {
+            // Regular text with formatting
+            if (contentLine.trim()) {
+              let formattedLine = contentLine
+              formattedLine = formattedLine.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+              formattedLine = formattedLine.replace(/\*(.*?)\*/g, '<em>$1</em>')
+              formattedLine = formattedLine.replace(/__(.*?)__/g, '<u>$1</u>')
+              
+              return (
+                <div key={contentIndex} className="mb-0">
+                  {contentLine.includes('LinkedIn:') ? (
+                    <div className="flex items-center gap-2">
+                      <svg className="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                      </svg>
+                      <a 
+                        href={(() => {
+                          const url = contentLine.replace(/^LinkedIn:\s*/, '')
+                          return url.startsWith('http') ? url : `https://${url}`
+                        })()}
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="text-blue-600 hover:text-blue-800 underline"
+                      >
+                        LinkedIn
+                      </a>
+                    </div>
+                  ) : contentLine.includes('@') ? (
+                    <a 
+                      href={`mailto:${contentLine}`}
+                      className="text-blue-600 hover:text-blue-800 underline"
+                    >
+                      {contentLine}
+                    </a>
+                  ) : (
+                    <span className="text-gray-700" dangerouslySetInnerHTML={{ __html: formattedLine }} />
+                  )}
+                </div>
+              )
+            }
+            
+            return null
+          }).filter(Boolean)
+
+          return (
+            <div key={index} className="sign-off-block">
+              {processedSignOffContent}
+            </div>
+          )
+        }
+      }
+
       // Skip callout block content lines (they're handled above)
       if (index > 0) {
         // Check if we're inside a callout block
@@ -418,6 +478,27 @@ export default function IndustryThesis() {
         }
         
         if (insideCallout) {
+          const closingDivIndex = lines.findIndex((l, i) => i >= index && l.trim() === '</div>')
+          if (closingDivIndex >= index) {
+            return null
+          }
+        }
+      }
+
+      // Skip sign-off block content lines (they're handled above)
+      if (index > 0) {
+        // Check if we're inside a sign-off block
+        let insideSignOff = false
+        for (let i = index - 1; i >= 0; i--) {
+          if (lines[i].includes('<div class="sign-off-block">')) {
+            insideSignOff = true
+            break
+          } else if (lines[i].trim() === '</div>') {
+            break
+          }
+        }
+        
+        if (insideSignOff) {
           const closingDivIndex = lines.findIndex((l, i) => i >= index && l.trim() === '</div>')
           if (closingDivIndex >= index) {
             return null

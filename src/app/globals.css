@@ -121,6 +121,17 @@ body {
   font-weight: 500;
 }
 
+/* Sign-off block styles */
+.sign-off-block {
+  background-color: #F8F9FA;
+  border-left: 3px solid #E5E7EB;
+  padding: 0.5em;
+  margin: 0.1em 0 1em 0;
+  border-radius: 4px;
+  font-weight: 400;
+  color: #374151;
+}
+
 .callout-block * {
   font-weight: 500 !important;
 }

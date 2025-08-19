@@ -370,6 +370,31 @@ export default function ThesisAdmin() {
     }, 100)
   }
 
+  const addSignOffBlock = () => {
+    const textarea = document.getElementById('content') as HTMLTextAreaElement
+    if (!textarea) return
+
+    // Store current scroll position
+    const scrollTop = textarea.scrollTop
+
+    const cursorPos = textarea.selectionStart
+    const textBefore = editContent.substring(0, cursorPos)
+    const textAfter = editContent.substring(cursorPos)
+    
+    // Add sign-off block at cursor position with tight spacing and LinkedIn field
+    const signOffBlock = '\n\n<div class="sign-off-block">\n\nFor more information or to discuss this opportunity, please reach out.\n\nLinkedIn: [Your LinkedIn URL here]\n\n</div>\n\n'
+    const newContent = textBefore + signOffBlock + textAfter
+    setEditContent(newContent)
+    
+    // Set cursor position inside the sign-off block
+    setTimeout(() => {
+      textarea.focus()
+      const newCursorPos = cursorPos + signOffBlock.indexOf('[Your LinkedIn URL here]')
+      textarea.setSelectionRange(newCursorPos, newCursorPos + '[Your LinkedIn URL here]'.length)
+      textarea.scrollTop = scrollTop
+    }, 100)
+  }
+
   // Generate preview when table data or structure changes
   useEffect(() => {
     generateTablePreview()
@@ -593,36 +618,7 @@ export default function ThesisAdmin() {
           category: newThesisCategory,
           type: newThesisType,
           featured: newThesisFeatured,
-            content: {
-              executiveSummary: {
-                title: "I. Executive Summary",
-              content: ""
-              },
-              conclusion: {
-              title: "II. Conclusion",
-              content: ""
-            },
-            contact: {
-              title: "III. Contact",
-              content: {
-                name: "",
-                title: "",
-                company: "",
-                email: ""
-              }
-            },
-            sources: {
-              title: "IV. Sources",
-              content: []
-            }
-          },
-          contact: {
-            name: "",
-            title: "",
-            company: "",
-            email: ""
-          },
-          sources: []
+                      content: {}
         })
       })
 
@@ -661,15 +657,6 @@ export default function ThesisAdmin() {
     { value: 'publishDate', label: 'Publish Date' },
     { value: 'readTime', label: 'Read Time' },
     { value: 'tags', label: 'Tags (comma separated)' },
-    { value: 'executiveSummary', label: 'Executive Summary' },
-    { value: 'narrative', label: 'Narrative' },
-    { value: 'structuralObservations', label: 'Structural Observations' },
-    { value: 'fundingSignals', label: 'Funding Signals' },
-    { value: 'workflowFit', label: 'Workflow Fit' },
-    { value: 'productStrategy', label: 'Product Strategy' },
-    { value: 'segmentStrategy', label: 'Segment Strategy' },
-    { value: 'salesRealities', label: 'Sales Realities' },
-    { value: 'conclusion', label: 'Conclusion' },
   ]
 
   const currentThesis = thesisData[selectedThesis]
@@ -944,40 +931,50 @@ export default function ThesisAdmin() {
       // Handle numbered sections with proper renumbering
       let inserted = false
       
-      for (const { key, section: sectionData, position } of numberedSections) {
-        if (!inserted && sectionNumber <= position) {
-          // Insert new section here
+      // If there are no existing numbered sections, this is the first section
+      if (numberedSections.length === 0) {
+        newContent[sectionId] = {
+          title: `${toRomanNumeral(sectionNumber)}. ${sectionTitle}`,
+          content: ""
+        }
+        inserted = true
+      } else {
+        // Handle existing numbered sections
+        for (const { key, section: sectionData, position } of numberedSections) {
+          if (!inserted && sectionNumber <= position) {
+            // Insert new section here
+            newContent[sectionId] = {
+              title: `${toRomanNumeral(sectionNumber)}. ${sectionTitle}`,
+              content: ""
+            }
+            inserted = true
+          }
+          
+          // Calculate new position for existing section
+          let newPosition: number
+          if (inserted && position >= sectionNumber) {
+            // This section comes after the inserted section, shift it down by 1
+            newPosition = position + 1
+          } else {
+            // This section comes before the inserted section, keep its original position
+            newPosition = position
+          }
+          
+          // Update the section title with new Roman numeral
+          const cleanTitle = (sectionData.title as string).replace(/^[IVX]+\.\s*/, '')
+          newContent[key] = {
+            ...sectionData,
+            title: `${toRomanNumeral(newPosition)}. ${cleanTitle}`
+          }
+        }
+        
+        // If not inserted yet, add at the end
+        if (!inserted) {
+          const actualPosition = Math.max(sectionNumber, maxPosition + 1)
           newContent[sectionId] = {
-            title: `${toRomanNumeral(sectionNumber)}. ${sectionTitle}`,
+            title: `${toRomanNumeral(actualPosition)}. ${sectionTitle}`,
             content: ""
           }
-          inserted = true
-        }
-        
-        // Calculate new position for existing section
-        let newPosition: number
-        if (inserted && position >= sectionNumber) {
-          // This section comes after the inserted section, shift it down by 1
-          newPosition = position + 1
-        } else {
-          // This section comes before the inserted section, keep its original position
-          newPosition = position
-        }
-        
-        // Update the section title with new Roman numeral
-        const cleanTitle = (sectionData.title as string).replace(/^[IVX]+\.\s*/, '')
-        newContent[key] = {
-          ...sectionData,
-          title: `${toRomanNumeral(newPosition)}. ${cleanTitle}`
-        }
-      }
-      
-      // If not inserted yet, add at the end
-      if (!inserted) {
-        const actualPosition = Math.max(sectionNumber, maxPosition + 1)
-        newContent[sectionId] = {
-          title: `${toRomanNumeral(actualPosition)}. ${sectionTitle}`,
-          content: ""
         }
       }
       
@@ -986,8 +983,10 @@ export default function ThesisAdmin() {
         requestedPosition: sectionNumber,
         inserted,
         maxPosition,
+        numberedSectionsLength: numberedSections.length,
         newContentKeys: Object.keys(newContent),
-        newContentTitles: Object.keys(newContent).map(key => (newContent[key] as any)?.title)
+        newContentTitles: Object.keys(newContent).map(key => (newContent[key] as any)?.title),
+        toRomanNumeralTest: toRomanNumeral(sectionNumber)
       })
 
       // Update the thesis with new content
@@ -1017,8 +1016,8 @@ export default function ThesisAdmin() {
         // Set the section title and clear content for the new section
         setTimeout(() => {
           setEditContent("")
-          // Set the section title to what was entered (without the Roman numeral)
-          setEditSectionTitle(sectionTitle)
+          // Set the section title to the full title including Roman numeral
+          setEditSectionTitle(`${toRomanNumeral(sectionNumber)}. ${sectionTitle}`)
           // Force refresh the content display
           if (newSectionId) {
             const currentThesisData = thesisData[currentThesis]
@@ -2399,6 +2398,17 @@ export default function ThesisAdmin() {
                       title="Add Callout Block"
                     >
                       <MessageSquare className="w-4 h-4" />
+                    </Button>
+                    <div className="w-px h-6 bg-gray-300 mx-1"></div>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={addSignOffBlock}
+                      className="h-8 px-2 text-xs"
+                      title="Insert Sign-Off Block"
+                    >
+                      Sign-Off
                     </Button>
                   </div>
                   
