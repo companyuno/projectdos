@@ -220,7 +220,9 @@ export default function IndustryThesis() {
             {beforeTable.trim() && processTextContent(beforeTable)}
             
             {/* Render table */}
-            <div className="my-4" dangerouslySetInnerHTML={{ __html: tableHTML }} />
+            <div className="my-4 -mx-4 sm:mx-0 overflow-x-auto text-xs sm:text-sm">
+              <div className="min-w-[480px]" dangerouslySetInnerHTML={{ __html: tableHTML }} />
+            </div>
             
             {/* Render text after table */}
             {afterTable.trim() && processTextContent(afterTable)}
@@ -576,6 +578,8 @@ export default function IndustryThesis() {
   }
   const [thesisData, setThesisData] = useState<ThesisData>(fallbackThesisData)
   const [loading, setLoading] = useState(true)
+  const [showSectionsSheet, setShowSectionsSheet] = useState(false)
+  const [showAuthorsSheet, setShowAuthorsSheet] = useState(false)
 
   // New: authors state
   const [authors, setAuthors] = useState<Author[]>([])
@@ -658,7 +662,8 @@ export default function IndustryThesis() {
 
   return (
     <div className="min-h-screen bg-white">
-      <div className="sticky top-0 z-20 bg-white border-b border-gray-200 w-full shadow-sm flex items-center justify-between h-20 px-6">
+      <div className="sticky top-0 z-20 bg-white border-b border-gray-200 w-full shadow-sm">
+        <div className="flex items-center justify-between h-20 px-6">
         <Button
           variant="ghost"
           size="icon"
@@ -694,9 +699,35 @@ export default function IndustryThesis() {
           >
             <Download className="w-7 h-7" />
           </a>
-        </Button>
+                </Button>
+        </div>
+        {/* Mobile tools */}
+        <div className="xl:hidden flex items-center justify-between px-6 py-2 border-t border-gray-100">
+          <button
+            onClick={()=>setShowSectionsSheet(true)}
+            aria-label="Jump to Section"
+            className="inline-flex items-center gap-1 rounded-full border border-gray-300 bg-white px-3 py-1 text-xs font-medium text-[hsl(212,74%,15%)] shadow-sm"
+          >
+            Jump to Section
+          </button>
+          <div className="flex items-center gap-2">
+            {authors.slice(0,2).map((a, idx)=> (
+              <span key={a.id || idx} className="inline-flex items-center gap-1 text-xs text-gray-700">
+                <img src={(a.photoUrl && a.photoUrl.startsWith('http')) ? a.photoUrl : '/logo.png'} alt={a.name} className="w-5 h-5 rounded-full object-cover ring-1 ring-gray-200" />
+                {a.name.split(' ')[0]}
+              </span>
+            ))}
+            <button
+              onClick={()=>setShowAuthorsSheet(true)}
+              aria-label="Authors"
+              className="inline-flex items-center gap-1 rounded-full border border-gray-300 bg-white px-3 py-1 text-xs font-medium text-[hsl(212,74%,15%)] shadow-sm"
+            >
+              Authors
+            </button>
+          </div>
+        </div>
       </div>
-
+ 
       {/* Navigation Sidebar - Only on large screens */}
       <div className="hidden xl:block fixed top-24 left-4 bg-gray-50 shadow-none rounded-md border border-gray-200/80 p-3 z-20" style={{width: '240px'}}>
         <h3 className="text-sm font-semibold text-[hsl(212,74%,15%)] mb-3 pb-2 border-b border-gray-200">Jump to Section</h3>
@@ -783,6 +814,61 @@ export default function IndustryThesis() {
       </div>
 
       <div className="max-w-4xl mx-auto px-8 py-16">
+        {/* Mobile Sections Sheet */}
+        {showSectionsSheet && (
+          <div className="fixed inset-0 z-40 xl:hidden" onClick={()=>setShowSectionsSheet(false)}>
+            <div className="absolute inset-0 bg-black/40" />
+            <div className="absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl p-4 max-h-[70vh] overflow-y-auto">
+              <div className="flex items-center justify-between mb-2">
+                <h4 className="text-sm font-semibold text-gray-800">Jump to Section</h4>
+                <button className="text-sm text-gray-600" onClick={()=>setShowSectionsSheet(false)}>Close</button>
+              </div>
+              <nav className="space-y-1">
+                {thesis.content && Object.keys(thesis.content)
+                  .filter((sectionKey) => !['featured','category'].includes(sectionKey))
+                  .map((sectionKey)=> {
+                    const sectionData = (thesis.content as Record<string, unknown>)[sectionKey]
+                    const sectionTitle = typeof sectionData === 'object' && (sectionData as any).title ? (sectionData as any).title : sectionKey
+                    const romanMatch = sectionTitle.match(/^([IVX]+)\./)
+                    const position = romanMatch ? ['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII','XIII','XIV','XV'].indexOf(romanMatch[1]) + 1 : 999
+                    return { sectionKey, sectionTitle, position }
+                  })
+                  .sort((a,b)=> a.position - b.position)
+                  .map(({sectionKey, sectionTitle})=> (
+                    <a key={sectionKey} href={`#${sectionKey}`} onClick={()=>setShowSectionsSheet(false)} className="block text-sm text-gray-700 px-2 py-2 rounded hover:bg-gray-50">{sectionTitle}</a>
+                  ))}
+              </nav>
+            </div>
+          </div>
+        )}
+
+        {/* Mobile Authors Sheet */}
+        {showAuthorsSheet && (
+          <div className="fixed inset-0 z-40 xl:hidden" onClick={()=>setShowAuthorsSheet(false)}>
+            <div className="absolute inset-0 bg-black/40" />
+            <div className="absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl p-4 max-h-[70vh] overflow-y-auto">
+              <div className="flex items-center justify-between mb-2">
+                <h4 className="text-sm font-semibold text-gray-800">Authors</h4>
+                <button className="text-sm text-gray-600" onClick={()=>setShowAuthorsSheet(false)}>Close</button>
+              </div>
+              <div className="divide-y divide-gray-200/70">
+                {authors.map((author, idx)=> (
+                  <div key={author.id || idx} className="flex items-center gap-3 py-3">
+                    <img src={(author.photoUrl && author.photoUrl.startsWith('http')) ? author.photoUrl : '/logo.png'} alt={author.name} className="w-10 h-10 rounded-full object-cover ring-1 ring-gray-200" />
+                    <div className="min-w-0">
+                      <div className="text-sm font-semibold text-gray-900">{author.name}</div>
+                      <div className="text-xs text-gray-600 whitespace-normal">{author.title}</div>
+                      {author.company && author.company.trim() && (
+                        <div className="text-xs text-gray-500 whitespace-normal">{author.company.trim()}</div>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
         <div className="text-left mb-12">
           <h1 className="font-inter text-3xl font-semibold text-gray-900 mb-4 leading-tight">{thesis.title}</h1>
           {thesis.subtitle && (
