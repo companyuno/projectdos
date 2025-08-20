@@ -448,10 +448,8 @@ export default function ResearchHub() {
     }
   ];
 
-  // Use database decompositions if available, otherwise fall back to hardcoded ones
-  const industryDecompositionsSorted = decompositions.length > 0 
-    ? decompositions.sort((a, b) => a.title.localeCompare(b.title))
-    : hardcodedDecompositions.sort((a, b) => a.title.localeCompare(b.title));
+  // Use only dynamic decompositions; hide folder when none
+  const industryDecompositionsSorted = decompositions.sort((a, b) => a.title.localeCompare(b.title));
 
   // Don't render anything until data is loaded to prevent flash of "No documents available"
   if (isLoading) {
@@ -492,7 +490,7 @@ export default function ResearchHub() {
       )}
       
       {/* Research Folders Panel */}
-      <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
+      <div className="bg-white rounded-lg border border-gray-200 shadow-sm pb-4 md:pb-6">
         {/* Research Archive Section (box format, inside folders panel, same size as Featured Research) */}
         <div className="p-6">
           <div className="flex items-center gap-2 mb-2">
@@ -534,17 +532,19 @@ export default function ResearchHub() {
         <Separator />
 
         {/* Industry Decompositions Folder */}
-        <FolderSection
-          category="industry-decompositions"
-          papers={industryDecompositionsSorted}
-          isExpanded={expandedFolders["industry-decompositions"] ?? true}
-          onToggle={() => toggleFolder("industry-decompositions")}
-          onPaperClick={(paperId) => {
-            // Route to decomposition pages using the paper ID
-            router.push(`/decomposition/${paperId}`);
-          }}
-          placeholderText="Industry Decomposition research coming soon."
-        />
+        {industryDecompositionsSorted.length > 0 && (
+          <FolderSection
+            category="industry-decompositions"
+            papers={industryDecompositionsSorted}
+            isExpanded={expandedFolders["industry-decompositions"] ?? true}
+            onToggle={() => toggleFolder("industry-decompositions")}
+            onPaperClick={(paperId) => {
+              // Route to decomposition pages using the paper ID
+              router.push(`/decomposition/${paperId}`);
+            }}
+            placeholderText="Industry Decomposition research coming soon."
+          />
+        )}
       </div>
 
       {/* User Info Form Dialog */}
