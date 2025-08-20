@@ -176,3 +176,21 @@ section {
   border-bottom: 1.5px solid #CCCCCC;
   padding-bottom: 0.25em;
 } 
+
+/* Global bullet spacing: tight inside list, normal gap after last */
+.markdown-body .bullet-item,
+.editor-content .bullet-item {
+  margin-bottom: 0.25rem !important; /* tight spacing between bullets */
+  line-height: 1.6 !important;
+}
+
+.markdown-body .bullet-item:last-child,
+.editor-content .bullet-item:last-child {
+  margin-bottom: 1rem !important; /* normal gap after the list */
+} 
+
+/* Normal top spacing after a bullet block (match newline) */
+.markdown-body .bullet-item + :not(.bullet-item),
+.editor-content .bullet-item + :not(.bullet-item) {
+  margin-top: 1rem !important;
+} 

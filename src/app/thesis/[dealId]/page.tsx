@@ -173,7 +173,7 @@ export default function IndustryThesis() {
       if (formattedLine.match(/^•[\s\t]/)) {
         formattedLine = formattedLine.replace(/^•[\s\t]+/, '')
         processedElements.push(
-          <div key={i} className="mb-3 relative pl-12">
+          <div key={i} className="bullet-item relative pl-12">
             <span className="absolute left-8 top-0 font-bold text-lg text-gray-800">•</span>
             <div className="leading-relaxed text-gray-700" dangerouslySetInnerHTML={{ __html: formattedLine }} />
           </div>
@@ -382,7 +382,7 @@ export default function IndustryThesis() {
               if (formattedLine.match(/^•[\s\t]/)) {
                 formattedLine = formattedLine.replace(/^•[\s\t]+/, '')
                 return (
-                  <div key={contentIndex} className="mb-3 relative pl-12">
+                  <div key={contentIndex} className="bullet-item relative pl-12">
                     <span className="absolute left-8 top-0 font-bold text-lg text-gray-800">•</span>
                     <div className="leading-relaxed text-gray-700" dangerouslySetInnerHTML={{ __html: formattedLine }} />
                   </div>
@@ -542,7 +542,7 @@ export default function IndustryThesis() {
         if (formattedLine.match(/^•[\s\t]/)) {
           formattedLine = formattedLine.replace(/^•[\s\t]+/, '')
           return (
-            <div key={index} className="mb-3 relative pl-12">
+            <div key={index} className="bullet-item relative pl-12">
               <span className="absolute left-8 top-0 font-bold text-lg text-gray-800">•</span>
               <div className="leading-relaxed text-gray-700" dangerouslySetInnerHTML={{ __html: formattedLine }} />
             </div>
