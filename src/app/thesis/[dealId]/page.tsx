@@ -672,7 +672,8 @@ export default function IndustryThesis() {
       "invitro-investment-build-process": "/IVC -- Investment & Build Thesis.pdf",
       "invitro-private-markets-whitepaper": "/PrivateMarketsWhitePaper.pdf",
       "healthcare-elearning-thesis": "/Industry Thesis - Healthcare E-Learning.pdf",
-      "healthcare-prescription-dtc-thesis": "/Industry Thesis - DTC Prescription Healthcare.pdf"
+      "healthcare-prescription-dtc-thesis": "/Industry Thesis - DTC Prescription Healthcare.pdf",
+      "a-comparative-analysis-of-private-company-ownership-models": "/PrivateMarketsWhitePaper.pdf"
     }
     return pdfMap[thesisId] || "#"
   }
