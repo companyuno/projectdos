@@ -194,3 +194,21 @@ section {
 .editor-content .bullet-item + :not(.bullet-item) {
   margin-top: 1rem !important;
 } 
+
+/* Remove num-item customizations: rely on bullet-item spacing via shared wrapper usage for numbers */
+/* .markdown-body .num-item,
+.editor-content .num-item { }
+.markdown-body .num-item + :not(.num-item),
+.editor-content .num-item + :not(.num-item) { } */ 
+
+/* Lightweight note block for chart subtitles/notes */
+.note-block {
+  background-color: transparent;
+  border-left: 2px solid #E5E7EB; /* thinner, subtle */
+  padding: 0.25em 0.5em;
+  margin: 0.15rem 0 0.75rem 0; /* tighter top, modest bottom */
+  margin-left: 3rem; /* match bullet indent (pl-12 ~= 3rem) */
+  border-radius: 2px;
+  font-size: 0.85em; /* smaller than body */
+  color: #4B5563; /* gray-600 */
+} 

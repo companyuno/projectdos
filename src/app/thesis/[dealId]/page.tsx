@@ -178,6 +178,15 @@ export default function IndustryThesis() {
             <div className="leading-relaxed text-gray-700" dangerouslySetInnerHTML={{ __html: formattedLine }} />
           </div>
         )
+      } else if (/^\d+\.[\s\t]/.test(formattedLine)) {
+        const itemNum = (line.match(/^(\d+)\.[\s\t]+/) || [])[1] || ''
+        const textOnly = formattedLine.replace(/^\d+\.[\s\t]+/, '')
+        processedElements.push(
+          <div key={i} className="bullet-item relative pl-12">
+            <span className="absolute left-8 top-0 text-gray-700 font-normal">{itemNum}.</span>
+            <div className="leading-relaxed text-gray-700" dangerouslySetInnerHTML={{ __html: textOnly }} />
+          </div>
+        )
       } else {
         
         // Indented text (4 spaces)
@@ -389,6 +398,18 @@ export default function IndustryThesis() {
                 )
               }
               
+              // Numbers: 1. text
+              if (/^\d+\.[\s\t]/.test(formattedLine)) {
+                const num = (contentLine.match(/^(\d+)\.[\s\t]+/) || [])[1] || ''
+                const textOnly = formattedLine.replace(/^\d+\.[\s\t]+/, '')
+                return (
+                  <div key={contentIndex} className="bullet-item relative pl-12">
+                    <span className="absolute left-8 top-0 text-gray-700 font-normal">{num}.</span>
+                    <div className="leading-relaxed text-gray-700" dangerouslySetInnerHTML={{ __html: textOnly }} />
+                  </div>
+                )
+              }
+              
               // Indented text (4 spaces)
               if (formattedLine.startsWith('    ')) {
                 formattedLine = formattedLine.replace(/^    /, '')
@@ -412,6 +433,33 @@ export default function IndustryThesis() {
           return (
             <div key={index} className="callout-block">
               {processedCalloutContent}
+            </div>
+          )
+        }
+      }
+
+      // Check for note block opening
+      if (line.includes('<div class="note-block">')) {
+        const closingDivIndex = lines.findIndex((l, i) => i > index && l.trim() === '</div>')
+        if (closingDivIndex > index) {
+          const noteContentLines = lines.slice(index + 1, closingDivIndex)
+          const processedNoteContent = noteContentLines.map((contentLine, contentIndex) => {
+            if (contentLine.trim()) {
+              let formattedLine = contentLine
+              formattedLine = formattedLine.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+              formattedLine = formattedLine.replace(/\*(.*?)\*/g, '<em>$1</em>')
+              formattedLine = formattedLine.replace(/__(.*?)__/g, '<u>$1</u>')
+              return (
+                <div key={contentIndex} className="mb-1 text-gray-600">
+                  <span dangerouslySetInnerHTML={{ __html: formattedLine }} />
+                </div>
+              )
+            }
+            return null
+          }).filter(Boolean)
+          return (
+            <div key={index} className="note-block">
+              {processedNoteContent}
             </div>
           )
         }
@@ -498,6 +546,25 @@ export default function IndustryThesis() {
         }
       }
 
+      // Skip note block content lines (they're handled above)
+      if (index > 0) {
+        let insideNote = false
+        for (let i = index - 1; i >= 0; i--) {
+          if (lines[i].includes('<div class="note-block">')) {
+            insideNote = true
+            break
+          } else if (lines[i].trim() === '</div>') {
+            break
+          }
+        }
+        if (insideNote) {
+          const closingDivIndex = lines.findIndex((l, i) => i >= index && l.trim() === '</div>')
+          if (closingDivIndex >= index) {
+            return null
+          }
+        }
+      }
+
       // Skip sign-off block content lines (they're handled above)
       if (index > 0) {
         // Check if we're inside a sign-off block
@@ -548,6 +615,18 @@ export default function IndustryThesis() {
             </div>
           )
         }
+        
+                 // Numbers: 1. text
+         if (/^\d+\.[\s\t]/.test(formattedLine)) {
+           const num = (line.match(/^(\d+)\.[\s\t]+/) || [])[1] || ''
+           const textOnly = formattedLine.replace(/^\d+\.[\s\t]+/, '')
+           return (
+             <div key={index} className="bullet-item relative pl-12">
+               <span className="absolute left-8 top-0 text-gray-700 font-normal">{num}.</span>
+               <div className="leading-relaxed text-gray-700" dangerouslySetInnerHTML={{ __html: textOnly }} />
+             </div>
+           )
+         }
         
         // Skip alignment div opening tags (they're handled by the media alignment logic above)
         if (formattedLine.trim().startsWith('<div class="text-') || formattedLine.trim().startsWith('<div class="flex')) {

@@ -422,6 +422,24 @@ export default function ThesisAdmin() {
     }, 100)
   }
 
+  const addNoteBlock = () => {
+    const textarea = document.getElementById('content') as HTMLTextAreaElement
+    if (!textarea) return
+    const scrollTop = textarea.scrollTop
+    const cursorPos = textarea.selectionStart
+    const before = editContent.substring(0, cursorPos)
+    const after = editContent.substring(cursorPos)
+    const noteBlock = '\n\n<div class="note-block">\n\nAdd note or chart subtitle here...\n\n</div>\n\n'
+    const updated = before + noteBlock + after
+    setEditContent(updated)
+    setTimeout(() => {
+      textarea.focus()
+      const pos = cursorPos + noteBlock.indexOf('Add note or chart subtitle here...')
+      textarea.setSelectionRange(pos, pos + 'Add note or chart subtitle here...'.length)
+      textarea.scrollTop = scrollTop
+    }, 100)
+  }
+
   // Generate preview when table data or structure changes
   useEffect(() => {
     generateTablePreview()
@@ -2765,6 +2783,17 @@ export default function ThesisAdmin() {
                       title="Insert Sign-Off Block"
                     >
                       Sign-Off
+                    </Button>
+                    <div className="w-px h-6 bg-gray-300 mx-1"></div>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={addNoteBlock}
+                      className="h-8 px-2 text-xs"
+                      title="Insert Note Block"
+                    >
+                      Note
                     </Button>
                   </div>
                   
