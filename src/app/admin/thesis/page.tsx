@@ -712,13 +712,15 @@ export default function ThesisAdmin() {
   }
 
   const handleAssignAuthorToThesis = async () => {
-    if (!selectedThesisForAuthor || !selectedAuthorForThesis) {
+    const thesisId = selectedThesisForAuthor || selectedThesis
+    const authorId = selectedAuthorForThesis
+
+    if (!thesisId || !authorId) {
       alert('Please select both a thesis and an author')
       return
     }
 
-    const author = authorsList.find(a => a.id === selectedAuthorForThesis)
-    
+    const author = authorsList.find(a => a.id === authorId)
     if (!author) {
       alert('Author not found')
       return
@@ -731,8 +733,8 @@ export default function ThesisAdmin() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          thesisId: selectedThesisForAuthor,
-          authorId: author.id
+          thesisId,
+          authorId
         })
       })
 
@@ -760,7 +762,16 @@ export default function ThesisAdmin() {
         throw new Error('Failed to fetch authors')
       }
       const authors = await response.json()
-      setAuthorsList(authors)
+      const normalized = (Array.isArray(authors) ? authors : []).map((a: any) => ({
+        id: a.id,
+        name: a.name,
+        title: a.title,
+        company: a.company,
+        email: a.email,
+        linkedin: a.linkedin || '',
+        photoUrl: a.photo_url ?? a.photoUrl ?? ''
+      }))
+      setAuthorsList(normalized)
     } catch (error) {
       console.error('Error fetching authors:', error)
       // Don't show alert for fetch errors on load
@@ -2236,7 +2247,7 @@ export default function ThesisAdmin() {
               <Select value={selectedAuthorForThesis} onValueChange={setSelectedAuthorForThesis}>
                 <SelectTrigger className="h-8"><SelectValue placeholder="Choose author" /></SelectTrigger>
                 <SelectContent className="z-50">
-                  {authorsList.map((author, index)=>(<SelectItem key={author.id || index.toString()} value={index.toString()}>{author.name} - {author.title}</SelectItem>))}
+                  {authorsList.map((author)=>(<SelectItem key={author.id || author.email} value={(author.id || '').toString()}>{author.name} - {author.title}</SelectItem>))}
                 </SelectContent>
               </Select>
             </div>
