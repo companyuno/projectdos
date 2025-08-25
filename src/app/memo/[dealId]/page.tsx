@@ -625,7 +625,7 @@ export default function InvestmentMemo() {
                 </ul>
               </div>
 
-              <div className="bg-accent/10 dark:bg-accent/30 p-6 rounded-lg">
+              <div className="bg-accent/10 p-6 rounded-lg">
                 <h3 className="text-xl font-semibold mb-3">Investment Recommendation</h3>
                 <p className="text-muted-foreground">
                   Based on our comprehensive analysis, we recommend proceeding with this investment opportunity. The
