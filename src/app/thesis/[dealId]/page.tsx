@@ -903,7 +903,7 @@ export default function IndustryThesis() {
       <div className="max-w-4xl mx-auto px-8 py-16">
         {/* Mobile Sections Sheet */}
         {showSectionsSheet && (
-          <div className="fixed inset-0 z-40 xl:hidden" onClick={()=>setShowSectionsSheet(false)}>
+          <div className="fixed inset-0 z-40 min-[1400px]:hidden" onClick={()=>setShowSectionsSheet(false)}>
             <div className="absolute inset-0 bg-black/40" />
             <div className="absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl p-4 max-h-[70vh] overflow-y-auto">
               <div className="flex items-center justify-between mb-2">
@@ -931,7 +931,7 @@ export default function IndustryThesis() {
 
         {/* Mobile Authors Sheet */}
         {showAuthorsSheet && (
-          <div className="fixed inset-0 z-40 xl:hidden" onClick={()=>setShowAuthorsSheet(false)}>
+          <div className="fixed inset-0 z-40 min-[1400px]:hidden" onClick={()=>setShowAuthorsSheet(false)}>
             <div className="absolute inset-0 bg-black/40" />
             <div className="absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl p-4 max-h-[70vh] overflow-y-auto">
               <div className="flex items-center justify-between mb-2">
