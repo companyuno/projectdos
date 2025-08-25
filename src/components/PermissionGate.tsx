@@ -13,23 +13,97 @@ const STORAGE_KEY_EMAIL = "invitro-user-email";
 const STORAGE_KEY_PERMISSION = "invitro-user-permission";
 
 export default function PermissionGate({ children }: PermissionGateProps) {
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
+  const [accreditedSelections, setAccreditedSelections] = useState<string[]>([]);
   const [hasPermission, setHasPermission] = useState<null | boolean>(null);
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [showAccessBanner, setShowAccessBanner] = useState(false);
+  const [step, setStep] = useState<1 | 2>(1);
+  const [hasExistingInfo, setHasExistingInfo] = useState(false);
 
-  // On mount, check localStorage for previous session
+  const ACCREDITED_OPTIONS = [
+    "I earned over $200,000 individually (or $300,000 with my spouse) in each of the last two years and expect the same this year",
+    "I have a net worth over $1 million, excluding my primary residence",
+    "I hold a qualifying financial license (Series 7, 65, or 82)",
+    "I am a knowledgeable employee of a private investment fund",
+    "I represent an entity with over $5 million in assets, or where all equity owners are accredited investors",
+  ];
+
+  // On mount, prefill from previous session and auto-check allowlist if info exists
   useEffect(() => {
+    let infoEmail = "";
+    try {
+      const infoRaw = localStorage.getItem("invitro-user-info");
+      if (infoRaw) {
+        const info = JSON.parse(infoRaw || "{}");
+        if (info.firstName) setFirstName(info.firstName);
+        if (info.lastName) setLastName(info.lastName);
+        if (info.email) {
+          setEmail(info.email);
+          infoEmail = info.email;
+        }
+        setHasExistingInfo(true);
+      }
+      const acc = localStorage.getItem("invitro-accredited-selections");
+      if (acc) setAccreditedSelections(JSON.parse(acc));
+    } catch {}
+
     const storedEmail = localStorage.getItem(STORAGE_KEY_EMAIL);
     const storedPermission = localStorage.getItem(STORAGE_KEY_PERMISSION);
     if (storedEmail && storedPermission === "true") {
-      setEmail(storedEmail);
+      if (!email) setEmail(storedEmail);
       setHasPermission(true);
       setSubmitted(true);
+      return; // Already allowed
+    }
+
+    // If we already have user info (from Research), do not show the form—auto-check allowlist now
+    if (infoEmail && (!storedPermission || storedPermission === "false")) {
+      (async () => {
+        setLoading(true);
+        try {
+          const res = await fetch("/api/permissions/check", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email: infoEmail }),
+          });
+          const data = await res.json();
+          setHasPermission(Boolean(data.hasPermission));
+          setSubmitted(true);
+          if (data.hasPermission) {
+            setShowAccessBanner(true);
+            localStorage.setItem(STORAGE_KEY_EMAIL, infoEmail);
+            localStorage.setItem(STORAGE_KEY_PERMISSION, "true");
+          } else {
+            localStorage.removeItem(STORAGE_KEY_EMAIL);
+            localStorage.setItem(STORAGE_KEY_PERMISSION, "false");
+          }
+        } catch {
+          // On error, keep showing the form fallback
+          setHasExistingInfo(false);
+          setSubmitted(false);
+        } finally {
+          setLoading(false);
+        }
+      })();
     }
   }, []);
+
+  const handleNext = (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    try {
+      localStorage.setItem(
+        "invitro-user-info",
+        JSON.stringify({ firstName, lastName, email })
+      );
+    } catch {}
+    setStep(2);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,28 +111,35 @@ export default function PermissionGate({ children }: PermissionGateProps) {
     setLoading(true);
     setHasPermission(null);
     setSubmitted(false);
+
     try {
-      // Check permission
+      localStorage.setItem(
+        "invitro-user-info",
+        JSON.stringify({ firstName, lastName, email })
+      );
+      localStorage.setItem("invitro-accredited", "true");
+      localStorage.setItem(
+        "invitro-accredited-selections",
+        JSON.stringify(accreditedSelections)
+      );
+    } catch {}
+
+    try {
       const res = await fetch("/api/permissions/check", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
       });
       const data = await res.json();
-      setHasPermission(data.hasPermission);
+      setHasPermission(Boolean(data.hasPermission));
 
-      // Log the access attempt
-      await fetch("/api/visitors", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email,
-          accessAttempt: true,
-          hasAccess: data.hasPermission,
-          accessType: data.hasPermission ? "investments_tab" : "access_request",
-          requestType: data.hasPermission ? "authorized_access" : "unauthorized_request",
-        }),
-      });
+      try {
+        await fetch("/api/visitors", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ firstName, lastName, email, accredited: "true", accreditedSelections }),
+        });
+      } catch {}
 
       setSubmitted(true);
       if (data.hasPermission) {
@@ -76,7 +157,6 @@ export default function PermissionGate({ children }: PermissionGateProps) {
     }
   };
 
-  // Hide the access granted banner after 3 seconds
   useEffect(() => {
     if (showAccessBanner) {
       const timer = setTimeout(() => setShowAccessBanner(false), 3000);
@@ -84,17 +164,31 @@ export default function PermissionGate({ children }: PermissionGateProps) {
     }
   }, [showAccessBanner]);
 
-  // Logout handler
+  const toggleSelection = (opt: string) => {
+    setAccreditedSelections((prev) =>
+      prev.includes(opt) ? prev.filter((s) => s !== opt) : [...prev, opt]
+    );
+  };
+
   const handleLogout = () => {
     localStorage.removeItem(STORAGE_KEY_EMAIL);
     localStorage.removeItem(STORAGE_KEY_PERMISSION);
+    try {
+      localStorage.removeItem("invitro-user-info");
+      localStorage.removeItem("invitro-accredited");
+      localStorage.removeItem("invitro-accredited-selections");
+    } catch {}
+    setFirstName("");
+    setLastName("");
     setEmail("");
+    setAccreditedSelections([]);
     setHasPermission(null);
     setSubmitted(false);
     setError("");
+    setStep(1);
+    setHasExistingInfo(false);
   };
 
-  // If user has permission and submitted, show children (protected content) and logout button
   if (submitted && hasPermission) {
     return (
       <>
@@ -111,7 +205,6 @@ export default function PermissionGate({ children }: PermissionGateProps) {
     );
   }
 
-  // If submitted and no permission, show request received message
   if (submitted && hasPermission === false) {
     return (
       <div className="max-w-md mx-auto py-12">
@@ -128,7 +221,7 @@ export default function PermissionGate({ children }: PermissionGateProps) {
                 We&apos;ve received your request to access our deals. We will be in touch shortly.
               </p>
             </div>
-            <Button onClick={() => { setSubmitted(false); setEmail(""); setHasPermission(null); }} className="w-full">
+            <Button onClick={() => { setSubmitted(false); setHasPermission(null); setStep(1); setHasExistingInfo(false); }} className="w-full">
               Submit Another Request
             </Button>
           </CardContent>
@@ -137,39 +230,69 @@ export default function PermissionGate({ children }: PermissionGateProps) {
     );
   }
 
-  // Show access form
+  // If user info exists already (from Research), avoid showing any form; a background check will decide the view
+  if (hasExistingInfo || loading) {
+    return null;
+  }
+
+  // Two-step form when there is no prior info
   return (
     <div className="max-w-md mx-auto py-12">
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Lock className="w-5 h-5" />
-            Access Required
+            {step === 1 ? "Access Required" : "Accredited Investor"}
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-gray-600 mb-6">
-            Please enter your email address to access investment opportunities.
-          </p>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <Label htmlFor="email">Email Address</Label>
-              <Input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter your email"
-                required
-                className="mt-1"
-                disabled={loading}
-              />
-            </div>
-            {error && <p className="text-red-600 text-sm">{error}</p>}
-            <Button type="submit" className="w-full" disabled={loading || !email.trim()}>
-              {loading ? "Checking..." : "Request Access"}
-            </Button>
-          </form>
+          {step === 1 ? (
+            <>
+              <p className="text-gray-600 mb-6">Please provide your details to request access to investment opportunities.</p>
+              <form onSubmit={handleNext} className="space-y-4">
+                <div>
+                  <Label htmlFor="firstName">First Name</Label>
+                  <Input id="firstName" value={firstName} onChange={(e) => setFirstName(e.target.value)} placeholder="Your first name" required className="mt-1" disabled={loading} />
+                </div>
+                <div>
+                  <Label htmlFor="lastName">Last Name</Label>
+                  <Input id="lastName" value={lastName} onChange={(e) => setLastName(e.target.value)} placeholder="Your last name" required className="mt-1" disabled={loading} />
+                </div>
+                <div>
+                  <Label htmlFor="email">Email Address</Label>
+                  <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Enter your email" required className="mt-1" disabled={loading} />
+                </div>
+                {error && <p className="text-red-600 text-sm">{error}</p>}
+                <Button type="submit" className="w-full" disabled={loading || !email.trim() || !firstName.trim() || !lastName.trim()}>Next</Button>
+              </form>
+              <Button type="button" variant="outline" onClick={handleLogout} className="w-full mt-3">Clear Info</Button>
+            </>
+          ) : (
+            <>
+              <p className="text-gray-600 mb-4">Select all accreditation criteria that apply.</p>
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div>
+                  <div className="mt-2 space-y-2">
+                    {ACCREDITED_OPTIONS.map((opt) => (
+                      <label key={opt} className={`flex items-start gap-2 cursor-pointer p-2 rounded-md ${accreditedSelections.includes(opt) ? 'bg-blue-50 border border-blue-200' : ''}`}>
+                        <input type="checkbox" checked={accreditedSelections.includes(opt)} onChange={() => toggleSelection(opt)} className="mt-1 accent-blue-600" />
+                        <span className="text-sm text-gray-800 leading-snug">{opt}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+                {error && <p className="text-red-600 text-sm">{error}</p>}
+                <div className="flex items-center gap-2">
+                  <Button type="button" variant="outline" onClick={() => setStep(1)} disabled={loading}>
+                    Back
+                  </Button>
+                  <Button type="submit" className="flex-1" disabled={loading}>
+                    {loading ? "Submitting..." : "Request Access"}
+                  </Button>
+                </div>
+              </form>
+            </>
+          )}
         </CardContent>
       </Card>
     </div>
