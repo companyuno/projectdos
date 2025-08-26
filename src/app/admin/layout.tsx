@@ -52,6 +52,11 @@ export default function AdminLayout({
       icon: FileText
     },
     {
+      href: "/admin/deals",
+      label: "Deals",
+      icon: FileText
+    },
+    {
       href: "/admin/submissions",
       label: "Submissions",
       icon: Rocket

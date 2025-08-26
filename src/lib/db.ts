@@ -266,6 +266,216 @@ export async function deleteThesis(thesisId: string) {
   }
 }
 
+// Deals data functions
+export interface DealRecord {
+  id: string;
+  transactionName: string;
+  status: 'closed' | 'open' | 'upcoming';
+  industry: string;
+  targetRaise: string;
+  preMoneyValuation: string;
+  postMoneyValuation: string;
+  targetOwnership: string;
+  targetCloseDate: string;
+  leadInvestor: string;
+  memoRoute?: string | null;
+  thesisRoute?: string | null;
+  decompositionRoute?: string | null;
+  featured?: boolean;
+  live?: boolean;
+  orderIndex?: number | null;
+  links?: { name: string; url: string }[] | null;
+  traction?: string | null;
+  tractionNotes?: string | null;
+}
+
+export async function getAllDeals(): Promise<DealRecord[]> {
+  try {
+    if (!supabase) {
+      console.error('Supabase client not initialized');
+      return [];
+    }
+
+    const { data, error } = await supabase
+      .from('deals')
+      .select('*')
+      .order('order_index', { ascending: true, nullsFirst: false })
+      .order('updated_at', { ascending: false });
+
+    if (error) throw error;
+
+    const deals: DealRecord[] = (data || []).map((row: any) => ({
+      id: row.id,
+      transactionName: row.transaction_name,
+      status: row.status,
+      industry: row.industry,
+      targetRaise: row.target_raise,
+      preMoneyValuation: row.pre_money_valuation,
+      postMoneyValuation: row.post_money_valuation,
+      targetOwnership: row.target_ownership,
+      targetCloseDate: row.target_close_date,
+      leadInvestor: row.lead_investor,
+      memoRoute: row.memo_route ?? null,
+      thesisRoute: row.thesis_route ?? null,
+      decompositionRoute: row.decomposition_route ?? null,
+      featured: !!row.featured,
+      live: !!row.live,
+      orderIndex: row.order_index ?? null,
+      links: Array.isArray(row.links) ? row.links : null,
+      traction: row.traction ?? null,
+      tractionNotes: row.traction_notes ?? null,
+    }));
+
+    return deals;
+  } catch (error) {
+    console.error('Error fetching deals:', error);
+    return [];
+  }
+}
+
+export async function getDeal(dealId: string): Promise<DealRecord | null> {
+  try {
+    if (!supabase) {
+      console.error('Supabase client not initialized');
+      return null;
+    }
+
+    const { data, error } = await supabase
+      .from('deals')
+      .select('*')
+      .eq('id', dealId)
+      .single();
+
+    if (error) {
+      if ((error as any).code === 'PGRST116') return null;
+      throw error;
+    }
+
+    return {
+      id: data.id,
+      transactionName: data.transaction_name,
+      status: data.status,
+      industry: data.industry,
+      targetRaise: data.target_raise,
+      preMoneyValuation: data.pre_money_valuation,
+      postMoneyValuation: data.post_money_valuation,
+      targetOwnership: data.target_ownership,
+      targetCloseDate: data.target_close_date,
+      leadInvestor: data.lead_investor,
+      memoRoute: data.memo_route ?? null,
+      thesisRoute: data.thesis_route ?? null,
+      decompositionRoute: data.decomposition_route ?? null,
+      featured: !!data.featured,
+      live: !!data.live,
+      orderIndex: data.order_index ?? null,
+      links: Array.isArray(data.links) ? data.links : null,
+      traction: data.traction ?? null,
+      tractionNotes: data.traction_notes ?? null,
+    };
+  } catch (error) {
+    console.error('Error fetching deal:', error);
+    return null;
+  }
+}
+
+export async function createDeal(record: DealRecord): Promise<boolean> {
+  try {
+    if (!supabase) {
+      console.error('Supabase client not initialized');
+      return false;
+    }
+
+    const { error } = await supabase
+      .from('deals')
+      .insert({
+        id: record.id,
+        transaction_name: record.transactionName,
+        status: record.status,
+        industry: record.industry,
+        target_raise: record.targetRaise,
+        pre_money_valuation: record.preMoneyValuation,
+        post_money_valuation: record.postMoneyValuation,
+        target_ownership: record.targetOwnership,
+        target_close_date: record.targetCloseDate,
+        lead_investor: record.leadInvestor,
+        memo_route: record.memoRoute ?? null,
+        thesis_route: record.thesisRoute ?? null,
+        decomposition_route: record.decompositionRoute ?? null,
+        featured: record.featured ?? false,
+        live: record.live ?? true,
+        order_index: record.orderIndex ?? null,
+        links: record.links ?? null,
+        traction: record.traction ?? null,
+        traction_notes: record.tractionNotes ?? null,
+      });
+
+    if (error) throw error;
+    return true;
+  } catch (error) {
+    console.error('Error creating deal:', error);
+    return false;
+  }
+}
+
+export async function updateDeal(dealId: string, record: Partial<DealRecord>): Promise<boolean> {
+  try {
+    if (!supabase) {
+      console.error('Supabase client not initialized');
+      return false;
+    }
+
+    const { error } = await supabase
+      .from('deals')
+      .update({
+        transaction_name: record.transactionName,
+        status: record.status,
+        industry: record.industry,
+        target_raise: record.targetRaise,
+        pre_money_valuation: record.preMoneyValuation,
+        post_money_valuation: record.postMoneyValuation,
+        target_ownership: record.targetOwnership,
+        target_close_date: record.targetCloseDate,
+        lead_investor: record.leadInvestor,
+        memo_route: record.memoRoute,
+        thesis_route: record.thesisRoute,
+        decomposition_route: record.decompositionRoute,
+        featured: record.featured,
+        live: record.live,
+        order_index: record.orderIndex,
+        links: record.links as any,
+        traction: record.traction,
+        traction_notes: record.tractionNotes,
+      })
+      .eq('id', dealId);
+
+    if (error) throw error;
+    return true;
+  } catch (error) {
+    console.error('Error updating deal:', error);
+    return false;
+  }
+}
+
+export async function deleteDeal(dealId: string): Promise<boolean> {
+  try {
+    if (!supabase) {
+      console.error('Supabase client not initialized');
+      return false;
+    }
+
+    const { error } = await supabase
+      .from('deals')
+      .delete()
+      .eq('id', dealId);
+
+    if (error) throw error;
+    return true;
+  } catch (error) {
+    console.error('Error deleting deal:', error);
+    return false;
+  }
+}
+
 // Visitor tracking functions
 export async function getAllVisitors() {
   try {
