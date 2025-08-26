@@ -289,6 +289,29 @@ export interface DealRecord {
   tractionNotes?: string | null;
 }
 
+// Raw row shape from the 'deals' table
+type DealRow = {
+  id: string;
+  transaction_name: string;
+  status: 'closed' | 'open' | 'upcoming';
+  industry: string | null;
+  target_raise: string | null;
+  pre_money_valuation: string | null;
+  post_money_valuation: string | null;
+  target_ownership: string | null;
+  target_close_date: string | null;
+  lead_investor: string | null;
+  memo_route: string | null;
+  thesis_route: string | null;
+  decomposition_route: string | null;
+  featured: boolean | null;
+  live: boolean | null;
+  order_index: number | null;
+  links: { name: string; url: string }[] | null;
+  traction: string | null;
+  traction_notes: string | null;
+};
+
 export async function getAllDeals(): Promise<DealRecord[]> {
   try {
     if (!supabase) {
@@ -304,22 +327,22 @@ export async function getAllDeals(): Promise<DealRecord[]> {
 
     if (error) throw error;
 
-    const deals: DealRecord[] = (data || []).map((row: any) => ({
+    const deals: DealRecord[] = (data as DealRow[] | null || []).map((row: DealRow) => ({
       id: row.id,
       transactionName: row.transaction_name,
       status: row.status,
-      industry: row.industry,
-      targetRaise: row.target_raise,
-      preMoneyValuation: row.pre_money_valuation,
-      postMoneyValuation: row.post_money_valuation,
-      targetOwnership: row.target_ownership,
-      targetCloseDate: row.target_close_date,
-      leadInvestor: row.lead_investor,
+      industry: row.industry ?? '',
+      targetRaise: row.target_raise ?? '',
+      preMoneyValuation: row.pre_money_valuation ?? '',
+      postMoneyValuation: row.post_money_valuation ?? '',
+      targetOwnership: row.target_ownership ?? '',
+      targetCloseDate: row.target_close_date ?? '',
+      leadInvestor: row.lead_investor ?? '',
       memoRoute: row.memo_route ?? null,
       thesisRoute: row.thesis_route ?? null,
       decompositionRoute: row.decomposition_route ?? null,
-      featured: !!row.featured,
-      live: !!row.live,
+      featured: Boolean(row.featured ?? false),
+      live: Boolean(row.live ?? true),
       orderIndex: row.order_index ?? null,
       links: Array.isArray(row.links) ? row.links : null,
       traction: row.traction ?? null,
@@ -347,30 +370,33 @@ export async function getDeal(dealId: string): Promise<DealRecord | null> {
       .single();
 
     if (error) {
-      if ((error as any).code === 'PGRST116') return null;
+      const code = (error as { code?: string }).code;
+      if (code === 'PGRST116') return null;
       throw error;
     }
 
+    const row = data as DealRow;
+
     return {
-      id: data.id,
-      transactionName: data.transaction_name,
-      status: data.status,
-      industry: data.industry,
-      targetRaise: data.target_raise,
-      preMoneyValuation: data.pre_money_valuation,
-      postMoneyValuation: data.post_money_valuation,
-      targetOwnership: data.target_ownership,
-      targetCloseDate: data.target_close_date,
-      leadInvestor: data.lead_investor,
-      memoRoute: data.memo_route ?? null,
-      thesisRoute: data.thesis_route ?? null,
-      decompositionRoute: data.decomposition_route ?? null,
-      featured: !!data.featured,
-      live: !!data.live,
-      orderIndex: data.order_index ?? null,
-      links: Array.isArray(data.links) ? data.links : null,
-      traction: data.traction ?? null,
-      tractionNotes: data.traction_notes ?? null,
+      id: row.id,
+      transactionName: row.transaction_name,
+      status: row.status,
+      industry: row.industry ?? '',
+      targetRaise: row.target_raise ?? '',
+      preMoneyValuation: row.pre_money_valuation ?? '',
+      postMoneyValuation: row.post_money_valuation ?? '',
+      targetOwnership: row.target_ownership ?? '',
+      targetCloseDate: row.target_close_date ?? '',
+      leadInvestor: row.lead_investor ?? '',
+      memoRoute: row.memo_route ?? null,
+      thesisRoute: row.thesis_route ?? null,
+      decompositionRoute: row.decomposition_route ?? null,
+      featured: Boolean(row.featured ?? false),
+      live: Boolean(row.live ?? true),
+      orderIndex: row.order_index ?? null,
+      links: Array.isArray(row.links) ? row.links : null,
+      traction: row.traction ?? null,
+      tractionNotes: row.traction_notes ?? null,
     };
   } catch (error) {
     console.error('Error fetching deal:', error);
@@ -442,7 +468,7 @@ export async function updateDeal(dealId: string, record: Partial<DealRecord>): P
         featured: record.featured,
         live: record.live,
         order_index: record.orderIndex,
-        links: record.links as any,
+        links: record.links ?? null,
         traction: record.traction,
         traction_notes: record.tractionNotes,
       })
