@@ -1,0 +1,36 @@
+[
+  {
+    "slug": "build-process",
+    "name": "InVitro Builder",
+    "order": 1,
+    "active": true,
+    "iconKey": "rocket"
+  },
+  {
+    "slug": "whitepapers",
+    "name": "White Papers",
+    "order": 2,
+    "active": true,
+    "iconKey": "bar-chart"
+  },
+  {
+    "slug": "industry-theses",
+    "name": "Industry Theses",
+    "order": 3,
+    "active": true,
+    "iconKey": "graduation-cap"
+  },
+  {
+    "slug": "industry-decompositions",
+    "name": "Industry Decompositions",
+    "order": 4,
+    "active": true,
+    "iconKey": "search"
+  },
+  {
+    "slug": "digestible-insights",
+    "name": "Digestible Insights",
+    "order": 5,
+    "active": true
+  }
+]

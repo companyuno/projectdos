@@ -18,7 +18,7 @@ interface ResearchPaper {
   title: string
   description: string
   subtitle?: string
-  category: "build-process" | "whitepapers" | "industry-theses" | "industry-decompositions"
+  category: string
   publishDate: string
   readTime: string
   tags: string[]
@@ -85,10 +85,12 @@ const featuredResearch = researchPapers.filter((paper) => paper.featured);
 
 function FeaturedCard({ paper, onPaperClick }: { paper: ResearchPaper; onPaperClick: (paperId: string) => void }) {
   const config = categoryConfig[paper.category] || {
-    title: paper.category,
+    title: paper.category.replace(/-/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase()),
     icon: FileText,
-    color: "bg-gray-50 border-gray-200",
-    iconColor: "text-gray-400",
+    color: "bg-[#f8fafc] border-[#e2e8f0]",
+    iconColor: "text-[#032a52]",
+    borderColor: "border-l-[#6ea9f4]",
+    bgColor: "bg-[#f8fafc]",
   };
   const CategoryIcon = config.icon;
   // Fix timezone issue: parse as local date
@@ -202,7 +204,7 @@ export default function ResearchHub() {
               subtitle: thesis.subtitle ? String(thesis.subtitle) : undefined,
               category: (() => {
                 const cat = thesis.category || thesis.content?.category || "industry-theses";
-                return typeof cat === 'string' ? cat as "build-process" | "whitepapers" | "industry-theses" | "industry-decompositions" : "industry-theses";
+                return typeof cat === 'string' ? cat : "industry-theses";
               })(),
               publishDate: (() => {
                 const date = thesis.publishDate || "2025-01-01";
@@ -375,6 +377,10 @@ export default function ResearchHub() {
   const buildProcessPapers = sortedPapers["build-process"] || []
   const whitepapers = sortedPapers["whitepapers"] || []
   const industryTheses = sortedPapers["industry-theses"] || []
+  const reservedCategories = new Set(["build-process", "whitepapers", "industry-theses", "industry-decompositions"])
+  const otherCategories = Object.keys(sortedPapers)
+    .filter((c) => !reservedCategories.has(c))
+    .sort((a, b) => a.localeCompare(b))
   
   // Featured research from dynamic sources - sorted by publish date (newest first)
   const featuredResearch = dynamicTheses
@@ -545,6 +551,20 @@ export default function ResearchHub() {
             placeholderText="Industry Decomposition research coming soon."
           />
         )}
+
+        {/* Dynamically render any additional non-empty categories */}
+        {otherCategories.map((cat) => (
+          <div key={cat}>
+            <Separator />
+            <FolderSection
+              category={cat}
+              papers={sortedPapers[cat] || []}
+              isExpanded={expandedFolders[cat] ?? true}
+              onToggle={() => toggleFolder(cat)}
+              onPaperClick={handlePaperClick}
+            />
+          </div>
+        ))}
       </div>
 
       {/* User Info Form Dialog */}
@@ -679,8 +699,10 @@ function FolderSection({
   const config = categoryConfig[category] || {
     title: category.replace(/-/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase()),
     icon: Folder,
-    color: "bg-gray-50 border-gray-200",
-    iconColor: "text-gray-400",
+    color: "bg-[#f8fafc] border-[#e2e8f0]",
+    iconColor: "text-[#032a52]",
+    borderColor: "border-l-[#6ea9f4]",
+    bgColor: "bg-[#f8fafc]",
   }
 
   return (

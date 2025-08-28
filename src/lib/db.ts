@@ -666,3 +666,109 @@ export async function updateStartupSubmissionStatus(
     return false;
   }
 } 
+
+// Categories (for Research folders)
+export interface CategoryRecord {
+  slug: string
+  name: string
+  orderIndex: number | null
+  active: boolean
+  iconKey: string | null
+}
+
+export async function getAllCategories(): Promise<CategoryRecord[]> {
+  try {
+    if (!supabase) {
+      console.error('Supabase client not initialized')
+      return []
+    }
+    const { data, error } = await supabase
+      .from('categories')
+      .select('*')
+      .order('order_index', { ascending: true, nullsFirst: false })
+      .order('updated_at', { ascending: false })
+    if (error) throw error
+    const categories: CategoryRecord[] = (data as any[] | null || []).map((row: any) => ({
+      slug: row.slug,
+      name: row.name,
+      orderIndex: row.order_index ?? null,
+      active: row.active ?? true,
+      iconKey: row.icon_key ?? null,
+    }))
+    return categories
+  } catch (err) {
+    console.error('Error fetching categories:', err)
+    return []
+  }
+}
+
+export async function createCategory(record: {
+  slug: string
+  name: string
+  orderIndex?: number | null
+  active?: boolean
+  iconKey?: string | null
+}): Promise<boolean> {
+  try {
+    if (!supabase) {
+      console.error('Supabase client not initialized')
+      return false
+    }
+    const { error } = await supabase
+      .from('categories')
+      .insert({
+        slug: record.slug,
+        name: record.name,
+        order_index: record.orderIndex ?? null,
+        active: record.active ?? true,
+        icon_key: record.iconKey ?? null,
+      })
+    if (error) throw error
+    return true
+  } catch (err) {
+    console.error('Error creating category:', err)
+    return false
+  }
+}
+
+export async function updateCategory(slug: string, patch: Partial<Omit<CategoryRecord, 'slug'>>): Promise<boolean> {
+  try {
+    if (!supabase) {
+      console.error('Supabase client not initialized')
+      return false
+    }
+    const { error } = await supabase
+      .from('categories')
+      .update({
+        name: patch.name,
+        order_index: patch.orderIndex,
+        active: patch.active,
+        icon_key: patch.iconKey,
+      })
+      .eq('slug', slug)
+    if (error) throw error
+    return true
+  } catch (err) {
+    console.error('Error updating category:', err)
+    return false
+  }
+}
+
+export async function deleteCategory(slug: string): Promise<boolean> {
+  try {
+    if (!supabase) {
+      console.error('Supabase client not initialized')
+      return false
+    }
+    // Soft-delete: set active=false to mirror previous behavior
+    const { error } = await supabase
+      .from('categories')
+      .update({ active: false })
+      .eq('slug', slug)
+    if (error) throw error
+    return true
+  } catch (err) {
+    console.error('Error deleting category:', err)
+    return false
+  }
+} 

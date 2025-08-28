@@ -1923,6 +1923,42 @@ export default function ThesisAdmin() {
     }
   }
 
+  const [categories, setCategories] = useState<{ slug: string; name: string; order?: number }[]>([])
+  const [creatingCategory, setCreatingCategory] = useState(false)
+  const [newCategoryName, setNewCategoryName] = useState("")
+  const [renamingSlug, setRenamingSlug] = useState<string | null>(null)
+  const [renameName, setRenameName] = useState("")
+
+  // Helpers for slug generation
+  const generateSlug = (name: string) => name
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9\s-]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-")
+
+  const getUniqueSlug = (base: string, existing: { slug: string }[]) => {
+    let slug = base || "category"
+    const taken = new Set(existing.map((c) => c.slug))
+    let i = 2
+    while (taken.has(slug)) {
+      slug = `${base}-${i++}`
+    }
+    return slug
+  }
+
+  useEffect(() => {
+    ;(async () => {
+      try {
+        const res = await fetch('/api/categories')
+        if (res.ok) {
+          const data = await res.json()
+          setCategories(Array.isArray(data) ? data : [])
+        }
+      } catch {}
+    })()
+  }, [])
+
   if (loading) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
@@ -2385,57 +2421,163 @@ export default function ThesisAdmin() {
                 {selectedThesis && (
                   <div className="space-y-2">
                     <Label htmlFor="thesisCategory">Category</Label>
-                    <Select
-                      value={(currentThesis?.category || currentThesis?.content?.category || "industry-theses") as string}
-                      onValueChange={async (value) => {
-                        if (!selectedThesis) return
-                        
-                        setHasChanges(true)
-                        setSaving(true)
-                        try {
-                          const response = await fetch('/api/thesis', {
-                            method: 'PUT',
-                            headers: {
-                              'Content-Type': 'application/json',
-                            },
-                            body: JSON.stringify({
-                              thesisId: selectedThesis,
-                              section: 'category',
-                              content: value
-                            }),
-                          })
-                          
-                          if (response.ok) {
-                            // Store current selections
-                            const currentThesis = selectedThesis
-                            const currentSection = selectedSection
-                            
-                            // Refresh the thesis data to show the updated category
-                            await fetchThesisData()
-                            
-                            // Restore selections after refresh
-                            setSelectedThesis(currentThesis)
-                            setSelectedSection(currentSection)
-                          } else {
-                            console.error('Failed to update category')
-                          }
-                        } catch (error) {
-                          console.error('Error updating category:', error)
-                        } finally {
-                          setSaving(false)
-                        }
-                      }}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select category" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="build-process">InVitro Builder</SelectItem>
-                        <SelectItem value="whitepapers">White Papers</SelectItem>
-                        <SelectItem value="industry-theses">Industry Theses</SelectItem>
-                        <SelectItem value="industry-decompositions">Industry Decompositions</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <div className="flex items-center gap-2">
+                      <Select
+                        value={(currentThesis?.category || currentThesis?.content?.category || "industry-theses") as string}
+                        onValueChange={async (value) => {
+                          if (!selectedThesis) return
+                          setHasChanges(true)
+                          setSaving(true)
+                          try {
+                            const response = await fetch('/api/thesis', {
+                              method: 'PUT',
+                              headers: { 'Content-Type': 'application/json' },
+                              body: JSON.stringify({ thesisId: selectedThesis, section: 'category', content: value })
+                            })
+                            if (response.ok) {
+                              const curThesis = selectedThesis
+                              const curSection = selectedSection
+                              await fetchThesisData()
+                              setSelectedThesis(curThesis)
+                              setSelectedSection(curSection)
+                            }
+                          } catch {} finally { setSaving(false) }
+                        }}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select category" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {(categories.length > 0 ? categories : [
+                            { slug: 'build-process', name: 'InVitro Builder' },
+                            { slug: 'whitepapers', name: 'White Papers' },
+                            { slug: 'industry-theses', name: 'Industry Theses' },
+                            { slug: 'industry-decompositions', name: 'Industry Decompositions' },
+                          ]).map((c) => (
+                            <SelectItem key={c.slug} value={c.slug}>{c.name}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          setNewCategoryName("")
+                          setCreatingCategory(true)
+                          setRenamingSlug(null)
+                          setRenameName("")
+                        }}
+                      >New</Button>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          const cur = (currentThesis?.category || currentThesis?.content?.category || "") as string
+                          const selected = (categories.find(c=>c.slug===cur) || null)
+                          setRenamingSlug(selected?.slug || null)
+                          setRenameName(selected?.name || "")
+                          setCreatingCategory(false)
+                          setNewCategoryName("")
+                        }}
+                      >
+                        Rename
+                      </Button>
+                    </div>
+
+                    {creatingCategory && (
+                      <div className="mt-2 flex items-center gap-2">
+                        <Input
+                          className="flex-1 min-w-0"
+                          placeholder="Category name"
+                          value={newCategoryName}
+                          onChange={(e)=>setNewCategoryName(e.target.value)}
+                          onKeyDown={async (e)=>{
+                            if (e.key === 'Enter') {
+                              e.preventDefault()
+                              const base = generateSlug(newCategoryName)
+                              const slug = getUniqueSlug(base, categories)
+                              if (!newCategoryName.trim()) return
+                              try {
+                                const res = await fetch('/api/categories', {
+                                  method: 'POST',
+                                  headers: { 'Content-Type': 'application/json' },
+                                  body: JSON.stringify({ slug, name: newCategoryName.trim() })
+                                })
+                                if (res.ok) {
+                                  const list = await (await fetch('/api/categories')).json()
+                                  setCategories(Array.isArray(list) ? list : [])
+                                  setNewCategoryName("")
+                                  setCreatingCategory(false)
+                                } else {
+                                  alert('Failed to create category')
+                                }
+                              } catch {
+                                alert('Failed to create category')
+                              }
+                            }
+                          }}
+                        />
+                        <Button
+                          type="button"
+                          size="sm"
+                          onClick={async ()=>{
+                            if (!newCategoryName.trim()) return
+                            const base = generateSlug(newCategoryName)
+                            const slug = getUniqueSlug(base, categories)
+                            try {
+                              const res = await fetch('/api/categories', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ slug, name: newCategoryName.trim() })
+                              })
+                              if (res.ok) {
+                                const list = await (await fetch('/api/categories')).json()
+                                setCategories(Array.isArray(list) ? list : [])
+                                setNewCategoryName("")
+                                setCreatingCategory(false)
+                              } else {
+                                alert('Failed to create category')
+                              }
+                            } catch {
+                              alert('Failed to create category')
+                            }
+                          }}
+                        >
+                          Add
+                        </Button>
+                      </div>
+                    )}
+
+                    {renamingSlug && (
+                      <div className="mt-2 flex items-center gap-2">
+                        <Input className="flex-1 min-w-0" placeholder="New display name" value={renameName} onChange={(e)=>setRenameName(e.target.value)} />
+                        <Button type="button" size="sm" variant="outline" onClick={()=>{ setRenamingSlug(null); setRenameName("") }}>Cancel</Button>
+                        <Button
+                          type="button"
+                          size="sm"
+                          onClick={async ()=>{
+                            if (!renameName) return
+                            try {
+                              const res = await fetch('/api/categories', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ slug: renamingSlug, name: renameName }) })
+                              if (res.ok) {
+                                const list = await (await fetch('/api/categories')).json()
+                                setCategories(Array.isArray(list) ? list : [])
+                                setRenamingSlug(null)
+                                setRenameName("")
+                              } else {
+                                alert('Failed to rename category')
+                              }
+                            } catch {
+                              alert('Failed to rename category')
+                            }
+                          }}
+                        >
+                          Update
+                        </Button>
+                      </div>
+                    )}
                   </div>
                 )}
 
