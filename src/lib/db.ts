@@ -676,6 +676,15 @@ export interface CategoryRecord {
   iconKey: string | null
 }
 
+// Raw row shape from the 'categories' table
+type CategoryRow = {
+  slug: string
+  name: string
+  order_index: number | null
+  active: boolean | null
+  icon_key: string | null
+}
+
 export async function getAllCategories(): Promise<CategoryRecord[]> {
   try {
     if (!supabase) {
@@ -688,11 +697,11 @@ export async function getAllCategories(): Promise<CategoryRecord[]> {
       .order('order_index', { ascending: true, nullsFirst: false })
       .order('updated_at', { ascending: false })
     if (error) throw error
-    const categories: CategoryRecord[] = (data as any[] | null || []).map((row: any) => ({
+    const categories: CategoryRecord[] = ((data as CategoryRow[] | null) || []).map((row: CategoryRow) => ({
       slug: row.slug,
       name: row.name,
       orderIndex: row.order_index ?? null,
-      active: row.active ?? true,
+      active: Boolean(row.active ?? true),
       iconKey: row.icon_key ?? null,
     }))
     return categories

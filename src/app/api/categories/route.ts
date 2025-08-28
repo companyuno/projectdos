@@ -26,7 +26,7 @@ export async function GET() {
       .filter((c) => c.active !== false)
       .sort((a, b) => (a.order ?? 999) - (b.order ?? 999) || a.name.localeCompare(b.name))
     return NextResponse.json(active)
-  } catch (err) {
+  } catch {
     return NextResponse.json(defaultCategories)
   }
 }
