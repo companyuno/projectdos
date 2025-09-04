@@ -126,10 +126,12 @@ export async function checkPermission(email: string) {
       .from('permissions')
       .select('id')
       .eq('email', email.toLowerCase().trim())
-      .single();
+      .limit(1)
+      .maybeSingle();
     
     if (error) {
-      if (error.code === 'PGRST116') return false; // No rows found
+      // If no rows, return false; otherwise bubble up
+      if ((error as any).code === 'PGRST116') return false;
       throw error;
     }
     
