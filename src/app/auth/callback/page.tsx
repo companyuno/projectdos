@@ -55,8 +55,9 @@ export default function AuthCallbackPage() {
         } catch {}
         if (!mounted) return
         router.replace(dest.startsWith('/') ? dest : `/${dest}`)
-      } catch (e: any) {
-        setError(e?.message || 'Authentication failed')
+      } catch (e: unknown) {
+        const msg = typeof e === 'object' && e && 'message' in e ? String((e as { message?: unknown }).message) : 'Authentication failed'
+        setError(msg)
       }
     }
     run()

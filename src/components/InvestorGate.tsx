@@ -219,8 +219,9 @@ export default function InvestorGate({ children, message, redirectOnGrant }: Inv
                   setShowBanner(false)
                   try { localStorage.setItem('iv_magic_last_sent', String(Date.now())); setCooldown(60) } catch {}
                   setInfoMsg('You will receive an email with a login link if you are registered as an investor in our database')
-                } catch (e: any) {
-                  setError(e?.message || 'Failed to send magic link')
+                } catch (e: unknown) {
+                  const msg = typeof e === 'object' && e && 'message' in e ? String((e as { message?: unknown }).message) : 'Failed to send magic link'
+                  setError(msg)
                 } finally {
                   setLoading(false)
                 }

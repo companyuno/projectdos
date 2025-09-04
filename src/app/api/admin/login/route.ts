@@ -37,9 +37,9 @@ export async function POST(req: NextRequest) {
       maxAge: 60 * 60 * 24 * 30,
     })
     return res
-  } catch (e: any) {
+  } catch (e: unknown) {
     console.error('Admin login error:', e)
-    const message = process.env.NODE_ENV === 'production' ? 'Server error' : (e?.message || 'Server error')
+    const message = process.env.NODE_ENV === 'production' ? 'Server error' : (typeof e === 'object' && e && 'message' in e ? String((e as { message?: unknown }).message) : 'Server error')
     return NextResponse.json({ error: message }, { status: 500 })
   }
 } 

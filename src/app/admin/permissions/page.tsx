@@ -33,10 +33,10 @@ export default function PermissionsPage() {
       const response = await fetch('/api/permissions')
       if (response.ok) {
         const data = await response.json()
-        const mapped: Permission[] = Array.isArray(data) ? data.map((p: any) => ({
+        const mapped: Permission[] = Array.isArray(data) ? data.map((p: { email: string; added_at?: string; added_by?: string; group_name?: string }) => ({
           email: p.email,
-          addedAt: p.added_at,
-          addedBy: p.added_by,
+          addedAt: p.added_at || '',
+          addedBy: p.added_by || '',
           groupName: p.group_name || 'investments',
         })) : []
         setPermissions(mapped)

@@ -31,8 +31,9 @@ export default function AdminLoginPage() {
         return
       }
       router.replace(from)
-    } catch (e: any) {
-      setError(e?.message || 'Login failed')
+    } catch (e: unknown) {
+      const msg = typeof e === 'object' && e && 'message' in e ? String((e as { message?: unknown }).message) : 'Login failed'
+      setError(msg)
     } finally {
       setLoading(false)
     }
