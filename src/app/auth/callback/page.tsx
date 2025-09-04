@@ -1,10 +1,10 @@
 "use client"
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import { supabaseBrowser } from '@/lib/supabaseClient'
 
-export default function AuthCallbackPage() {
+function AuthCallbackInner() {
   const sp = useSearchParams()
   const router = useRouter()
   const [error, setError] = useState<string>("")
@@ -51,7 +51,6 @@ export default function AuthCallbackPage() {
         })
         try {
           localStorage.setItem('invitro-investor-email', email)
-          localStorage.setItem('invitro-investor-permission', 'true')
         } catch {}
         if (!mounted) return
         router.replace(dest.startsWith('/') ? dest : `/${dest}`)
@@ -70,5 +69,13 @@ export default function AuthCallbackPage() {
         {error ? error : 'Signing you in…'}
       </div>
     </div>
+  )
+}
+
+export default function AuthCallbackPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><div className="text-sm text-gray-700">Signing you in…</div></div>}>
+      <AuthCallbackInner />
+    </Suspense>
   )
 } 
