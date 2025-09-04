@@ -44,13 +44,19 @@ function AuthCallbackInner() {
         }
 
         // Set our cookie session based on allowlist and persist local state for the gate
-        await fetch('/api/permissions/check', {
+        const permRes = await fetch('/api/permissions/check', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email, group })
         })
+        let hasPermission = false
+        try {
+          const payload = await permRes.json().catch(()=>({}))
+          hasPermission = Boolean(payload?.hasPermission)
+        } catch {}
         try {
           localStorage.setItem('invitro-investor-email', email)
+          localStorage.setItem('invitro-investor-permission', hasPermission ? 'true' : 'false')
         } catch {}
         if (!mounted) return
         router.replace(dest.startsWith('/') ? dest : `/${dest}`)
