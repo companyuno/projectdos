@@ -261,18 +261,13 @@ export default function ResearchHub() {
     setAccreditedSelections([])
     if (!hasSubmittedInfo) {
       setShowForm(true)
-    } else if (!isAccredited) {
-      setShowAccreditedModal(true)
     } else {
-      // Already accredited, go straight to research or thesis
+      // Go straight to content without accreditation gating
       if (paperId === "invitro-investment-build-process" || paperId === "invitro-private-markets-whitepaper" || paperId === "healthcare-elearning-thesis" || paperId === "healthcare-prescription-dtc-thesis") {
-        // These have dedicated research pages
         router.push(`/research/${paperId}`)
       } else if (paperId === "long-term-care" || paperId === "construction-tech" || paperId === "healthcare-e-learning" || paperId === "accounting-services" || paperId === "b2b-sales-marketing-software" || paperId === "dtc-healthcare") {
-        // These are decomposition pages
         router.push(`/decomposition/${paperId}`)
       } else {
-        // All others go to thesis pages
         router.push(`/thesis/${paperId}`)
       }
       setPendingNavigation(null)
@@ -282,63 +277,20 @@ export default function ResearchHub() {
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     localStorage.setItem("invitro-user-info", JSON.stringify(userInfo));
-    // Send to backend visitor log, including accredited info if available
-    let accredited = undefined;
-    let accreditedSelections = undefined;
-    try {
-      const stored = localStorage.getItem("invitro-accredited");
-      if (stored) accredited = stored;
-      const selections = localStorage.getItem("invitro-accredited-selections");
-      if (selections) accreditedSelections = JSON.parse(selections);
-    } catch {}
+    // Send to backend visitor log without accreditation fields
     try {
       await fetch("/api/visitors", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...userInfo, accredited, accreditedSelections }),
+        body: JSON.stringify({ ...userInfo }),
       });
     } catch (err) {
       // Ignore error for now
     }
     setHasSubmittedInfo(true);
     setShowForm(false);
-    // Check if accredited (localStorage value or state)
-    const isAccreditedNow = (typeof window !== 'undefined' && localStorage.getItem('invitro-accredited') === 'true') || isAccredited;
     if (pendingNavigation) {
-      if (isAccreditedNow) {
-        // Use the same routing logic as handlePaperClick
-        if (pendingNavigation === "invitro-investment-build-process" || pendingNavigation === "invitro-private-markets-whitepaper" || pendingNavigation === "healthcare-elearning-thesis" || pendingNavigation === "healthcare-prescription-dtc-thesis") {
-          router.push(`/research/${pendingNavigation}`)
-        } else if (pendingNavigation === "long-term-care" || pendingNavigation === "construction-tech" || pendingNavigation === "healthcare-e-learning" || pendingNavigation === "accounting-services" || pendingNavigation === "b2b-sales-marketing-software" || pendingNavigation === "dtc-healthcare") {
-          router.push(`/decomposition/${pendingNavigation}`)
-        } else {
-          router.push(`/thesis/${pendingNavigation}`)
-        }
-        setPendingNavigation(null);
-      } else {
-        setShowAccreditedModal(true);
-      }
-    }
-  }
-
-  const handleAccreditedSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (anyAboveSelected && !lastSelected) {
-      localStorage.setItem("invitro-accredited", "true")
-      localStorage.setItem("invitro-accredited-selections", JSON.stringify(accreditedSelections))
-      setIsAccredited(true)
-      setShowAccreditedModal(false)
-      setAccreditedSelections([])
-      // Send updated info to backend visitor log
-      try {
-        const userInfo = JSON.parse(localStorage.getItem("invitro-user-info") || '{}');
-        await fetch("/api/visitors", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ ...userInfo, accredited: "true", accreditedSelections }),
-        });
-      } catch {}
-      // Use the same routing logic as handlePaperClick
+      // Navigate immediately after name/email
       if (pendingNavigation === "invitro-investment-build-process" || pendingNavigation === "invitro-private-markets-whitepaper" || pendingNavigation === "healthcare-elearning-thesis" || pendingNavigation === "healthcare-prescription-dtc-thesis") {
         router.push(`/research/${pendingNavigation}`)
       } else if (pendingNavigation === "long-term-care" || pendingNavigation === "construction-tech" || pendingNavigation === "healthcare-e-learning" || pendingNavigation === "accounting-services" || pendingNavigation === "b2b-sales-marketing-software" || pendingNavigation === "dtc-healthcare") {
@@ -346,8 +298,15 @@ export default function ResearchHub() {
       } else {
         router.push(`/thesis/${pendingNavigation}`)
       }
-      setPendingNavigation(null)
+      setPendingNavigation(null);
     }
+  }
+
+  const handleAccreditedSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    // Research no longer gates on accreditation; simply close modal if ever opened
+    setShowAccreditedModal(false)
+    setAccreditedSelections([])
   }
 
   // For use in render

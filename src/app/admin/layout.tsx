@@ -1,114 +1,78 @@
 "use client"
 
-import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Lock, FileText, Users, Settings, Rocket } from "lucide-react"
+import { FileText, Users, Settings, Rocket } from "lucide-react"
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
+import { useEffect, useState } from "react"
 
-// Get password from environment variable - no fallback for security
-const ADMIN_PASSWORD = process.env.NEXT_PUBLIC_ADMIN_PASSWORD
-
-export default function AdminLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
-  const [password, setPassword] = useState("")
-  const [error, setError] = useState("")
+export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
-
-  useEffect(() => {
-    // Check if already authenticated
-    const auth = sessionStorage.getItem("admin-authenticated")
-    if (auth === "true") {
-      setIsAuthenticated(true)
-    }
-  }, [])
-
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (password === ADMIN_PASSWORD) {
-      setIsAuthenticated(true)
-      sessionStorage.setItem("admin-authenticated", "true")
-      setError("")
-    } else {
-      setError("Incorrect password")
-    }
-  }
-
-  const handleLogout = () => {
-    setIsAuthenticated(false)
-    sessionStorage.removeItem("admin-authenticated")
-  }
-
+  const router = useRouter()
   const navItems = [
-    {
-      href: "/admin/thesis",
-      label: "Thesis Editor",
-      icon: FileText
-    },
-    {
-      href: "/admin/deals",
-      label: "Deals",
-      icon: FileText
-    },
-    {
-      href: "/admin/submissions",
-      label: "Submissions",
-      icon: Rocket
-    },
-    {
-      href: "/admin/visitors",
-      label: "Visitors",
-      icon: Users
-    },
-    {
-      href: "/admin/permissions",
-      label: "Permissions",
-      icon: Settings
-    }
+    { href: "/admin/thesis", label: "Content Editor", icon: FileText },
+    { href: "/admin/deals", label: "Deals", icon: FileText },
+    { href: "/admin/updates", label: "Updates", icon: FileText },
+    { href: "/admin/submissions", label: "Submissions", icon: Rocket },
+    { href: "/admin/visitors", label: "Visitors", icon: Users },
+    { href: "/admin/permissions", label: "Permissions", icon: Settings },
   ]
 
-  if (!isAuthenticated) {
+  const [checked, setChecked] = useState(false)
+  const [isAuthed, setIsAuthed] = useState(false)
+
+  useEffect(() => {
+    let cancelled = false
+    async function check() {
+      try {
+        const res = await fetch('/api/admin/session', { cache: 'no-store' })
+        const data = await res.json().catch(()=>({}))
+        if (!cancelled) {
+          setIsAuthed(Boolean(data?.ok))
+          setChecked(true)
+          if (!data?.ok && pathname !== '/admin/login') {
+            const from = encodeURIComponent(pathname)
+            router.replace(`/admin/login?from=${from}`)
+          }
+        }
+      } catch {
+        if (!cancelled) {
+          setIsAuthed(false)
+          setChecked(true)
+          if (pathname !== '/admin/login') {
+            const from = encodeURIComponent(pathname)
+            router.replace(`/admin/login?from=${from}`)
+          }
+        }
+      }
+    }
+    check()
+    return () => { cancelled = true }
+  }, [pathname, router])
+
+  const handleLogout = async () => {
+    await fetch('/api/admin/logout', { method: 'POST' }).catch(()=>{})
+    window.location.href = '/admin/login'
+  }
+
+  // On the login page, render children only (no admin shell/navigation)
+  if (pathname === '/admin/login') {
+    return <>{children}</>
+  }
+
+  if (!checked) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <Card className="w-full max-w-md">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Lock className="w-5 h-5" />
-              Admin Access
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleLogin} className="space-y-4">
-              <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-                  Password
-                </label>
-                <Input
-                  id="password"
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Enter admin password"
-                  required
-                />
-              </div>
-              {error && (
-                <p className="text-red-600 text-sm">{error}</p>
-              )}
-              <Button type="submit" className="w-full">
-                Login
-              </Button>
-            </form>
-          </CardContent>
-        </Card>
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading...</p>
+        </div>
       </div>
     )
+  }
+
+  if (!isAuthed) {
+    return null
   }
 
   return (
@@ -136,10 +100,7 @@ export default function AdminLayout({
             })}
           </nav>
         </div>
-        <Button 
-          onClick={handleLogout} 
-          className="bg-red-600 hover:bg-red-700 text-white font-medium px-4 py-2 rounded-md"
-        >
+        <Button onClick={handleLogout} className="bg-red-600 hover:bg-red-700 text-white font-medium px-4 py-2 rounded-md">
           Logout
         </Button>
       </div>

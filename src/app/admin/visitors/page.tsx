@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Shield, Trash2, Search } from "lucide-react";
 import Link from "next/link";
+import { supabaseBrowser } from "@/lib/supabaseClient";
+import { useRouter } from "next/navigation";
 
 interface Visitor {
   id: number;
@@ -18,6 +20,7 @@ interface Visitor {
 }
 
 export default function AdminVisitorsPage() {
+  const router = useRouter();
   const [visitors, setVisitors] = useState<Visitor[]>([]);
   const [filteredVisitors, setFilteredVisitors] = useState<Visitor[]>([]);
   const [loading, setLoading] = useState(true);
@@ -95,14 +98,49 @@ export default function AdminVisitorsPage() {
           <Button
             variant="outline"
             className="text-xs px-3 py-1 border-red-400 text-red-700 hover:bg-red-50 hover:border-red-500"
-            onClick={() => {
-              localStorage.removeItem("invitro-accredited");
-              localStorage.removeItem("invitro-accredited-selections");
-              localStorage.removeItem("invitro-user-info");
-              localStorage.removeItem("invitro-user-email");
-              localStorage.removeItem("invitro-user-permission");
-              // Remove any other relevant keys if needed
-              window.location.reload();
+            onClick={async () => {
+              // Clear Research/PermissionGate data
+              try {
+                localStorage.removeItem("invitro-accredited");
+                localStorage.removeItem("invitro-accredited-selections");
+                localStorage.removeItem("invitro-user-info");
+                localStorage.removeItem("invitro-user-email");
+                localStorage.removeItem("invitro-user-permission");
+              } catch {}
+              // Clear InvestorGate data
+              try {
+                localStorage.removeItem("invitro-investor-email");
+                localStorage.removeItem("invitro-investor-permission");
+                localStorage.removeItem("iv_magic_last_sent");
+              } catch {}
+              // Clear any Supabase local storage tokens (sb-*)
+              try {
+                const keys: string[] = [];
+                for (let i = 0; i < localStorage.length; i++) {
+                  const k = localStorage.key(i) || '';
+                  if (k.startsWith('sb-')) keys.push(k);
+                }
+                keys.forEach((k) => localStorage.removeItem(k));
+              } catch {}
+              // Clear admin client session
+              try {
+                sessionStorage.removeItem("admin-authenticated");
+              } catch {}
+              // Hit API to clear HttpOnly investor cookies
+              try {
+                await fetch('/api/permissions/check', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ logout: true })
+                })
+              } catch {}
+              // Clear admin session cookie
+              try { await fetch('/api/admin/logout', { method: 'POST', cache: 'no-store' }) } catch {}
+              // Supabase sign out (best-effort)
+              try { await supabaseBrowser?.auth.signOut() } catch {}
+              // Redirect to admin login to confirm logout state
+              const from = encodeURIComponent(window.location.pathname || '/admin/visitors');
+              router.replace(`/admin/login?from=${from}`)
             }}
           >
             Reset Demo

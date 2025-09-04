@@ -23,9 +23,7 @@ interface Deal {
   industry: string
   website?: string
   links?: { name: string; url: string }[]
-  memoRoute?: string | null
-  thesisRoute?: string | null
-  decompositionRoute?: string | null
+  detailRoute?: string | null
   featured?: boolean
   live?: boolean
   traction?: string
@@ -89,14 +87,7 @@ export default function DealsShowcase() {
   const openDeals = deals.filter((deal) => deal.status === "open")
   const upcomingDeals = deals.filter((deal) => deal.status === "upcoming")
 
-  const handleDocumentClick = (deal: Deal, type: "memo" | "thesis" | "decomposition") => {
-    const route = type === 'memo'
-      ? (deal.memoRoute || deal.id)
-      : type === 'thesis'
-        ? (deal.thesisRoute || deal.id)
-        : (deal.decompositionRoute || deal.id)
-    router.push(`/${type}/${route}`)
-  }
+  const handleDocumentClick = () => {}
 
   if (loading) {
     return null
@@ -159,8 +150,15 @@ function DealCard({
   deal: Deal
   onDocumentClick: (deal: Deal, type: "memo" | "thesis" | "decomposition") => void
 }) {
+  const router = useRouter()
+  const goToDeal = () => {
+    if (!deal.detailRoute) return
+    const to = deal.detailRoute.startsWith('/') ? deal.detailRoute : `/${deal.detailRoute}`
+    router.push(to)
+  }
+  const clickable = Boolean(deal.detailRoute)
   return (
-    <Card className="hover:shadow-xl transition-all duration-300 border-gray-200 bg-white">
+    <Card onClick={goToDeal} role={clickable ? "button" : undefined} className={`hover:shadow-xl transition-all duration-300 border-gray-200 bg-white ${clickable ? 'cursor-pointer' : 'cursor-default'}`}>
       <CardHeader className="pb-3 sm:pb-4">
         <div className="flex items-center justify-between mb-2">
           <CardTitle className="text-lg sm:text-xl font-bold text-gray-900">{deal.transactionName}</CardTitle>
@@ -219,9 +217,10 @@ function DealCard({
               variant="outline"
               size="sm"
               className="justify-start bg-transparent cursor-pointer text-xs sm:text-sm h-8 sm:h-9"
+              onClick={(e)=>e.stopPropagation()}
               asChild
             >
-              <a href={deal.website} target="_blank" rel="noopener noreferrer" className="flex items-center w-full">
+              <a href={deal.website} onClick={(e)=>e.stopPropagation()} target="_blank" rel="noopener noreferrer" className="flex items-center w-full">
                 <Globe className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1.5 sm:mr-2" />
                 Company Website
                 <ExternalLink className="w-2.5 h-2.5 sm:w-3 sm:h-3 ml-auto" />
@@ -234,51 +233,16 @@ function DealCard({
               variant="outline"
               size="sm"
               className="justify-start bg-transparent cursor-pointer text-xs sm:text-sm h-8 sm:h-9"
+              onClick={(e)=>e.stopPropagation()}
               asChild
             >
-              <a href={lnk.url} target="_blank" rel="noopener noreferrer" className="flex items-center w-full">
+              <a href={lnk.url} onClick={(e)=>e.stopPropagation()} target="_blank" rel="noopener noreferrer" className="flex items-center w-full">
                 <ExternalLink className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1.5 sm:mr-2" />
                 {lnk.name || 'Link'}
                 <ExternalLink className="w-2.5 h-2.5 sm:w-3 sm:h-3 ml-auto" />
               </a>
             </Button>
           ))}
-          {deal.status === "open" ? (
-            <>
-              <Button
-                variant="outline"
-                size="sm"
-                className="justify-start bg-transparent cursor-pointer text-xs sm:text-sm h-8 sm:h-9"
-                onClick={() => onDocumentClick(deal, "memo")}
-              >
-                <FileText className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1.5 sm:mr-2" />
-                Investment Memo
-                <ExternalLink className="w-2.5 h-2.5 sm:w-3 sm:h-3 ml-auto" />
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                className="justify-start bg-transparent cursor-pointer text-xs sm:text-sm h-8 sm:h-9"
-                onClick={() => onDocumentClick(deal, "thesis")}
-              >
-                <Users className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1.5 sm:mr-2" />
-                Industry Thesis
-                <ExternalLink className="w-2.5 h-2.5 sm:w-3 sm:h-3 ml-auto" />
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                className="justify-start bg-transparent cursor-pointer text-xs sm:text-sm h-8 sm:h-9"
-                asChild
-              >
-                <a href="mailto:jonathan.schroeder@invitrocapital.com?subject=Interest%20in%20Deal%20-%20" className="flex items-center w-full">
-                  <TrendingUp className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1.5 sm:mr-2" />
-                  Submit Interest
-                  <ExternalLink className="w-2.5 h-2.5 sm:w-3 sm:h-3 ml-auto" />
-                </a>
-              </Button>
-            </>
-          ) : null}
         </div>
       </CardContent>
     </Card>

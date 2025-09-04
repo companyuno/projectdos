@@ -1983,7 +1983,7 @@ export default function ThesisAdmin() {
           <ArrowLeft className="w-7 h-7" />
         </Button>
         <div className="flex-1 flex justify-center">
-          <h1 className="text-xl font-semibold">Thesis Content Management</h1>
+          <h1 className="text-xl font-semibold">Content Management</h1>
         </div>
         <div className="flex items-center gap-2">
           <Button
@@ -2012,7 +2012,7 @@ export default function ThesisAdmin() {
         <Card className="mb-6">
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-lg">Create New Thesis</CardTitle>
+              <CardTitle className="text-lg">Create New Content</CardTitle>
               <Button
                 variant="outline"
                 size="sm"
@@ -2020,7 +2020,7 @@ export default function ThesisAdmin() {
                 className="flex items-center gap-2"
               >
                 <Plus className="w-4 h-4" />
-                {showCreateForm ? 'Hide' : 'New Thesis'}
+                {showCreateForm ? 'Hide' : 'New Content'}
               </Button>
             </div>
           </CardHeader>
@@ -2340,7 +2340,7 @@ export default function ThesisAdmin() {
             <Card>
               <CardHeader>
                 <div className="flex items-center justify-between">
-                  <CardTitle className="text-lg">Update Thesis Content</CardTitle>
+                  <CardTitle className="text-lg">Update Content</CardTitle>
                   {selectedThesis && (
                     <Button
                       variant="outline"

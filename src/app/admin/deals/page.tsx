@@ -22,15 +22,14 @@ interface DealForm {
   targetOwnership: string
   targetCloseDate: string
   leadInvestor: string
-  memoRoute?: string
-  thesisRoute?: string
-  decompositionRoute?: string
+  detailRoute?: string | null
   featured?: boolean
   live?: boolean
   orderIndex?: number | null
   links?: { name: string; url: string }[] | null
   traction?: string | null
   tractionNotes?: string | null
+  sections?: Record<string, { title?: string; content?: string }>
 }
 
 // Auto-generate a URL-safe slug from the transaction name
@@ -47,6 +46,7 @@ export default function DealsAdminPage() {
   const [deals, setDeals] = useState<DealForm[]>([])
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
+  const [thesisOptions, setThesisOptions] = useState<{ id: string; title: string }[]>([])
 
   // Create/edit form state
   const [showCreateForm, setShowCreateForm] = useState(false)
@@ -61,17 +61,58 @@ export default function DealsAdminPage() {
     targetOwnership: "",
     targetCloseDate: "",
     leadInvestor: "InVitro Capital",
-    memoRoute: "",
-    thesisRoute: "",
-    decompositionRoute: "",
+    detailRoute: "",
     featured: false,
     live: true,
     orderIndex: null,
     links: [],
     traction: "",
     tractionNotes: "",
+    sections: {},
   })
   const [editingId, setEditingId] = useState<string | null>(null)
+
+  // Sections editor state (like Thesis)
+  const [selectedSectionKey, setSelectedSectionKey] = useState<string>("")
+  const [newSectionKey, setNewSectionKey] = useState<string>("")
+  const [sectionTitle, setSectionTitle] = useState<string>("")
+  const [sectionContent, setSectionContent] = useState<string>("")
+
+  const loadSectionIntoEditor = (key: string) => {
+    setSelectedSectionKey(key)
+    const sec = (form.sections || {})[key] || { title: "", content: "" }
+    setSectionTitle(sec.title || "")
+    setSectionContent(sec.content || "")
+  }
+  const saveCurrentSection = () => {
+    if (!selectedSectionKey) return
+    const next = { ...(form.sections || {}) }
+    next[selectedSectionKey] = { title: sectionTitle || undefined, content: sectionContent || "" }
+    setForm({ ...form, sections: next })
+  }
+  const addNewSection = () => {
+    const key = slugify(newSectionKey || `section-${Object.keys(form.sections || {}).length + 1}`)
+    if (!key) return
+    if ((form.sections || {})[key]) {
+      alert('Section key already exists')
+      return
+    }
+    const next = { ...(form.sections || {}) }
+    next[key] = { title: newSectionKey, content: "" }
+    setForm({ ...form, sections: next })
+    setNewSectionKey("")
+    loadSectionIntoEditor(key)
+  }
+  const removeSection = (key: string) => {
+    const next = { ...(form.sections || {}) }
+    delete next[key]
+    setForm({ ...form, sections: next })
+    if (selectedSectionKey === key) {
+      setSelectedSectionKey("")
+      setSectionTitle("")
+      setSectionContent("")
+    }
+  }
 
   const fetchDeals = async () => {
     try {
@@ -91,6 +132,19 @@ export default function DealsAdminPage() {
     fetchDeals()
   }, [])
 
+  useEffect(() => {
+    const fetchThesisOptions = async () => {
+      try {
+        const res = await fetch('/api/thesis')
+        if (!res.ok) return
+        const data = await res.json()
+        const list = Object.keys(data || {}).map((id) => ({ id, title: (data?.[id]?.title as string) || id }))
+        setThesisOptions(list)
+      } catch {}
+    }
+    fetchThesisOptions()
+  }, [])
+
   const resetForm = () => {
     setForm({
       id: "",
@@ -103,17 +157,20 @@ export default function DealsAdminPage() {
       targetOwnership: "",
       targetCloseDate: "",
       leadInvestor: "InVitro Capital",
-      memoRoute: "",
-      thesisRoute: "",
-      decompositionRoute: "",
+      detailRoute: "",
       featured: false,
       live: true,
       orderIndex: null,
       links: [],
       traction: "",
       tractionNotes: "",
+      sections: {},
     })
     setEditingId(null)
+    setSelectedSectionKey("")
+    setNewSectionKey("")
+    setSectionTitle("")
+    setSectionContent("")
   }
 
   const handleCreate = async () => {
@@ -182,7 +239,7 @@ export default function DealsAdminPage() {
 
   const startEdit = (d: DealForm) => {
     setEditingId(d.id)
-    setForm({ ...d, traction: d.traction ?? "" })
+    setForm({ ...d, traction: d.traction ?? "", sections: d.sections || {} })
     setShowCreateForm(true)
   }
 
@@ -295,17 +352,36 @@ export default function DealsAdminPage() {
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="space-y-2">
-                  <Label>Memo Route (slug)</Label>
-                  <Input value={form.memoRoute} onChange={(e)=>setForm({...form, memoRoute: e.target.value})} placeholder="curenta" />
+                <div className="space-y-2 md:col-span-2">
+                  <Label>Detail Route (where card navigates)</Label>
+                  <Input value={form.detailRoute || ''} onChange={(e)=>setForm({...form, detailRoute: e.target.value})} placeholder="/deals/curenta or /thesis/osta-deal-page" />
+                  <div className="text-xs text-gray-500">If empty, the card will not navigate.</div>
                 </div>
                 <div className="space-y-2">
-                  <Label>Thesis Route (slug)</Label>
-                  <Input value={form.thesisRoute} onChange={(e)=>setForm({...form, thesisRoute: e.target.value})} placeholder="long-term-care" />
-                </div>
-                <div className="space-y-2">
-                  <Label>Decomposition Route (slug)</Label>
-                  <Input value={form.decompositionRoute} onChange={(e)=>setForm({...form, decompositionRoute: e.target.value})} placeholder="construction-tech" />
+                  <Label>Link to Content</Label>
+                  <Select onValueChange={(v)=>{
+                    if (v === '__none__') {
+                      setForm({...form, detailRoute: ''})
+                    } else {
+                      setForm({...form, detailRoute: `/thesis/${v}`})
+                    }
+                  }}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Choose page" />
+                    </SelectTrigger>
+                    <SelectContent className="z-50">
+                      <SelectItem value="__none__">None</SelectItem>
+                      {thesisOptions.map((t)=> (
+                        <SelectItem key={t.id} value={t.id}>{t.title}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <Button type="button" variant="outline" size="sm" onClick={()=>{
+                    const to = (form.detailRoute || '').trim()
+                    if (!to) return
+                    const href = to.startsWith('/') ? to : `/${to}`
+                    window.open(href, '_blank')
+                  }}>Preview</Button>
                 </div>
               </div>
 
@@ -405,6 +481,8 @@ export default function DealsAdminPage() {
             )}
           </CardContent>
         </Card>
+
+        {/* Sections Editor removed */}
       </div>
     </div>
   )

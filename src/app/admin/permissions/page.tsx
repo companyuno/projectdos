@@ -8,16 +8,19 @@ import { Separator } from "@/components/ui/separator"
 import { ArrowLeft, Plus, Trash2, Mail } from "lucide-react"
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 interface Permission {
   email: string
   addedAt: string
   addedBy: string
+  groupName?: string
 }
 
 export default function PermissionsPage() {
   const [permissions, setPermissions] = useState<Permission[]>([])
   const [newEmail, setNewEmail] = useState("")
+  const [newGroup, setNewGroup] = useState<string>("investments")
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
 
@@ -30,7 +33,13 @@ export default function PermissionsPage() {
       const response = await fetch('/api/permissions')
       if (response.ok) {
         const data = await response.json()
-        setPermissions(data)
+        const mapped: Permission[] = Array.isArray(data) ? data.map((p: any) => ({
+          email: p.email,
+          addedAt: p.added_at,
+          addedBy: p.added_by,
+          groupName: p.group_name || 'investments',
+        })) : []
+        setPermissions(mapped)
       }
     } catch (error) {
       console.error('Error loading permissions:', error)
@@ -48,7 +57,7 @@ export default function PermissionsPage() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email: newEmail.trim() }),
+        body: JSON.stringify({ email: newEmail.trim(), group: newGroup }),
       })
 
       if (response.ok) {
@@ -64,14 +73,14 @@ export default function PermissionsPage() {
     }
   }
 
-  const removePermission = async (email: string) => {
+  const removePermission = async (email: string, group?: string) => {
     try {
       const response = await fetch('/api/permissions', {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email, group }),
       })
 
       if (response.ok) {
@@ -112,9 +121,9 @@ export default function PermissionsPage() {
           </CardHeader>
           <CardContent>
             <form onSubmit={addPermission} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="email">Email Address</Label>
-                <div className="flex gap-2">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3 items-end">
+                <div className="space-y-2 md:col-span-2">
+                  <Label htmlFor="email">Email Address</Label>
                   <Input
                     id="email"
                     type="email"
@@ -122,13 +131,25 @@ export default function PermissionsPage() {
                     onChange={(e) => setNewEmail(e.target.value)}
                     placeholder="Enter email address"
                     required
-                    className="flex-1"
+                    className="w-full"
                   />
-                  <Button type="submit" disabled={isLoading || !newEmail.trim()}>
-                    <Plus className="w-4 h-4 mr-2" />
-                    Add
-                  </Button>
                 </div>
+                <div className="space-y-2">
+                  <Label>Group</Label>
+                  <Select value={newGroup} onValueChange={(v)=>setNewGroup(v)}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="investments">Investments (default)</SelectItem>
+                      <SelectItem value="investor-login">Investor Login</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <div>
+                <Button type="submit" disabled={isLoading || !newEmail.trim()}>
+                  <Plus className="w-4 h-4 mr-2" />
+                  Add
+                </Button>
               </div>
             </form>
           </CardContent>
@@ -146,20 +167,17 @@ export default function PermissionsPage() {
             ) : (
               <div className="space-y-3">
                 {permissions.map((permission, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
-                  >
+                  <div key={`${permission.email}-${permission.groupName}-${index}`} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                     <div>
                       <p className="font-medium text-gray-900">{permission.email}</p>
                       <p className="text-sm text-gray-500">
-                        Added: {new Date(permission.addedAt).toLocaleDateString()}
+                        Group: {permission.groupName || 'investments'} • Added: {permission.addedAt ? new Date(permission.addedAt).toLocaleDateString() : '—'}
                       </p>
                     </div>
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => removePermission(permission.email)}
+                      onClick={() => removePermission(permission.email, permission.groupName)}
                       className="text-red-600 border-red-200 hover:bg-red-50"
                     >
                       <Trash2 className="w-4 h-4" />

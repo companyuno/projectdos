@@ -16,59 +16,95 @@ export async function getPermissions() {
       return [];
     }
     
-    const { data, error } = await supabase
+    // Try selecting group_name; fallback if column doesn't exist
+    let query = supabase
       .from('permissions')
-      .select('email, added_at, added_by')
+      .select('email, group_name, added_at, added_by')
       .order('added_at', { ascending: false });
+
+    let { data, error } = await query;
+    if (error && (error as any).code === '42703') { // undefined_column
+      const fallback = await supabase
+        .from('permissions')
+        .select('email, added_at, added_by')
+        .order('added_at', { ascending: false });
+      data = fallback.data as any[] | null;
+    } else if (error) {
+      throw error;
+    }
     
-    if (error) throw error;
-    return data || [];
+    return (data as any[]) || [];
   } catch (error) {
     console.error('Error fetching permissions:', error);
     return [];
   }
 }
 
-export async function addPermission(email: string) {
+export async function addPermission(email: string, groupName?: string) {
   try {
     if (!supabase) {
       console.error('Supabase client not initialized');
       return false;
     }
+    const payloadAny: any = {
+      email: email.toLowerCase().trim(),
+      added_by: 'admin'
+    };
+    if (groupName && groupName.trim()) payloadAny.group_name = groupName.toLowerCase().trim();
     
-    const { data, error } = await supabase
+    let { data, error } = await supabase
       .from('permissions')
-      .insert({
-        email: email.toLowerCase().trim(),
-        added_by: 'admin'
-      })
+      .insert(payloadAny)
       .select();
-    
+
     if (error) {
+      // If undefined column, retry without group_name for backwards compatibility
+      if ((error as any).code === '42703') {
+        const { data: data2, error: error2 } = await supabase
+          .from('permissions')
+          .insert({ email: payloadAny.email, added_by: payloadAny.added_by })
+          .select();
+        if (error2) {
+          if ((error2 as any).code === '23505') return false;
+          throw error2;
+        }
+        return !!(data2 && data2.length > 0);
+      }
       // If it's a duplicate key error, that's fine
-      if (error.code === '23505') return false;
+      if ((error as any).code === '23505') return false;
       throw error;
     }
     
-    return data && data.length > 0;
+    return !!(data && (data as any[]).length > 0);
   } catch (error) {
     console.error('Error adding permission:', error);
     return false;
   }
 }
 
-export async function removePermission(email: string) {
+export async function removePermission(email: string, groupName?: string) {
   try {
     if (!supabase) {
       console.error('Supabase client not initialized');
       return false;
     }
-    
+    const normalizedEmail = email.toLowerCase().trim();
+    // Try group-specific delete if provided
+    if (groupName && groupName.trim()) {
+      const { error } = await supabase
+        .from('permissions')
+        .delete()
+        .eq('email', normalizedEmail)
+        .eq('group_name', groupName.toLowerCase().trim());
+      if (!error) return true;
+      if ((error as any).code !== '42703') throw error; // if not undefined column, bubble up
+    }
+
+    // Fallback: delete by email only
     const { error } = await supabase
       .from('permissions')
       .delete()
-      .eq('email', email.toLowerCase().trim());
-    
+      .eq('email', normalizedEmail);
     if (error) throw error;
     return true;
   } catch (error) {
@@ -99,6 +135,48 @@ export async function checkPermission(email: string) {
   } catch (error) {
     console.error('Error checking permission:', error);
     return false;
+  }
+}
+
+// Group-aware permission check: looks for a row matching email and group_name
+export async function checkPermissionForGroup(email: string, groupName: string) {
+  try {
+    if (!supabase) {
+      console.error('Supabase client not initialized');
+      return false;
+    }
+    const normalizedEmail = email.toLowerCase().trim()
+    const normalizedGroup = (groupName || 'investments').toLowerCase().trim()
+    // First, try a strict match on (email, group_name)
+    const { data, error } = await supabase
+      .from('permissions')
+      .select('id, group_name')
+      .eq('email', normalizedEmail)
+      .eq('group_name', normalizedGroup)
+      .single()
+    if (error) {
+      const code = (error as any).code
+      // Column missing -> fallback to legacy email-only behavior
+      if (code === '42703') {
+        const legacy = await supabase
+          .from('permissions')
+          .select('id')
+          .eq('email', normalizedEmail)
+          .single()
+        if (legacy.error) {
+          if ((legacy.error as any).code === 'PGRST116') return false
+          throw legacy.error
+        }
+        return !!legacy.data
+      }
+      if (code === 'PGRST116') return false // no rows
+      throw error
+    }
+    // Found a matching row for this group
+    return !!data
+  } catch (error) {
+    console.error('Error checking group permission:', error)
+    return false
   }
 }
 
@@ -278,15 +356,14 @@ export interface DealRecord {
   targetOwnership: string;
   targetCloseDate: string;
   leadInvestor: string;
-  memoRoute?: string | null;
-  thesisRoute?: string | null;
-  decompositionRoute?: string | null;
+  detailRoute?: string | null;
   featured?: boolean;
   live?: boolean;
   orderIndex?: number | null;
   links?: { name: string; url: string }[] | null;
   traction?: string | null;
   tractionNotes?: string | null;
+  sections?: Record<string, { title?: string; content?: string }> | null;
 }
 
 // Raw row shape from the 'deals' table
@@ -301,15 +378,14 @@ type DealRow = {
   target_ownership: string | null;
   target_close_date: string | null;
   lead_investor: string | null;
-  memo_route: string | null;
-  thesis_route: string | null;
-  decomposition_route: string | null;
+  detail_route: string | null;
   featured: boolean | null;
   live: boolean | null;
   order_index: number | null;
   links: { name: string; url: string }[] | null;
   traction: string | null;
   traction_notes: string | null;
+  sections?: Record<string, { title?: string; content?: string }> | null;
 };
 
 export async function getAllDeals(): Promise<DealRecord[]> {
@@ -338,15 +414,14 @@ export async function getAllDeals(): Promise<DealRecord[]> {
       targetOwnership: row.target_ownership ?? '',
       targetCloseDate: row.target_close_date ?? '',
       leadInvestor: row.lead_investor ?? '',
-      memoRoute: row.memo_route ?? null,
-      thesisRoute: row.thesis_route ?? null,
-      decompositionRoute: row.decomposition_route ?? null,
+      detailRoute: row.detail_route ?? null,
       featured: Boolean(row.featured ?? false),
       live: Boolean(row.live ?? true),
       orderIndex: row.order_index ?? null,
       links: Array.isArray(row.links) ? row.links : null,
       traction: row.traction ?? null,
       tractionNotes: row.traction_notes ?? null,
+      sections: row.sections ?? null,
     }));
 
     return deals;
@@ -388,15 +463,14 @@ export async function getDeal(dealId: string): Promise<DealRecord | null> {
       targetOwnership: row.target_ownership ?? '',
       targetCloseDate: row.target_close_date ?? '',
       leadInvestor: row.lead_investor ?? '',
-      memoRoute: row.memo_route ?? null,
-      thesisRoute: row.thesis_route ?? null,
-      decompositionRoute: row.decomposition_route ?? null,
+      detailRoute: row.detail_route ?? null,
       featured: Boolean(row.featured ?? false),
       live: Boolean(row.live ?? true),
       orderIndex: row.order_index ?? null,
       links: Array.isArray(row.links) ? row.links : null,
       traction: row.traction ?? null,
       tractionNotes: row.traction_notes ?? null,
+      sections: row.sections ?? null,
     };
   } catch (error) {
     console.error('Error fetching deal:', error);
@@ -424,9 +498,7 @@ export async function createDeal(record: DealRecord): Promise<boolean> {
         target_ownership: record.targetOwnership,
         target_close_date: record.targetCloseDate,
         lead_investor: record.leadInvestor,
-        memo_route: record.memoRoute ?? null,
-        thesis_route: record.thesisRoute ?? null,
-        decomposition_route: record.decompositionRoute ?? null,
+        detail_route: record.detailRoute ?? null,
         featured: record.featured ?? false,
         live: record.live ?? true,
         order_index: record.orderIndex ?? null,
@@ -462,9 +534,7 @@ export async function updateDeal(dealId: string, record: Partial<DealRecord>): P
         target_ownership: record.targetOwnership,
         target_close_date: record.targetCloseDate,
         lead_investor: record.leadInvestor,
-        memo_route: record.memoRoute,
-        thesis_route: record.thesisRoute,
-        decomposition_route: record.decompositionRoute,
+        detail_route: record.detailRoute,
         featured: record.featured,
         live: record.live,
         order_index: record.orderIndex,
@@ -572,6 +642,160 @@ export async function deleteVisitor(visitorId: number) {
   } catch (error) {
     console.error('Error deleting visitor:', error);
     return false;
+  }
+}
+
+// Investor Updates (Phase 1 MVP)
+export interface InvestorUpdateRecord {
+  slug: string
+  title: string
+  content: string
+  audience: 'public' | 'investors'
+  live: boolean
+  publishDate?: string | null
+  linkedSlug?: string | null
+  created_at?: string
+  updated_at?: string
+}
+
+type InvestorUpdateRow = {
+  slug: string
+  title: string
+  content: string
+  audience: 'public' | 'investors'
+  live: boolean
+  publish_date: string | null
+  linked_slug: string | null
+  created_at: string
+  updated_at: string
+}
+
+export async function getAllInvestorUpdates(): Promise<InvestorUpdateRecord[]> {
+  try {
+    if (!supabase) {
+      console.error('Supabase client not initialized')
+      return []
+    }
+    const { data, error } = await supabase
+      .from('investor_updates')
+      .select('*')
+      .order('updated_at', { ascending: false })
+    if (error) throw error
+    return ((data as InvestorUpdateRow[] | null) || []).map((row) => ({
+      slug: row.slug,
+      title: row.title,
+      content: row.content,
+      audience: row.audience,
+      live: row.live,
+      publishDate: row.publish_date,
+      linkedSlug: row.linked_slug,
+      created_at: row.created_at,
+      updated_at: row.updated_at,
+    }))
+  } catch (err) {
+    console.error('Error fetching investor updates:', err)
+    return []
+  }
+}
+
+export async function getInvestorUpdate(slug: string): Promise<InvestorUpdateRecord | null> {
+  try {
+    if (!supabase) {
+      console.error('Supabase client not initialized')
+      return null
+    }
+    const { data, error } = await supabase
+      .from('investor_updates')
+      .select('*')
+      .eq('slug', slug)
+      .single()
+    if (error) {
+      if ((error as any).code === 'PGRST116') return null
+      throw error
+    }
+    const row = data as InvestorUpdateRow
+    return {
+      slug: row.slug,
+      title: row.title,
+      content: row.content,
+      audience: row.audience,
+      live: row.live,
+      publishDate: row.publish_date,
+      linkedSlug: row.linked_slug,
+      created_at: row.created_at,
+      updated_at: row.updated_at,
+    }
+  } catch (err) {
+    console.error('Error fetching investor update:', err)
+    return null
+  }
+}
+
+export async function createInvestorUpdate(record: InvestorUpdateRecord): Promise<boolean> {
+  try {
+    if (!supabase) {
+      console.error('Supabase client not initialized')
+      return false
+    }
+    const { error } = await supabase
+      .from('investor_updates')
+      .insert({
+        slug: record.slug,
+        title: record.title,
+        content: record.content,
+        audience: record.audience,
+        live: record.live,
+        publish_date: record.publishDate ?? null,
+        linked_slug: record.linkedSlug ?? null,
+      })
+    if (error) throw error
+    return true
+  } catch (err) {
+    console.error('Error creating investor update:', err)
+    return false
+  }
+}
+
+export async function updateInvestorUpdate(slug: string, patch: Partial<InvestorUpdateRecord>): Promise<boolean> {
+  try {
+    if (!supabase) {
+      console.error('Supabase client not initialized')
+      return false
+    }
+    const { error } = await supabase
+      .from('investor_updates')
+      .update({
+        title: patch.title,
+        content: patch.content,
+        audience: patch.audience as any,
+        live: patch.live,
+        publish_date: patch.publishDate ?? undefined,
+        linked_slug: patch.linkedSlug ?? undefined,
+      })
+      .eq('slug', slug)
+    if (error) throw error
+    return true
+  } catch (err) {
+    console.error('Error updating investor update:', err)
+    return false
+  }
+}
+
+export async function deleteInvestorUpdate(slug: string): Promise<boolean> {
+  try {
+    if (!supabase) {
+      console.error('Supabase client not initialized')
+      return false
+    }
+    const { error } = await supabase
+      .from('investor_updates')
+      .delete()
+      .eq('slug', slug)
+    if (error) throw error
+    return true
+  } catch (err) {
+    console.error('Error deleting investor update:', err)
+    return false
   }
 }
 

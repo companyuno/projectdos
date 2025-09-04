@@ -31,6 +31,7 @@ export default function PermissionGate({ children }: PermissionGateProps) {
     "I hold a qualifying financial license (Series 7, 65, or 82)",
     "I am a knowledgeable employee of a private investment fund",
     "I represent an entity with over $5 million in assets, or where all equity owners are accredited investors",
+    "I am not an accredited investor",
   ];
 
   // On mount, prefill from previous session and auto-check allowlist if info exists
@@ -54,15 +55,21 @@ export default function PermissionGate({ children }: PermissionGateProps) {
 
     const storedEmail = localStorage.getItem(STORAGE_KEY_EMAIL);
     const storedPermission = localStorage.getItem(STORAGE_KEY_PERMISSION);
-    if (storedEmail && storedPermission === "true") {
+    const accreditedFlag = localStorage.getItem("invitro-accredited") === "true";
+
+    // Only auto-allow if permission is granted AND accreditation has been completed previously
+    if (storedEmail && storedPermission === "true" && accreditedFlag) {
       if (!email) setEmail(storedEmail);
       setHasPermission(true);
       setSubmitted(true);
       return; // Already allowed
     }
 
-    // If we already have user info (from Research), do not show the form—auto-check allowlist now
-    if (infoEmail && (!storedPermission || storedPermission === "false")) {
+    // If we already have user info (from Research) and accreditation not completed, show Step 1 prefilled
+    // (no auto-jump; user can review and click Next)
+
+    // If we have user info and accreditation is completed, auto-check allowlist (for banner + persistence)
+    if (infoEmail && accreditedFlag && (!storedPermission || storedPermission === "false")) {
       (async () => {
         setLoading(true);
         try {
@@ -165,9 +172,18 @@ export default function PermissionGate({ children }: PermissionGateProps) {
   }, [showAccessBanner]);
 
   const toggleSelection = (opt: string) => {
-    setAccreditedSelections((prev) =>
-      prev.includes(opt) ? prev.filter((s) => s !== opt) : [...prev, opt]
-    );
+    const notAcc = ACCREDITED_OPTIONS[ACCREDITED_OPTIONS.length - 1];
+    setAccreditedSelections((prev) => {
+      // If selecting "Not accredited", it becomes the only selection
+      if (opt === notAcc) {
+        return prev.includes(notAcc) ? [] : [notAcc];
+      }
+      // Otherwise, deselect "Not accredited" if present, then toggle this option
+      const withoutNot = prev.filter((s) => s !== notAcc);
+      return withoutNot.includes(opt)
+        ? withoutNot.filter((s) => s !== opt)
+        : [...withoutNot, opt];
+    });
   };
 
   const handleLogout = () => {
@@ -230,8 +246,8 @@ export default function PermissionGate({ children }: PermissionGateProps) {
     );
   }
 
-  // If user info exists already (from Research), avoid showing any form; a background check will decide the view
-  if (hasExistingInfo || loading) {
+  // Only hide while loading; otherwise show the form (prefilled if info exists)
+  if (loading) {
     return null;
   }
 
@@ -239,16 +255,16 @@ export default function PermissionGate({ children }: PermissionGateProps) {
   return (
     <div className="max-w-md mx-auto py-12">
       <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+        <CardHeader className="pb-0">
+          <CardTitle className="flex items-center gap-2 mb-0">
             <Lock className="w-5 h-5" />
-            {step === 1 ? "Access Required" : "Accredited Investor"}
+            {step === 1 ? "Access Required" : "Accredited Investor Form"}
           </CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="pt-0">
           {step === 1 ? (
             <>
-              <p className="text-gray-600 mb-6">Please provide your details to request access to investment opportunities.</p>
+              <p className="text-gray-600 mb-4">Please provide your details to request access to investment opportunities.</p>
               <form onSubmit={handleNext} className="space-y-4">
                 <div>
                   <Label htmlFor="firstName">First Name</Label>
@@ -265,28 +281,40 @@ export default function PermissionGate({ children }: PermissionGateProps) {
                 {error && <p className="text-red-600 text-sm">{error}</p>}
                 <Button type="submit" className="w-full" disabled={loading || !email.trim() || !firstName.trim() || !lastName.trim()}>Next</Button>
               </form>
-              <Button type="button" variant="outline" onClick={handleLogout} className="w-full mt-3">Clear Info</Button>
+              <Button type="button" variant="outline" onClick={handleLogout} className="w-full mt-4">Clear Info</Button>
             </>
           ) : (
             <>
               <p className="text-gray-600 mb-4">Select all accreditation criteria that apply.</p>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                  <div className="mt-2 space-y-2">
-                    {ACCREDITED_OPTIONS.map((opt) => (
-                      <label key={opt} className={`flex items-start gap-2 cursor-pointer p-2 rounded-md ${accreditedSelections.includes(opt) ? 'bg-blue-50 border border-blue-200' : ''}`}>
-                        <input type="checkbox" checked={accreditedSelections.includes(opt)} onChange={() => toggleSelection(opt)} className="mt-1 accent-blue-600" />
-                        <span className="text-sm text-gray-800 leading-snug">{opt}</span>
-                      </label>
-                    ))}
+                  <div className="space-y-3">
+                    {ACCREDITED_OPTIONS.map((opt, idx) => {
+                      const isLast = idx === ACCREDITED_OPTIONS.length - 1;
+                      return (
+                        <label
+                          key={opt}
+                          className={`flex items-start gap-2 cursor-pointer p-2 rounded-md ${accreditedSelections.includes(opt) ? 'bg-blue-50 border border-blue-200' : ''} ${isLast ? 'mb-4' : ''}`}
+                        >
+                          <input type="checkbox" checked={accreditedSelections.includes(opt)} onChange={() => toggleSelection(opt)} className="mt-1 accent-blue-600" />
+                          <span className="text-sm text-gray-800 leading-snug">{opt}</span>
+                        </label>
+                      );
+                    })}
                   </div>
                 </div>
                 {error && <p className="text-red-600 text-sm">{error}</p>}
-                <div className="flex items-center gap-2">
+                <div className="flex items-center justify-between gap-3">
                   <Button type="button" variant="outline" onClick={() => setStep(1)} disabled={loading}>
                     Back
                   </Button>
-                  <Button type="submit" className="flex-1" disabled={loading}>
+                  <Button
+                    type="submit"
+                    className="min-w-[160px]"
+                    disabled={
+                      loading || accreditedSelections.includes(ACCREDITED_OPTIONS[ACCREDITED_OPTIONS.length - 1])
+                    }
+                  >
                     {loading ? "Submitting..." : "Request Access"}
                   </Button>
                 </div>
