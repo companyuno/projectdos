@@ -27,7 +27,7 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: "Investments | InVitro Capital",
-  description: "InVitro Capital research, theses, and industry decompositions.",
+  description: "InVitro Capital: Research, Investments, Company Building",
   icons: {
     icon: "/logo.png",
   },
