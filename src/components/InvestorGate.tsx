@@ -200,6 +200,7 @@ export default function InvestorGate({ children, message, redirectOnGrant }: Inv
               <Button type="button" variant="outline" disabled={loading || !email.trim() || cooldown>0} onClick={async ()=>{
                 setError("")
                 setLoading(true)
+                setInfoMsg('You will receive an email with a login link if you are registered as an investor in our database')
                 try {
                   const from = redirectOnGrant || '/investor-updates'
                   // Only send magic link if email is allowlisted for the investor-login group
@@ -215,7 +216,7 @@ export default function InvestorGate({ children, message, redirectOnGrant }: Inv
                     setAllowed(null)
                     setShowBanner(false)
                     setError("")
-                    setInfoMsg('You will receive an email with a login link if you are registered as an investor in our database')
+                    // keep infoMsg as-is
                     return
                   }
                   if (!supabaseBrowser) { setError('Email login is not configured'); setLoading(false); return; }
@@ -230,7 +231,7 @@ export default function InvestorGate({ children, message, redirectOnGrant }: Inv
                   setAllowed(false)
                   setShowBanner(false)
                   try { localStorage.setItem('iv_magic_last_sent', String(Date.now())); setCooldown(60) } catch {}
-                  setInfoMsg('You will receive an email with a login link if you are registered as an investor in our database')
+                  // keep infoMsg persistent during flow
                 } catch (e: unknown) {
                   const msg = typeof e === 'object' && e && 'message' in e ? String((e as { message?: unknown }).message) : 'Failed to send magic link'
                   setError(msg)
