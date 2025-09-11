@@ -241,7 +241,11 @@ export default function InvestorGate({ children, message, redirectOnGrant }: Inv
               }}>Send Link{cooldown>0 ? ` (${cooldown}s)` : ''}</Button>
               <Button type="button" variant="outline" onClick={handleLogout}>Clear</Button>
             </div>
-            {infoMsg && <p className="text-gray-600 text-sm mt-2">{infoMsg}</p>}
+            {(infoMsg || cooldown > 0 || (submitted && allowed === false)) && (
+              <p className="text-gray-600 text-sm mt-2">
+                {infoMsg || 'You will receive an email with a login link if you are registered as an investor in our database'}
+              </p>
+            )}
           </form>
         </CardContent>
       </Card>
