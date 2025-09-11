@@ -4,6 +4,14 @@ import type { NextRequest } from 'next/server'
 export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl
 
+  // Redirect shorthand /investor-update-:slug -> /investor-updates/:slug
+  if (pathname.startsWith('/investor-update-')) {
+    const slug = pathname.replace('/investor-update-', '')
+    const url = req.nextUrl.clone()
+    url.pathname = `/investor-updates/${slug}`
+    return NextResponse.redirect(url)
+  }
+
   // Admin protection (Edge-safe):
   if (pathname.startsWith('/admin')) {
     // Allow login page
@@ -39,5 +47,6 @@ export const config = {
   matcher: [
     '/admin/:path*',
     '/investor-updates/:path*',
+    '/investor-update-:path*',
   ],
 } 

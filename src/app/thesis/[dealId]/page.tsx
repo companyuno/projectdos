@@ -7,6 +7,7 @@ import { ArrowLeft, Download } from "lucide-react"
 import { useRouter, useParams } from "next/navigation"
 import Image from "next/image"
 import { useState, useEffect } from "react"
+import InvestorGate from "@/components/InvestorGate"
 
 // Define types for thesisData
 interface ExecutiveSummary {
@@ -153,6 +154,23 @@ export default function IndustryThesis() {
   const router = useRouter()
   const params = useParams()
   const dealId = params.dealId as string
+  const [requireGate, setRequireGate] = useState<boolean>(false)
+
+  useEffect(() => {
+    const checkInvestorLink = async () => {
+      try {
+        const linked = `/thesis/${dealId}`
+        const res = await fetch(`/api/investor-updates?linkedSlug=${encodeURIComponent(linked)}`, { cache: 'no-store' })
+        if (!res.ok) return
+        const arr = await res.json().catch(()=>[])
+        const investorOnly = Array.isArray(arr) && arr.some((u:any)=> u?.linkedSlug === linked && u?.audience === 'investors' && u?.live !== false)
+        setRequireGate(investorOnly)
+      } catch {}
+    }
+    if (dealId) checkInvestorLink()
+  }, [dealId])
+
+  const GateMaybe = ({children}: {children: any}) => requireGate ? <InvestorGate>{children}</InvestorGate> : <>{children}</>;
 
   // Helper function to process text content with formatting
   const processTextContent = (text: string) => {
@@ -741,6 +759,7 @@ export default function IndustryThesis() {
   }
 
   return (
+    <GateMaybe>
     <div className="min-h-screen bg-white">
       <div className="sticky top-0 z-20 bg-white border-b border-gray-200 w-full shadow-sm">
         <div className="flex items-center justify-between h-20 px-6">
@@ -1352,5 +1371,6 @@ export default function IndustryThesis() {
         )}
       </div>
     </div>
+    </GateMaybe>
   )
 } 

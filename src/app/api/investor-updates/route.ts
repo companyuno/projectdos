@@ -5,10 +5,16 @@ export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url)
     const slug = searchParams.get('slug')
+    const linkedSlug = searchParams.get('linkedSlug')
     if (slug) {
       const upd = await getInvestorUpdate(slug)
       if (!upd) return NextResponse.json({ error: 'Not found' }, { status: 404 })
       return NextResponse.json(upd)
+    }
+    if (linkedSlug) {
+      const list = await getAllInvestorUpdates()
+      const matches = list.filter((u) => (u.linkedSlug || '').trim() === linkedSlug.trim())
+      return NextResponse.json(matches)
     }
     const list = await getAllInvestorUpdates()
     return NextResponse.json(list)
