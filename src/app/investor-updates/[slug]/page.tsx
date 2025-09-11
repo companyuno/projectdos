@@ -51,9 +51,7 @@ export default function InvestorUpdateDetail() {
 
   if (update.audience === 'investors') {
     return (
-      <InvestorGate>
-        <Redirector to={dest} />
-      </InvestorGate>
+      <InvestorGate redirectOnGrant={dest} />
     )
   }
 
