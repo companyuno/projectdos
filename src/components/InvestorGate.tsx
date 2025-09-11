@@ -219,10 +219,11 @@ export default function InvestorGate({ children, message, redirectOnGrant }: Inv
             </div>
             {error && <p className="text-red-600 text-sm">{error}</p>}
             <div className="flex items-center gap-2">
-              <Button type="button" variant="outline" disabled={loading || !email.trim() || cooldown>0} onClick={async ()=>{
+              <Button type="button" variant="outline" disabled={!email.trim() || cooldown>0} onClick={async ()=>{
                 setError("")
-                setLoading(true)
                 setInfoMsg('You will receive an email with a login link if you are registered as an investor in our database')
+                // Start optimistic cooldown immediately for snappier UX
+                if (cooldown <= 0) setCooldown(60)
                 try {
                   const from = redirectOnGrant || '/investor-updates'
                   // Only send magic link if email is allowlisted for the investor-login group
@@ -239,9 +240,11 @@ export default function InvestorGate({ children, message, redirectOnGrant }: Inv
                     setShowBanner(false)
                     setError("")
                     // keep infoMsg as-is
+                    // Reset cooldown since no email will be sent
+                    setCooldown(0)
                     return
                   }
-                  if (!supabaseBrowser) { setError('Email login is not configured'); setLoading(false); return; }
+                  if (!supabaseBrowser) { setError('Email login is not configured'); setCooldown(0); return; }
                   const { error } = await supabaseBrowser.auth.signInWithOtp({ email, options: { emailRedirectTo: typeof window !== 'undefined' ? `${window.location.origin}/auth/callback?from=${encodeURIComponent(from)}` : undefined }})
                   if (error) {
                     const msg = String(error?.message || '')
@@ -257,8 +260,10 @@ export default function InvestorGate({ children, message, redirectOnGrant }: Inv
                 } catch (e: unknown) {
                   const msg = typeof e === 'object' && e && 'message' in e ? String((e as { message?: unknown }).message) : 'Failed to send magic link'
                   setError(msg)
+                  // drop cooldown on failure
+                  setCooldown(0)
                 } finally {
-                  setLoading(false)
+                  // no-op: avoid grey flicker; cooldown state controls disabled state
                 }
               }}>Send Link{cooldown>0 ? ` (${cooldown}s)` : ''}</Button>
               <Button type="button" variant="outline" onClick={handleLogout}>Clear</Button>
