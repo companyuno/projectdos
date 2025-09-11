@@ -105,8 +105,30 @@ export default function InvestorGate({ children, message, redirectOnGrant }: Inv
     if (!redirectOnGrant) return
     const onStorage = (e: StorageEvent) => {
       if (e.key === STORAGE_ALLOWED && e.newValue === 'true') {
+        // Update local state so gates without redirect can unlock immediately
+        setAllowed(true)
+        setSubmitted(true)
         const to = redirectOnGrant.startsWith('/') ? redirectOnGrant : `/${redirectOnGrant}`
         window.location.replace(to)
+      }
+      if (e.key === STORAGE_EMAIL && typeof e.newValue === 'string') {
+        setEmail(e.newValue)
+      }
+    }
+    window.addEventListener('storage', onStorage)
+    return () => window.removeEventListener('storage', onStorage)
+  }, [redirectOnGrant])
+
+  // Also listen for storage changes even when no redirect target is provided
+  useEffect(() => {
+    if (redirectOnGrant) return
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === STORAGE_ALLOWED && e.newValue === 'true') {
+        setAllowed(true)
+        setSubmitted(true)
+      }
+      if (e.key === STORAGE_EMAIL && typeof e.newValue === 'string') {
+        setEmail(e.newValue)
       }
     }
     window.addEventListener('storage', onStorage)
