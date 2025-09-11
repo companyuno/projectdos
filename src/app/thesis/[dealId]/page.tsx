@@ -9,6 +9,10 @@ import Image from "next/image"
 import { useState, useEffect } from "react"
 import InvestorGate from "@/components/InvestorGate"
 
+function GateMaybe({ children, requireGate }: { children: React.ReactNode; requireGate: boolean }) {
+  return requireGate ? <InvestorGate>{children}</InvestorGate> : <>{children}</>
+}
+
 // Define types for thesisData
 interface ExecutiveSummary {
   title: string;
@@ -169,8 +173,6 @@ export default function IndustryThesis() {
     }
     if (dealId) checkInvestorLink()
   }, [dealId])
-
-  const GateMaybe = ({children}: {children: any}) => requireGate ? <InvestorGate>{children}</InvestorGate> : <>{children}</>;
 
   // Helper function to process text content with formatting
   const processTextContent = (text: string) => {
@@ -759,7 +761,7 @@ export default function IndustryThesis() {
   }
 
   return (
-    <GateMaybe>
+    <GateMaybe requireGate={requireGate}>
     <div className="min-h-screen bg-white">
       <div className="sticky top-0 z-20 bg-white border-b border-gray-200 w-full shadow-sm">
         <div className="flex items-center justify-between h-20 px-6">
