@@ -226,7 +226,7 @@ export default function IndustryThesis() {
         return (
           <div className="font-inter space-y-5 leading-relaxed markdown-body editor-content">
             {/* Render text before table */}
-            {beforeTable.trim() && processTextContent(beforeTable)}
+            {beforeTable.trim() && renderContent(beforeTable)}
             
             {/* Render table */}
             <div className="my-4 -mx-4 sm:mx-0 overflow-x-auto text-xs sm:text-sm">
@@ -234,7 +234,7 @@ export default function IndustryThesis() {
             </div>
             
             {/* Render text after table */}
-            {afterTable.trim() && processTextContent(afterTable)}
+            {afterTable.trim() && renderContent(afterTable)}
           </div>
         )
       }
