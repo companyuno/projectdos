@@ -101,6 +101,18 @@ export default function InvestorGate({ children, message, redirectOnGrant }: Inv
     }
   }, [submitted, allowed, redirectOnGrant])
 
+  useEffect(() => {
+    if (!redirectOnGrant) return
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === STORAGE_ALLOWED && e.newValue === 'true') {
+        const to = redirectOnGrant.startsWith('/') ? redirectOnGrant : `/${redirectOnGrant}`
+        window.location.replace(to)
+      }
+    }
+    window.addEventListener('storage', onStorage)
+    return () => window.removeEventListener('storage', onStorage)
+  }, [redirectOnGrant])
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError("")

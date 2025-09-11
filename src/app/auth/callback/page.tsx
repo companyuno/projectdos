@@ -1,25 +1,21 @@
 "use client"
 
 import { useEffect, useState, Suspense } from 'react'
-import { useSearchParams, useRouter } from 'next/navigation'
+import { useSearchParams } from 'next/navigation'
 import { supabaseBrowser } from '@/lib/supabaseClient'
 
 function AuthCallbackInner() {
   const sp = useSearchParams()
-  const router = useRouter()
   const [error, setError] = useState<string>("")
+  const [done, setDone] = useState(false)
 
   useEffect(() => {
     let mounted = true
     const run = async () => {
       try {
-        const dest = sp?.get('from') || '/investor-updates'
         const code = sp?.get('code')
         const group = sp?.get('group') || 'investor-login'
 
-        // Handle Supabase magic link in both modes:
-        // 1) PKCE: ?code=...
-        // 2) Hash tokens: #access_token=...&refresh_token=...
         if (supabaseBrowser) {
           if (code) {
             await supabaseBrowser.auth.exchangeCodeForSession(code)
@@ -29,13 +25,11 @@ function AuthCallbackInner() {
             const refresh_token = params.get('refresh_token') || ''
             if (access_token) {
               await supabaseBrowser.auth.setSession({ access_token, refresh_token })
-              // Clean the hash from the URL
               try { window.history.replaceState({}, '', window.location.pathname + window.location.search) } catch {}
             }
           }
         }
 
-        // Get the signed-in user
         const userRes = supabaseBrowser ? await supabaseBrowser.auth.getUser() : null
         const email = userRes?.data?.user?.email
         if (!email) {
@@ -43,7 +37,7 @@ function AuthCallbackInner() {
           return
         }
 
-        // Set our cookie session based on allowlist and persist local state for the gate
+        // Set cookie session and local storage (used by the original tab)
         const permRes = await fetch('/api/permissions/check', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -58,8 +52,12 @@ function AuthCallbackInner() {
           localStorage.setItem('invitro-investor-email', email)
           localStorage.setItem('invitro-investor-permission', hasPermission ? 'true' : 'false')
         } catch {}
+
         if (!mounted) return
-        router.replace(dest.startsWith('/') ? dest : `/${dest}`)
+        setDone(true)
+
+        // Attempt to close the tab/window; if blocked, user will see confirmation below
+        try { window.close() } catch {}
       } catch (e: unknown) {
         const msg = typeof e === 'object' && e && 'message' in e ? String((e as { message?: unknown }).message) : 'Authentication failed'
         setError(msg)
@@ -67,12 +65,24 @@ function AuthCallbackInner() {
     }
     run()
     return () => { mounted = false }
-  }, [router, sp])
+  }, [sp])
 
   return (
     <div className="min-h-screen flex items-center justify-center">
-      <div className="text-sm text-gray-700">
-        {error ? error : 'Signing you in…'}
+      <div className="text-sm text-gray-700 text-center space-y-2">
+        {error ? (
+          <>
+            <div>{error}</div>
+            <div className="text-gray-500">You can close this tab and try again.</div>
+          </>
+        ) : done ? (
+          <>
+            <div>Signed in. You can return to your original tab.</div>
+            <div className="text-gray-500">If this tab didn’t close automatically, you may close it now.</div>
+          </>
+        ) : (
+          <div>Signing you in…</div>
+        )}
       </div>
     </div>
   )
