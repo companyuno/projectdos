@@ -55,9 +55,12 @@ function AuthCallbackInner() {
 
         if (!mounted) return
         setDone(true)
-
-        // Attempt to close the tab/window; if blocked, user will see confirmation below
-        try { window.close() } catch {}
+        const from = sp?.get('from') || '/investor-updates'
+        try {
+          window.location.replace(from)
+          return
+        } catch {}
+        // Fallback UI if redirect fails
       } catch (e: unknown) {
         const msg = typeof e === 'object' && e && 'message' in e ? String((e as { message?: unknown }).message) : 'Authentication failed'
         setError(msg)

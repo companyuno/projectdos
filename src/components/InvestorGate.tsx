@@ -26,6 +26,8 @@ export default function InvestorGate({ children, message, redirectOnGrant }: Inv
   const [showBanner, setShowBanner] = useState(false)
   const [cooldown, setCooldown] = useState<number>(0)
   const [infoMsg, setInfoMsg] = useState<string>("")
+  const [sending, setSending] = useState(false)
+  const [serverBackoffUntil, setServerBackoffUntil] = useState<number>(0)
 
   useEffect(() => {
     try {
@@ -51,6 +53,18 @@ export default function InvestorGate({ children, message, redirectOnGrant }: Inv
     const t = setInterval(() => setCooldown((c)=> (c>0? c-1 : 0)), 1000)
     return () => clearInterval(t)
   }, [cooldown])
+
+  // expire server backoff without changing the displayed countdown
+  useEffect(() => {
+    if (serverBackoffUntil <= 0) return
+    const ms = Math.max(serverBackoffUntil - Date.now(), 0)
+    if (ms === 0) {
+      setServerBackoffUntil(0)
+      return
+    }
+    const t = setTimeout(() => setServerBackoffUntil(0), ms)
+    return () => clearTimeout(t)
+  }, [serverBackoffUntil])
 
   // Revalidate permission on mount if we believe we are allowed, to handle revocations
   useEffect(() => {
@@ -219,13 +233,14 @@ export default function InvestorGate({ children, message, redirectOnGrant }: Inv
             </div>
             {error && <p className="text-red-600 text-sm">{error}</p>}
             <div className="flex items-center gap-2">
-              <Button type="button" variant="outline" disabled={!email.trim() || cooldown>0} onClick={async ()=>{
+              <Button type="button" variant="outline" disabled={!email.trim() || sending || cooldown>0 || (serverBackoffUntil > Date.now())} onClick={async ()=>{
                 setError("")
                 setInfoMsg('You will receive an email with a login link if you are registered as an investor in our database')
-                // Start optimistic cooldown immediately for snappier UX
-                if (cooldown <= 0) setCooldown(60)
+                setSending(true)
+                // Start optimistic cooldown immediately for snappier UX (non-increasing countdown)
+                setCooldown((c)=> (c>0 ? c : 60))
                 try {
-                  const from = redirectOnGrant || '/investor-updates'
+                  const from = redirectOnGrant || (typeof window !== 'undefined' ? `${window.location.pathname}${window.location.search}` : '/investor-updates')
                   // Only send magic link if email is allowlisted for the investor-login group
                   const allowRes = await fetch('/api/permissions/check', {
                     method: 'POST',
@@ -238,10 +253,11 @@ export default function InvestorGate({ children, message, redirectOnGrant }: Inv
                     setSubmitted(false)
                     setAllowed(null)
                     setShowBanner(false)
-                    setError("")
+                    setError("Your email was not found in our investor database.")
                     // keep infoMsg as-is
                     // Reset cooldown since no email will be sent
                     setCooldown(0)
+                    setSending(false)
                     return
                   }
                   if (!supabaseBrowser) { setError('Email login is not configured'); setCooldown(0); return; }
@@ -249,23 +265,28 @@ export default function InvestorGate({ children, message, redirectOnGrant }: Inv
                   if (error) {
                     const msg = String(error?.message || '')
                     const m = msg.match(/after\s+(\d+)\s*seconds?/i)
-                    if (m && m[1]) setCooldown(parseInt(m[1],10))
+                    if (m && m[1]) {
+                      const serverSeconds = parseInt(m[1],10)
+                      // do not increase the displayed countdown; enforce via hidden backoff
+                      setServerBackoffUntil(Date.now() + (isNaN(serverSeconds) ? 0 : serverSeconds*1000))
+                    }
                     throw error
                   }
                   setSubmitted(true)
                   setAllowed(false)
                   setShowBanner(false)
-                  try { localStorage.setItem('iv_magic_last_sent', String(Date.now())); setCooldown(60) } catch {}
+                  try { localStorage.setItem('iv_magic_last_sent', String(Date.now())) } catch {}
+                  // keep countdown non-increasing; ensure at least a brief remaining time
+                  setCooldown((c)=> (c>5 ? c : 5))
                   // keep infoMsg persistent during flow
                 } catch (e: unknown) {
                   const msg = typeof e === 'object' && e && 'message' in e ? String((e as { message?: unknown }).message) : 'Failed to send magic link'
                   setError(msg)
-                  // drop cooldown on failure
-                  setCooldown(0)
+                  // keep current countdown; no jump back
                 } finally {
-                  // no-op: avoid grey flicker; cooldown state controls disabled state
+                  setSending(false)
                 }
-              }}>Send Link{cooldown>0 ? ` (${cooldown}s)` : ''}</Button>
+              }}>{sending ? 'Sending…' : `Send Link${cooldown>0 ? ` (${cooldown}s)` : ''}`}</Button>
               <Button type="button" variant="outline" onClick={handleLogout}>Clear</Button>
             </div>
             {(infoMsg || cooldown > 0 || (submitted && allowed === false)) && (
