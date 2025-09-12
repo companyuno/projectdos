@@ -54,13 +54,12 @@ function AuthCallbackInner() {
         } catch {}
 
         if (!mounted) return
-        setDone(true)
         const from = sp?.get('from') || '/investor-updates'
         try {
           window.location.replace(from)
           return
         } catch {}
-        // Fallback UI if redirect fails
+        setDone(true)
       } catch (e: unknown) {
         const msg = typeof e === 'object' && e && 'message' in e ? String((e as { message?: unknown }).message) : 'Authentication failed'
         setError(msg)
@@ -72,20 +71,8 @@ function AuthCallbackInner() {
 
   return (
     <div className="min-h-screen flex items-center justify-center">
-      <div className="text-sm text-gray-700 text-center space-y-2">
-        {error ? (
-          <>
-            <div>{error}</div>
-            <div className="text-gray-500">You can close this tab and try again.</div>
-          </>
-        ) : done ? (
-          <>
-            <div>Signed in. You can return to your original tab.</div>
-            <div className="text-gray-500">If this tab didn’t close automatically, you may close it now.</div>
-          </>
-        ) : (
-          <div>Signing you in…</div>
-        )}
+      <div className="text-sm text-gray-700 text-center">
+        {error ? <div>{error}</div> : <div>Signing you in…</div>}
       </div>
     </div>
   )

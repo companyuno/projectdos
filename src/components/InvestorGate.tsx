@@ -235,7 +235,7 @@ export default function InvestorGate({ children, message, redirectOnGrant }: Inv
             <div className="flex items-center gap-2">
               <Button type="button" variant="outline" disabled={!email.trim() || sending || cooldown>0 || (serverBackoffUntil > Date.now())} onClick={async ()=>{
                 setError("")
-                setInfoMsg('You will receive an email with a login link if you are registered as an investor in our database')
+                setInfoMsg("")
                 setSending(true)
                 // Start optimistic cooldown immediately for snappier UX (non-increasing countdown)
                 setCooldown((c)=> (c>0 ? c : 60))
@@ -254,6 +254,7 @@ export default function InvestorGate({ children, message, redirectOnGrant }: Inv
                     setAllowed(null)
                     setShowBanner(false)
                     setError("Your email was not found in our investor database.")
+                    setInfoMsg("")
                     // keep infoMsg as-is
                     // Reset cooldown since no email will be sent
                     setCooldown(0)
@@ -278,6 +279,7 @@ export default function InvestorGate({ children, message, redirectOnGrant }: Inv
                   try { localStorage.setItem('iv_magic_last_sent', String(Date.now())) } catch {}
                   // keep countdown non-increasing; ensure at least a brief remaining time
                   setCooldown((c)=> (c>5 ? c : 5))
+                  setInfoMsg("Email confirmed. We've emailed you a link to log in.")
                   // keep infoMsg persistent during flow
                 } catch (e: unknown) {
                   const msg = typeof e === 'object' && e && 'message' in e ? String((e as { message?: unknown }).message) : 'Failed to send magic link'
@@ -289,10 +291,8 @@ export default function InvestorGate({ children, message, redirectOnGrant }: Inv
               }}>{sending ? 'Sending…' : `Send Link${cooldown>0 ? ` (${cooldown}s)` : ''}`}</Button>
               <Button type="button" variant="outline" onClick={handleLogout}>Clear</Button>
             </div>
-            {(infoMsg || cooldown > 0 || (submitted && allowed === false)) && (
-              <p className="text-gray-600 text-sm mt-2">
-                {infoMsg || 'You will receive an email with a login link if you are registered as an investor in our database'}
-              </p>
+            {infoMsg && (
+              <div className="mt-2 text-sm text-green-700 bg-green-50 border border-green-200 rounded px-2 py-1">{infoMsg}</div>
             )}
           </form>
         </CardContent>
