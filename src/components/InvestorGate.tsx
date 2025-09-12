@@ -18,9 +18,25 @@ const STORAGE_EMAIL = "invitro-investor-email"
 const STORAGE_ALLOWED = "invitro-investor-permission"
 
 export default function InvestorGate({ children, message, redirectOnGrant }: InvestorGateProps) {
-  const [email, setEmail] = useState("")
-  const [allowed, setAllowed] = useState<boolean | null>(null)
-  const [submitted, setSubmitted] = useState(false)
+  const [email, setEmail] = useState<string>(() => {
+    try { return typeof window !== 'undefined' ? (localStorage.getItem(STORAGE_EMAIL) || '') : '' } catch { return '' }
+  })
+  const [allowed, setAllowed] = useState<boolean | null>(() => {
+    try {
+      if (typeof window === 'undefined') return null
+      const v = localStorage.getItem(STORAGE_ALLOWED)
+      if (v === 'true') return true
+      if (v === 'false') return false
+      return null
+    } catch { return null }
+  })
+  const [submitted, setSubmitted] = useState<boolean>(() => {
+    try {
+      if (typeof window === 'undefined') return false
+      const v = localStorage.getItem(STORAGE_ALLOWED)
+      return v === 'true' || v === 'false'
+    } catch { return false }
+  })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
   const [showBanner, setShowBanner] = useState(false)
@@ -31,7 +47,7 @@ export default function InvestorGate({ children, message, redirectOnGrant }: Inv
 
   useEffect(() => {
     try {
-      const se = localStorage.getItem(STORAGE_EMAIL) || ""
+      const se = localStorage.getItem(STORAGE_EMAIL) || email
       const sa = localStorage.getItem(STORAGE_ALLOWED)
       const lastSend = Number(localStorage.getItem('iv_magic_last_sent') || '0')
       if (lastSend > 0) {
@@ -39,8 +55,8 @@ export default function InvestorGate({ children, message, redirectOnGrant }: Inv
         const remain = Math.max(60 - elapsed, 0)
         if (remain > 0) setCooldown(remain)
       }
-      if (se) setEmail(se)
-      if (sa === "true") {
+      if (se && !email) setEmail(se)
+      if (sa === "true" && allowed !== true) {
         setAllowed(true)
         setSubmitted(true)
       }
