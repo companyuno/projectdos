@@ -26,29 +26,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Email already has permission' }, { status: 400 });
     }
 
-    // Attempt to send a magic link via Supabase
-    try {
-      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL as string;
-      const supabaseKey = (process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY) as string;
-      if (supabaseUrl && supabaseKey) {
-        const supabase = createClient(supabaseUrl, supabaseKey);
-        const baseUrl = req.nextUrl.origin;
-        const emailRedirectTo = `${baseUrl}/auth/callback?from=${encodeURIComponent(from)}&group=${encodeURIComponent(group)}`;
-        const { error } = await supabase.auth.signInWithOtp({
-          email,
-          options: { emailRedirectTo },
-        });
-        if (error) {
-          // Don't fail the request; just report that email wasn't sent
-          return NextResponse.json({ success: true, emailSent: false, message: 'Permission added but email not sent' });
-        }
-        return NextResponse.json({ success: true, emailSent: true });
-      }
-    } catch {
-      // Ignore email send failure
-      return NextResponse.json({ success: true, emailSent: false });
-    }
-
+    // Do not send any emails automatically on add; outbound comms are handled separately
     return NextResponse.json({ success: true, emailSent: false });
   } catch {
     return NextResponse.json({ error: 'Server error' }, { status: 500 });
