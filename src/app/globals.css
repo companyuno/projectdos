@@ -197,4 +197,17 @@ section {
   border-radius: 2px;
   font-size: 0.85em; /* smaller than body */
   color: #4B5563; /* gray-600 */
+}
+
+/* Link styles inside rendered editor/markdown content */
+.editor-content a,
+.markdown-body a {
+  color: #2563EB; /* blue-600 */
+  text-decoration: underline;
+}
+
+.editor-content a:hover,
+.markdown-body a:hover {
+  color: #1D4ED8; /* blue-700 */
+  text-decoration: underline;
 } 
