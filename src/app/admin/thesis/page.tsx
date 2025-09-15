@@ -10,6 +10,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { ArrowLeft, Save, RefreshCw, Eye, Edit3, Plus, Trash2, Upload, Bold, Italic, Underline, List, Indent, AlignLeft, AlignCenter, AlignRight, Table, MessageSquare, ChevronUp, ChevronDown } from "lucide-react"
+import { Link as LinkIcon } from "lucide-react"
 import { useRouter } from "next/navigation"
 
 interface Author {
@@ -1959,6 +1960,31 @@ export default function ThesisAdmin() {
     })()
   }, [])
 
+  const insertLink = () => {
+    const textarea = document.getElementById('content') as HTMLTextAreaElement
+    if (!textarea) return
+    const scrollTop = textarea.scrollTop
+    const start = textarea.selectionStart
+    const end = textarea.selectionEnd
+    const selectedText = editContent.substring(start, end)
+    const urlInput = window.prompt('Enter URL (http(s):// or /path):', 'https://') || ''
+    const url = urlInput.trim()
+    if (!url) return
+    const text = (selectedText || window.prompt('Link text:', '') || '').trim()
+    const isExternal = /^https?:\/\//i.test(url)
+    const attrs = isExternal ? ' target="_blank" rel="noopener noreferrer"' : ''
+    const anchor = `<a href="${url}"${attrs}>${text || url}</a>`
+    const newContent = editContent.substring(0, start) + anchor + editContent.substring(end)
+    setEditContent(newContent)
+    setHasChanges(true)
+    setTimeout(() => {
+      textarea.focus()
+      const newCursorPos = start + anchor.length
+      textarea.setSelectionRange(newCursorPos, newCursorPos)
+      textarea.scrollTop = scrollTop
+    }, 0)
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
@@ -2837,6 +2863,16 @@ export default function ThesisAdmin() {
                       title="Underline (Ctrl+U)"
                     >
                       <Underline className="w-4 h-4" />
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={insertLink}
+                      className="h-8 w-8 p-0"
+                      title="Insert Link"
+                    >
+                      <LinkIcon className="w-4 h-4" />
                     </Button>
                     <div className="w-px h-6 bg-gray-300 mx-1"></div>
                     <Button
