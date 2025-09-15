@@ -768,7 +768,17 @@ export default function IndustryThesis() {
         <Button
           variant="ghost"
           size="icon"
-          onClick={() => router.push('/')}
+          onClick={() => {
+            if (typeof window !== 'undefined') {
+              const hasHistory = window.history.length > 1
+              const hasReferrer = document.referrer && document.referrer !== ''
+              if (hasHistory || hasReferrer) {
+                router.back()
+                return
+              }
+            }
+            router.push('/')
+          }}
           className="rounded-full p-3 text-[hsl(212,74%,15%)] hover:bg-[hsl(212,74%,97%)]"
           aria-label="Back"
         >
