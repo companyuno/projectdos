@@ -2405,9 +2405,11 @@ export default function ThesisAdmin() {
                         const thesis = thesisData[thesisId]
                         const type = thesis.type || 'thesis'
                         const typeLabel = type === 'decomposition' ? '📊' : '📄'
+                        const humanize = (id: string) => id.replace(/-/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase())
+                        const label = (thesis.title && thesis.title.trim()) ? thesis.title : humanize(thesisId)
                         return (
                           <SelectItem key={thesisId} value={thesisId}>
-                            {typeLabel} {thesis.title || thesisId}
+                            {typeLabel} {label}
                           </SelectItem>
                         )
                       })}

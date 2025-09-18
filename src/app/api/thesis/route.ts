@@ -131,19 +131,11 @@ export async function PUT(req: NextRequest) {
 
     // Get existing thesis data
     const existingThesis = await getThesis(thesisId);
-    const thesisData = existingThesis || {
-      title: '',
-      subtitle: '',
-      industry: '',
-      publishDate: '',
-      readTime: '',
-      tags: [],
-      content: {},
-      contact: null,
-      sources: null,
-      live: false
-    };
-
+    if (!existingThesis) {
+      return NextResponse.json({ error: 'Thesis not found' }, { status: 404 });
+    }
+    const thesisData = { ...existingThesis };
+    
     // Handle featured status update (special case)
     if (featured !== undefined) {
       // Update both top-level and content object for consistency

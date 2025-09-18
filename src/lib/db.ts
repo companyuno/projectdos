@@ -302,7 +302,7 @@ export async function updateThesis(thesisId: string, thesisData: Record<string, 
       return false;
     }
     
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from('thesis_data')
       .update({
         title: thesisData.title,
@@ -318,10 +318,11 @@ export async function updateThesis(thesisId: string, thesisData: Record<string, 
         featured: thesisData.featured,
         type: thesisData.type
       })
-      .eq('id', thesisId);
+      .eq('id', thesisId)
+      .select();
     
     if (error) throw error;
-    return true;
+    return Array.isArray(data) && data.length > 0;
   } catch (error) {
     console.error('Error updating thesis:', error);
     return false;
